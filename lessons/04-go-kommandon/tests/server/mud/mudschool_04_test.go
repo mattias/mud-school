@@ -60,6 +60,12 @@ func TestHelpListsCommands(t *testing.T) {
 			t.Errorf(L("help ska nämna %q, men skrev %q", "help should mention %q, but wrote %q", "help は %q を含むべきですが、出力は %q でした"), verb, line)
 		}
 	}
+	want := fmt.Sprintf(MsgCommands, strings.Join([]string{"echo", "help", "quit"}, MsgListSep))
+	if line != want {
+		t.Errorf(L("help ska skriva verben sorterade och åtskilda med MsgListSep\n  fick:    %q\n  väntade: %q",
+			"help should write the verbs sorted and separated by MsgListSep\n  got:      %q\n  expected: %q",
+			"help は動詞をソートし MsgListSep で区切って表示するべきです\n  実際: %q\n  期待: %q"), line, want)
+	}
 }
 
 func TestRegisteredCommandsAppearInHelp(t *testing.T) {

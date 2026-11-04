@@ -174,13 +174,21 @@ func localized(dir, name string) string {
 	return filepath.Join(dir, name+".md")
 }
 
-// overlay copies tree/ and then tree.<lang>/ from dir into dst.
+// overlay copies tree/ and tree.<lang>/ from dir into dst. A file in
+// tree.<lang>/ always wins over the same path in tree/:
+//   - overwrite=true:  tree/ first, then tree.<lang>/ on top.
+//   - overwrite=false: tree.<lang>/ first, so that tree/ skips the file;
+//     files that already exist in dst are never touched.
 func overlay(dir, tree, dst string, overwrite bool) ([]string, error) {
-	a, err := copyTree(filepath.Join(dir, tree), dst, overwrite)
+	first, second := filepath.Join(dir, tree), filepath.Join(dir, tree+"."+lang)
+	if !overwrite {
+		first, second = second, first
+	}
+	a, err := copyTree(first, dst, overwrite)
 	if err != nil {
 		return a, err
 	}
-	b, err := copyTree(filepath.Join(dir, tree+"."+lang), dst, overwrite)
+	b, err := copyTree(second, dst, overwrite)
 	return append(a, b...), err
 }
 

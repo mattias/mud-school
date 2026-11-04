@@ -44,7 +44,7 @@ func cmdHelp(s *Server, p *Player, cmd Command) {
 		verbs = append(verbs, verb)
 	}
 	sort.Strings(verbs)
-	p.Sendf(MsgCommands, strings.Join(verbs, ", "))
+	p.Sendf(MsgCommands, strings.Join(verbs, MsgListSep))
 }
 
 func cmdQuit(s *Server, p *Player, cmd Command) {

@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
-# Startar kursverktyget. Kör från kursens rotkatalog: ./mudschool <kommando>
+# Builds and runs the course tool. Run from the course root: ./mudschool <command>
+# (On Windows without WSL, see docs/<lang>/SETUP.md.)
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR/tools/mudschool" && go build -o "$DIR/.bin/mudschool" . || exit 1
 cd "$OLDPWD" 2>/dev/null || cd "$DIR"

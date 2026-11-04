@@ -2,7 +2,7 @@
   "title": {
     "sv": "Hej, TCP! – en ekoserver i Go",
     "en": "Hello, TCP! – an echo server in Go",
-    "ja": "こんにちは TCP！ – Go で作るエコーサーバー"
+    "ja": "こんにちは、TCP！ – Go で作るエコーサーバー"
   },
   "track": "go",
   "summary": {

@@ -53,6 +53,8 @@ docs/<言語>/                 カリキュラム、プロトコル、環境構�
 定数（`MsgAskName`、`fmt.Sprintf(MsgSays, "Anna", "hi")`）を使うので、どの言語でも
 動きます。受講者がテキストを変えるのも自由です。
 
+受講者が `./mudschool lang` で言語を切り替えると、変更済みの `messages.go`/`messages.rs` はまず `.bak` として保存されます。
+
 ## コースツールの動作
 
 - **`init`** は `starter/` と `starter.<言語>/` を `workspace/` にコピーし、最初の

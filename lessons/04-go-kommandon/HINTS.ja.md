@@ -24,7 +24,7 @@ if full, ok := aliases[verb]; ok {
 ## help
 
 マップのキーをスライスに集め、`sort.Strings` でソートし、
-`strings.Join(verbs, ", ")` でつなげます。それから `p.Sendf(MsgCommands, list)`。
+`strings.Join(verbs, MsgListSep)` でつなげます。それから `p.Sendf(MsgCommands, list)`。
 
 ## handle
 

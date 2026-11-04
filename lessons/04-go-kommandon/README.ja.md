@@ -76,8 +76,8 @@ cd workspace/server && go test ./mud -run TestParseCommand -v
    プレイヤーが切断するか `p.quit` が true になるまで行を読んで
    `s.dispatch(p, line)` を呼ぶ。
 3. **`commands.go`**: `dispatch`、`cmdHelp`、`cmdQuit` を書く:
-   - `help` は登録済みの全動詞をソートして `", "` で区切り、`MsgCommands` で送る
-     （例: `コマンド: echo, help, quit`）、
+   - `help` は登録済みの全動詞をソートして `MsgListSep` で区切り、`MsgCommands` で送る
+     （例: `コマンド: echo、help、quit`）、
    - `quit` は `MsgGoodbye`（`さようなら！`）を送って終了する、
    - 不明な動詞には `MsgUnknownCommand`:
      `p.Sendf(MsgUnknownCommand, cmd.Verb)` → `不明なコマンド "fly" です。…`

@@ -49,20 +49,72 @@ func (c *course) cmdLang(args []string) error {
 	}
 	lang = args[0]
 	p.Lang = lang
+
 	// The game texts (messages.go / messages.rs) follow the course language.
-	written, err := copyTree(filepath.Join(c.root, "starter."+lang), c.workspace(), true)
+	// If the student has edited one of them, keep a backup before replacing it.
+	src := filepath.Join(c.root, "starter."+lang)
+	err = filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		relPath, _ := filepath.Rel(src, path)
+		target := filepath.Join(c.workspace(), relPath)
+		shown := filepath.ToSlash(relPath)
+		if current, err := os.ReadFile(target); err == nil && !c.isStarterVersion(relPath, current) {
+			backup := freeBackupName(target)
+			if err := os.WriteFile(backup, current, 0o644); err != nil {
+				return err
+			}
+			shownBackup := filepath.ToSlash(filepath.Join(filepath.Dir(relPath), filepath.Base(backup)))
+			fmt.Println(yellow(fmt.Sprintf(L(
+				"  du hade ändrat workspace/%s – din version är sparad som workspace/%s",
+				"  you had edited workspace/%s – your version is saved as workspace/%s",
+				"  workspace/%s は変更されていたので、あなたの版を workspace/%s として保存しました"), shown, shownBackup)))
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(target, data, 0o644); err != nil {
+			return err
+		}
+		fmt.Println(dim(L("  skrev workspace/", "  wrote workspace/", "  書き込み: workspace/") + shown))
+		return nil
+	})
 	if err != nil {
 		return err
 	}
-	for _, f := range written {
-		fmt.Println(dim(L("  skrev workspace/", "  wrote workspace/", "  書き込み: workspace/") + f))
-	}
 	fmt.Println(green("✔"), L("Kursen är nu på svenska.", "The course is now in English.", "コースを日本語に切り替えました。"))
 	fmt.Println(dim(L(
-		"Spelvärlden (world.json) som du redan fått byts inte ut – ändra den själv om du vill.",
-		"World files you already have (world.json) are not replaced – edit them yourself if you like.",
-		"すでにある世界ファイル (world.json) は置き換えません。必要なら自分で編集してください。")))
+		"Spelvärlden du redan fått (defaultworld.go i lektion 08, world.json från lektion 09) byts inte ut – ändra den själv om du vill.",
+		"The game world you already have (defaultworld.go in lesson 08, world.json from lesson 09) is not replaced – edit it yourself if you like.",
+		"すでに受け取った世界データ（レッスン 08 の defaultworld.go、レッスン 09 以降の world.json）は置き換えません。必要なら自分で編集してください。")))
 	return c.saveProgress(p)
+}
+
+// freeBackupName returns path+".bak", or path+".bak.1", ".bak.2", ... if
+// earlier backups exist, so that no backup is ever overwritten.
+func freeBackupName(path string) string {
+	name := path + ".bak"
+	for i := 1; exists(name); i++ {
+		name = fmt.Sprintf("%s.bak.%d", path, i)
+	}
+	return name
+}
+
+// isStarterVersion reports whether data is identical to relPath in any of the
+// starter.<lang>/ trees, i.e. the student has not edited it.
+func (c *course) isStarterVersion(relPath string, data []byte) bool {
+	for _, l := range Languages {
+		orig, err := os.ReadFile(filepath.Join(c.root, "starter."+l, relPath))
+		if err == nil && string(orig) == string(data) {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *course) cmdList() error {

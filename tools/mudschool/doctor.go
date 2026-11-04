@@ -109,6 +109,10 @@ func (c *course) cmdDoctor() error {
 	if problems > 0 {
 		return fmt.Errorf(L("%d problem – se docs/sv/SETUP.md", "%d problem(s) – see docs/en/SETUP.md", "%d 件の問題があります。docs/ja/SETUP.md を参照してください"), problems)
 	}
-	fmt.Println(green(L("Allt ser bra ut!", "Everything looks good!", "準備完了です！")), L("Nästa steg:", "Next step:", "次のステップ:"), cyan("./mudschool init"))
+	next := "./mudschool init"
+	if exists(c.progressPath()) {
+		next = "./mudschool show"
+	}
+	fmt.Println(green(L("Allt ser bra ut!", "Everything looks good!", "準備完了です！")), L("Nästa steg:", "Next step:", "次のステップ:"), cyan(next))
 	return nil
 }

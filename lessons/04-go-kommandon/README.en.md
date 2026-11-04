@@ -78,7 +78,7 @@ cd workspace/server && go test ./mud -run TestParseCommand -v
    disconnects or `p.quit` becomes true.
 3. **`commands.go`**: write `dispatch`, `cmdHelp` and `cmdQuit`:
    - `help` sends `MsgCommands` with all registered verbs, sorted and separated
-     by `", "` – e.g. `Commands: echo, help, quit`,
+     by `MsgListSep` – e.g. `Commands: echo, help, quit`,
    - `quit` sends `MsgGoodbye` (`Goodbye!`) and leaves,
    - an unknown verb gives `MsgUnknownCommand`:
      `p.Sendf(MsgUnknownCommand, cmd.Verb)` → `Unknown command "fly". Type help for help.`

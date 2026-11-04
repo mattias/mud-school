@@ -56,7 +56,7 @@ func detectLang() string {
 func langFromLocale(val string) string {
 	val = strings.ToLower(val)
 	for _, l := range Languages {
-		if val == l || strings.HasPrefix(val, l+"_") || strings.HasPrefix(val, l+"-") || strings.HasPrefix(val, l+".") {
+		if val == l || strings.HasPrefix(val, l+"_") || strings.HasPrefix(val, l+"-") || strings.HasPrefix(val, l+".") || strings.HasPrefix(val, l+"@") {
 			return l
 		}
 	}

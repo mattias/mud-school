@@ -53,8 +53,7 @@ The tests never compare against hard-coded text. They use the same constants
 as the student's code (`MsgAskName`, `fmt.Sprintf(MsgSays, "Anna", "hi")`), so
 they work in every language – and the student is welcome to change the texts.
 
-The student may change these texts freely. If they switch languages with
-`./mudschool lang`, an edited `messages.go`/`messages.rs` is first saved as `.bak`.
+If the student switches languages with `./mudschool lang`, an edited `messages.go`/`messages.rs` is first saved as `.bak`.
 
 ## How the course tool works
 

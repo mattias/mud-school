@@ -1,0 +1,27 @@
+package mud
+
+import (
+	"errors"
+)
+
+// Fel som ValidateName kan returnera. Att definiera fel som variabler gör
+// att anroparen kan jämföra med errors.Is(err, ErrNameTooShort).
+var (
+	ErrNameTooShort = errors.New("namnet måste vara minst 2 tecken")
+	ErrNameTooLong  = errors.New("namnet får vara högst 16 tecken")
+	ErrNameInvalid  = errors.New("namnet får bara innehålla bokstäver")
+	ErrNameTaken    = errors.New("det namnet är redan upptaget")
+)
+
+// ValidateName kontrollerar att ett namn är 2–16 bokstäver (å, ä och ö räknas
+// som bokstäver, siffror och mellanslag gör det inte).
+func ValidateName(name string) error {
+	// TODO(lektion 5)
+	return nil
+}
+
+// NormalizeName gör första bokstaven stor och resten små: "aNNA" -> "Anna".
+func NormalizeName(name string) string {
+	// TODO(lektion 5)
+	return name
+}

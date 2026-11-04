@@ -1,0 +1,6 @@
+{
+  "title": "Spelare – inloggning och delat tillstånd",
+  "track": "go",
+  "summary": "Låt spelare välja namn, håll reda på vilka som är inloggade och skydda delad data med en mutex.",
+  "concepts": ["egna feltyper", "errors.Is och %w", "unicode och runor", "sync.Mutex", "data races", "defer för att låsa upp"]
+}

@@ -1,0 +1,6 @@
+{
+  "title": "Hej, Rust! – en första klient",
+  "track": "rust",
+  "summary": "Skriv en klient i Rust som ansluter till din server, läser rader och skickar det du skriver.",
+  "concepts": ["cargo", "moduler", "struct och impl", "Result och ?-operatorn", "Option", "ägarskap och lån (&, &mut)", "String vs &str", "TcpStream och BufReader"]
+}

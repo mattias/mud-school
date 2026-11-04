@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Startar kursverktyget. Kör från kursens rotkatalog: ./mudschool <kommando>
+DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$DIR/tools/mudschool" && go build -o "$DIR/.bin/mudschool" . || exit 1
+cd "$OLDPWD" 2>/dev/null || cd "$DIR"
+exec "$DIR/.bin/mudschool" "$@"

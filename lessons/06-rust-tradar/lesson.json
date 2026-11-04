@@ -1,0 +1,6 @@
+{
+  "title": "Trådar och kanaler – lyssna och skriv samtidigt",
+  "track": "rust",
+  "summary": "Läs från servern i en egen tråd och skicka raderna över en kanal, så att klienten kan ta emot meddelanden när som helst.",
+  "concepts": ["std::thread", "move-closures", "mpsc-kanaler", "generics och trait bounds", "Send och 'static", "Iterator", "att flytta ägarskap"]
+}

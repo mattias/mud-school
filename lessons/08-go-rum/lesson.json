@@ -1,0 +1,6 @@
+{
+  "title": "Rum – en värld att röra sig i",
+  "track": "go",
+  "summary": "Bygg en värld av rum med utgångar. Spelare kan titta, gå mellan rum och prata med dem i samma rum.",
+  "concepts": ["pekare", "struct-literals", "variadiska funktioner", "maps av pekare", "metoder på olika typer", "strings.Builder"]
+}

@@ -1,0 +1,6 @@
+{
+  "title": "Hej, TCP! – en ekoserver i Go",
+  "track": "go",
+  "summary": "Lyssna på en port, ta emot en anslutning, hälsa och eka tillbaka rader.",
+  "concepts": ["paket och import", "funktioner och metoder", "structs", "felhantering med error", "defer", "net.Listener", "bufio.Scanner"]
+}

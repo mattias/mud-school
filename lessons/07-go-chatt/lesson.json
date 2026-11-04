@@ -1,0 +1,6 @@
+{
+  "title": "Chatt – kanaler och select",
+  "track": "go",
+  "summary": "Låt spelare prata med varandra. Varje spelare får en egen utkorg (kanal) så att en långsam klient aldrig kan frysa servern.",
+  "concepts": ["kanaler (chan)", "buffrade kanaler", "select och default", "stänga kanaler", "en skrivare per resurs", "mottryck (backpressure)"]
+}

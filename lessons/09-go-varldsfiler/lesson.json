@@ -1,0 +1,6 @@
+{
+  "title": "Världsfiler – data istället för kod",
+  "track": "go",
+  "summary": "Läs världen från en JSON-fil, validera den noggrant och baka in standardvärlden i programmet med go:embed.",
+  "concepts": ["encoding/json", "struct-taggar", "io.Reader", "errors.Join", "go:embed", "arrayer som map-nycklar", "flag-paketet"]
+}

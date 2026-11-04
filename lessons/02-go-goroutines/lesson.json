@@ -1,0 +1,6 @@
+{
+  "title": "Många spelare samtidigt – goroutines",
+  "track": "go",
+  "summary": "Hantera varje anslutning i en egen goroutine så att flera kan spela samtidigt.",
+  "concepts": ["goroutines", "go-nyckelordet", "closures", "sync.WaitGroup", "log-paketet", "go test -race"]
+}

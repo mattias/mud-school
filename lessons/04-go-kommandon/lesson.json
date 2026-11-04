@@ -1,0 +1,6 @@
+{
+  "title": "Kommandon – tolka vad spelaren skriver",
+  "track": "go",
+  "summary": "Dela upp rader i verb och argument, stöd förkortningar och bygg ett kommandoregister.",
+  "concepts": ["strings-paketet", "maps", "slices", "funktioner som värden", "switch", "tabelldrivna tester", "sort"]
+}

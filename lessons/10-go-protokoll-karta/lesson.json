@@ -1,0 +1,6 @@
+{
+  "title": "Protokoll och karta – samma spel, två sorters klienter",
+  "track": "go",
+  "summary": "Inför ett JSON-protokoll för grafiska klienter, rita en karta över rummen och skicka statusrad – utan att telnet slutar fungera.",
+  "concepts": ["gränssnitt och olika kodningar", "json.Marshal och omitempty", "sync/atomic", "byte-slices och 2D-rutnät", "separera betydelse från presentation"]
+}

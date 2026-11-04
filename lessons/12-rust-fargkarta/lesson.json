@@ -1,0 +1,6 @@
+{
+  "title": "Kartan i färg – tiles, iteratorer och ANSI",
+  "track": "rust",
+  "summary": "Översätt kartans koder till färgade tecken i Dwarf Fortress-stil och rita dem med ANSI-färgkoder.",
+  "concepts": ["Copy-typer", "match på strängar", "Option", "iteratorer: map, collect, enumerate", "Vec<Vec<T>>", "fmt::Write", "ANSI escape-koder", "truecolor"]
+}

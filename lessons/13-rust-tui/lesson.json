@@ -1,0 +1,6 @@
+{
+  "title": "Ett riktigt gränssnitt – ratatui",
+  "track": "rust",
+  "summary": "Bygg ett terminalgränssnitt med statusrad, logg, färgkarta och inmatningsrad, och en händelseloop som kopplar ihop tangentbord och server.",
+  "concepts": ["ratatui och omedelbar rendering", "Layout och Constraint", "From/Into", "enum för händelser", "flera producenter på en kanal", "testa UI med TestBackend", "std::mem::take"]
+}

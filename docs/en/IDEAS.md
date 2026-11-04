@@ -77,4 +77,4 @@ Many of them work as challenges, projects of your own or future lessons.
   redesigning when global constants are no longer enough.
 - **More languages:** the same protocol makes it easy to add a track where the
   client is written in a third language – and the course itself can be
-  translated into more languages in the same way as Swedish, English and Japanese.
+  translated into more languages in the same way as English, Swedish and Japanese.

@@ -114,7 +114,7 @@ strukturera din kod som du vill – så länge den beter sig rätt.
 ### 7. Kursen finns på tre språk
 
 Instruktioner, ledtrådar, kursverktyget, testernas felmeddelanden, spelets
-texter och spelvärlden finns på **svenska, engelska och japanska**
+texter och spelvärlden finns på **engelska, svenska och japanska**
 (`./mudschool init --lang en|sv|ja`, byt senare med `./mudschool lang`).
 Kod och kodkommentarer är på engelska – det är så du kommer att möta kod i
 verkligheten, och det gör att alla studenter kan läsa varandras lösningar.

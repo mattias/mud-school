@@ -141,7 +141,7 @@ Reopen the terminal, then check `go version`, `rustc --version` and `cargo --ver
 
 ### 2. A terminal with 24-bit colour
 
-**Terminal.app lacks truecolor** – the map's colours come out wrong. Use
+**Terminal.app has long lacked truecolor** (at least before macOS 26) – the map's colours may come out wrong. Use
 **iTerm2**, **WezTerm**, **Ghostty** or **kitty** (e.g. `brew install --cask iterm2`).
 
 ### 3. Get the course and start
@@ -226,7 +226,7 @@ The client draws the map with characters such as `♣ ≈ ▲ ■ Ω ─ │ ♥
 
 **Windows Terminal:** Settings (`Ctrl+,`) → *Profiles* → *Defaults* →
 *Appearance* → *Font face*. Install a downloaded font first (right-click the
-`.ttf` file → *Install*) and restart Windows Terminal. If a font lacks a
+`.ttf` file → *Install*) and restart Windows Terminal. BIZ UDGothic is preinstalled on Japanese Windows; elsewhere add it under Settings → System → Optional features → *Japanese Supplemental Fonts*. If a font lacks a
 character, Windows Terminal borrows it from another font automatically.
 
 **Japanese text and the map.** Characters such as `≈ ▲ ■ ─ │ ♣` are "East
@@ -254,6 +254,7 @@ client handles correctly.
 | The map's columns don't line up (Japanese) | Ambiguous-width characters are drawn double-width – see [Fonts and terminals](#fonts-and-terminals). |
 | No colours or wrong colours | The terminal lacks 24-bit colour (e.g. macOS Terminal.app, the old Windows console). |
 | `-race requires cgo` | Install a C compiler (see your system's section) or run without `--race`. |
+| Windows: Ctrl+C asks "Terminate batch job (Y/N)?" | That is cmd.exe asking because `mudschool.cmd` is a batch file. Answer `Y`. |
 | `doctor` warns about UTF-8/colour although everything looks fine | Your terminal wasn't recognised. If the map looks right, you can ignore it. |
 
 Still not working? Run `doctor` and read what is red or yellow.

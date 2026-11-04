@@ -80,7 +80,7 @@ func main() {
 	}
 	if langFlag != "" {
 		if !validLang(langFlag) {
-			fail(fmt.Errorf("--lang: %q (sv, en, ja)", langFlag))
+			fail(fmt.Errorf("--lang: %q (en, sv, ja)", langFlag))
 		}
 		lang = langFlag
 	}

@@ -15,7 +15,8 @@ var lang = "en"
 // self is how the user starts the tool: "./mudschool" with a POSIX shell,
 // ".\mudschool.cmd" on Windows (cmd.exe and PowerShell).
 var self = func() string {
-	if runtime.GOOS == "windows" {
+	// Git Bash / MSYS2 run the sh script, so keep "./mudschool" there.
+	if runtime.GOOS == "windows" && os.Getenv("MSYSTEM") == "" {
 		return `.\mudschool.cmd`
 	}
 	return "./mudschool"

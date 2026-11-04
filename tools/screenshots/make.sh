@@ -9,7 +9,12 @@ set -e
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 HERE="$ROOT/tools/screenshots"
 WORK="$(mktemp -d)"
-trap 'tmux kill-server 2>/dev/null || true' EXIT
+cleanup() {
+  set +e
+  for s in en sv ja; do tmux kill-session -t "shot$s" 2>/dev/null; done
+  rm -rf "$WORK"
+}
+trap cleanup EXIT
 
 port=4500
 for L in en sv ja; do

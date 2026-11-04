@@ -88,10 +88,10 @@ func (c *course) cmdDoctor() error {
 	case t.name != "" && t.utf8 && t.truecolor:
 		ok(label, t.name+L(" (UTF-8, 24-bitars färg)", " (UTF-8, 24-bit colour)", "（UTF-8、24 ビットカラー）"))
 	case t.name != "" && !t.truecolor:
-		warn(label, t.name+L(" saknar 24-bitars färg", " lacks 24-bit colour", " は 24 ビットカラー非対応です"), L(
-			"Kartans färger blir fel. Byt terminal – se SETUP.md.",
-			"The map's colours will be wrong. Switch terminals – see SETUP.md.",
-			"マップの色がおかしくなります。端末を変えてください。SETUP.md を参照。"))
+		warn(label, t.name+L(" har ofta saknat 24-bitars färg", " has often lacked 24-bit colour", " は 24 ビットカラーに対応していないことがあります"), L(
+			"Ser kartans färger fel ut, byt terminal – se SETUP.md.",
+			"If the map's colours look wrong, switch terminals – see SETUP.md.",
+			"マップの色がおかしければ端末を変えてください。SETUP.md を参照。"))
 	case runtime.GOOS == "windows":
 		warn(label, L("inte Windows Terminal", "not Windows Terminal", "Windows Terminal ではありません"), L(
 			"Den gamla Windows-konsolen visar varken färgerna eller tecknen rätt. Använd Windows Terminal (`winget install Microsoft.WindowsTerminal`).",
@@ -145,9 +145,11 @@ func detectTerminal() terminalInfo {
 
 	switch {
 	case os.Getenv("WT_SESSION") != "":
-		t.name, t.utf8, t.truecolor = "Windows Terminal", true, true
+		t.name, t.truecolor = "Windows Terminal", true
 	case os.Getenv("TERM_PROGRAM") == "vscode":
-		t.name, t.utf8, t.truecolor = "VS Code", true, true
+		t.name, t.truecolor = "VS Code", true
+	case os.Getenv("TERM_PROGRAM") == "mintty":
+		t.name, t.truecolor = "mintty", true
 	case os.Getenv("TERM_PROGRAM") == "Apple_Terminal":
 		t.name, t.utf8, t.truecolor = "Terminal.app", true, false
 	case os.Getenv("TERM_PROGRAM") == "iTerm.app":
@@ -195,9 +197,9 @@ func gccHint() string {
 	switch runtime.GOOS {
 	case "windows":
 		return L(
-			"Behövs bara för `./mudschool check --race`. Installera MSYS2 (`winget install MSYS2.MSYS2`), kör `pacman -S mingw-w64-ucrt-x86_64-gcc` i \"MSYS2 UCRT64\" och lägg till C:\\msys64\\ucrt64\\bin i PATH. Se SETUP.md.",
-			"Only needed for `./mudschool check --race`. Install MSYS2 (`winget install MSYS2.MSYS2`), run `pacman -S mingw-w64-ucrt-x86_64-gcc` in \"MSYS2 UCRT64\" and add C:\\msys64\\ucrt64\\bin to PATH. See SETUP.md.",
-			"`./mudschool check --race` を使うときだけ必要です。MSYS2 を入れ（`winget install MSYS2.MSYS2`）、「MSYS2 UCRT64」で `pacman -S mingw-w64-ucrt-x86_64-gcc` を実行し、C:\\msys64\\ucrt64\\bin を PATH に追加します。SETUP.md を参照。")
+			"Behövs bara för `./mudschool check --race`. Installera MSYS2 (`winget install MSYS2.MSYS2`), kör `pacman -S --needed mingw-w64-ucrt-x86_64-gcc` i \"MSYS2 UCRT64\" och lägg till C:\\msys64\\ucrt64\\bin i PATH. Se SETUP.md.",
+			"Only needed for `./mudschool check --race`. Install MSYS2 (`winget install MSYS2.MSYS2`), run `pacman -S --needed mingw-w64-ucrt-x86_64-gcc` in \"MSYS2 UCRT64\" and add C:\\msys64\\ucrt64\\bin to PATH. See SETUP.md.",
+			"`./mudschool check --race` を使うときだけ必要です。MSYS2 を入れ（`winget install MSYS2.MSYS2`）、「MSYS2 UCRT64」で `pacman -S --needed mingw-w64-ucrt-x86_64-gcc` を実行し、C:\\msys64\\ucrt64\\bin を PATH に追加します。SETUP.md を参照。")
 	case "darwin":
 		return L("Behövs bara för `./mudschool check --race`: `xcode-select --install`", "Only needed for `./mudschool check --race`: `xcode-select --install`", "`./mudschool check --race` を使うときだけ必要です: `xcode-select --install`")
 	default:

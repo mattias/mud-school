@@ -114,7 +114,7 @@ your code however you like – as long as it behaves correctly.
 ### 7. The course is available in three languages
 
 Instructions, hints, the course tool, the tests' failure messages, the game's
-texts and the game world are available in **Swedish, English and Japanese**
+texts and the game world are available in **English, Swedish and Japanese**
 (`./mudschool init --lang en|sv|ja`, change later with `./mudschool lang`).
 Code and code comments are in English – that is how you will meet code in
 the real world, and it lets every student read each other's solutions. Having

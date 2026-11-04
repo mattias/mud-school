@@ -140,7 +140,7 @@ xcode-select --install            # C-kompilator, behövs för --race
 
 ### 2. En terminal med 24-bitars färg
 
-**Terminal.app saknar truecolor** – kartans färger blir fel. Använd **iTerm2**,
+**Terminal.app har länge saknat truecolor** (åtminstone före macOS 26) – kartans färger kan bli fel. Använd **iTerm2**,
 **WezTerm**, **Ghostty** eller **kitty** (t.ex. `brew install --cask iterm2`).
 
 ### 3. Hämta kursen och börja
@@ -226,7 +226,7 @@ Klienten ritar kartan med tecken som `♣ ≈ ▲ ■ Ω ─ │ ♥` i 24-bitar
 
 **Windows Terminal:** Inställningar (`Ctrl+,`) → *Profiler* → *Standardvärden* →
 *Utseende* → *Teckensnitt*. Installera ett nedladdat typsnitt först
-(högerklicka på `.ttf`-filen → *Installera*) och starta om Windows Terminal.
+(högerklicka på `.ttf`-filen → *Installera*) och starta om Windows Terminal. BIZ UDGothic finns förinstallerat i japansk Windows; i övriga lägger du till det under Inställningar → System → Valfria funktioner → *Japanese Supplemental Fonts*.
 Saknar ett typsnitt något tecken lånar Windows Terminal det automatiskt från
 ett annat typsnitt.
 
@@ -255,6 +255,7 @@ hanterar klienten rätt.
 | Kartans kolumner hamnar fel (japanska) | Tecken med tvetydig bredd ritas dubbelt så breda – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
 | Inga eller fel färger | Terminalen saknar 24-bitars färg (t.ex. macOS Terminal.app, den gamla Windows-konsolen). |
 | `-race requires cgo` | Installera en C-kompilator (se avsnittet för ditt system) eller kör utan `--race`. |
+| Windows: Ctrl+C frågar "Terminate batch job (Y/N)?" | Det är cmd.exe som frågar eftersom `mudschool.cmd` är en batchfil. Svara `Y`. |
 | `doctor` varnar för UTF-8/färg fast allt ser bra ut | Terminalen kändes inte igen. Ser kartan rätt ut kan du strunta i det. |
 
 Fungerar det fortfarande inte? Kör `doctor` och läs det som är rött eller gult.

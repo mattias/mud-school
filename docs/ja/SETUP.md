@@ -139,7 +139,7 @@ xcode-select --install            # C コンパイラ（--race に必要）
 
 ### 2. 24 ビットカラー対応の端末
 
-**ターミナル.app はトゥルーカラー非対応** で、マップの色がおかしくなります。
+**ターミナル.app は長らくトゥルーカラー非対応** でした（少なくとも macOS 26 より前）。マップの色がおかしくなることがあります。
 **iTerm2**、**WezTerm**、**Ghostty**、**kitty** を使ってください（例: `brew install --cask iterm2`）。
 
 ### 3. コースを入手して始める
@@ -224,7 +224,7 @@ JetBrains の GoLand/RustRover や、LSP を設定した Neovim も快適です�
 
 **Windows Terminal:** 設定（`Ctrl+,`）→ *プロファイル* → *既定値* → *外観* → *フォント フェイス*。
 ダウンロードしたフォントは先にインストールし（`.ttf` を右クリック → *インストール*）、
-Windows Terminal を再起動してください。フォントにない文字は、Windows Terminal が自動で
+Windows Terminal を再起動してください。BIZ UDゴシックは日本語版 Windows には最初から入っています。それ以外の言語の Windows では、設定 → システム → オプション機能 → *日本語の追加フォント*（Japanese Supplemental Fonts）で追加できます。フォントにない文字は、Windows Terminal が自動で
 別のフォントから補います。
 
 **日本語のテキストとマップ。** `≈ ▲ ■ ─ │ ♣` などは「East Asian Ambiguous Width（曖昧幅）」
@@ -251,6 +251,7 @@ Windows Terminal を再起動してください。フォントにない文字は
 | マップの列がずれる（日本語） | 曖昧幅の文字が全角で描かれています。[フォントと端末](#フォントと端末) を参照。 |
 | 色が出ない・おかしい | 端末が 24 ビットカラー非対応です（例: macOS のターミナル.app、古い Windows コンソール）。 |
 | `-race requires cgo` | C コンパイラを入れる（各システムの節を参照）か、`--race` なしで実行する。 |
+| Windows: Ctrl+C で「Terminate batch job (Y/N)?」と聞かれる | `mudschool.cmd` がバッチファイルなので cmd.exe が確認しています。`Y` と答えてください。 |
 | 問題なく見えるのに `doctor` が UTF-8／色の警告を出す | 端末を判別できませんでした。マップが正しく見えるなら無視してかまいません。 |
 
 それでも動かない？ `doctor` を実行し、赤や黄色の項目を読んでください。

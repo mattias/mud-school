@@ -55,7 +55,7 @@ for line in open(src, encoding='utf-8').read().split('\n')[:ROWS]:
 out = []
 for y, row in enumerate(cells):
     for (x, w, ch, fg, bg, bold) in row:
-        style = 'left:%.1fpx;top:%dpx;width:%.1fpx;' % (x * CW, y * CH, w * CW)
+        style = 'left:%.1fpx;top:%dpx;width:%.1fpx;' % (x * CW, y * CH, w * CW + 0.6)
         if bg: style += 'background:%s;' % bg
         style += 'color:%s;' % (fg or DEF_FG)
         if bold: style += 'font-weight:bold;'

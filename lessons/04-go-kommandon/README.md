@@ -77,7 +77,7 @@ cd workspace/server && go test ./mud -run TestParseCommand -v
    spelaren kopplar ner eller `p.quit` blir sann.
 3. **`commands.go`**: skriv `dispatch`, `cmdHelp` och `cmdQuit`:
    - `help` skriver `MsgCommands` med alla registrerade verb, sorterade och
-     åtskilda med `", "` – t.ex. `Kommandon: echo, help, quit`,
+     åtskilda med `MsgListSep` – t.ex. `Kommandon: echo, help, quit`,
    - `quit` skriver `MsgGoodbye` (`Hej då!`) och avslutar,
    - okänt verb ger `MsgUnknownCommand`:
      `p.Sendf(MsgUnknownCommand, cmd.Verb)` → `Okänt kommando "flyg". Skriv help för hjälp.`

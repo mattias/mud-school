@@ -25,7 +25,7 @@ if full, ok := aliases[verb]; ok {
 ## help
 
 Samla nycklarna ur mappen i en slice, sortera med `sort.Strings` och sätt
-ihop dem med `strings.Join(verbs, ", ")`. Sedan `p.Sendf(MsgCommands, lista)`.
+ihop dem med `strings.Join(verbs, MsgListSep)`. Sedan `p.Sendf(MsgCommands, lista)`.
 
 ## handle
 

@@ -25,7 +25,7 @@ if full, ok := aliases[verb]; ok {
 ## help
 
 Collect the keys of the map in a slice, sort it with `sort.Strings` and join
-it with `strings.Join(verbs, ", ")`. Then `p.Sendf(MsgCommands, list)`.
+it with `strings.Join(verbs, MsgListSep)`. Then `p.Sendf(MsgCommands, list)`.
 
 ## handle
 

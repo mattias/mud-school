@@ -53,6 +53,9 @@ Testerna jämför aldrig med hårdkodad text. De använder samma konstanter som
 studentens kod (`MsgAskName`, `fmt.Sprintf(MsgSays, "Anna", "hej")`), så de
 fungerar på alla språk – och studenten får gärna ändra texterna.
 
+Texterna kan studenten ändra fritt. Byter hen språk med `./mudschool lang`
+sparas en ändrad `messages.go`/`messages.rs` först som `.bak`.
+
 ## Hur kursverktyget arbetar
 
 - **`init`** kopierar `starter/` och `starter.<språk>/` till `workspace/` och

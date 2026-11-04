@@ -32,18 +32,35 @@ func validLang(l string) bool {
 	return false
 }
 
-// detectLang guesses a language from the environment ($MUDSCHOOL_LANG,
-// $LC_ALL, $LANG). Falls back to English.
+// detectLang guesses a language from the environment. $MUDSCHOOL_LANG wins
+// if it names a supported language. Otherwise the POSIX rule applies: the
+// first non-empty of $LC_ALL, $LC_MESSAGES and $LANG decides (so LC_ALL=C
+// means English even if LANG=sv_SE.UTF-8). Falls back to English.
 func detectLang() string {
-	for _, v := range []string{"MUDSCHOOL_LANG", "LC_ALL", "LC_MESSAGES", "LANG"} {
-		val := strings.ToLower(os.Getenv(v))
-		for _, l := range Languages {
-			if strings.HasPrefix(val, l) {
+	if l := langFromLocale(os.Getenv("MUDSCHOOL_LANG")); l != "" {
+		return l
+	}
+	for _, v := range []string{"LC_ALL", "LC_MESSAGES", "LANG"} {
+		if val := os.Getenv(v); val != "" {
+			if l := langFromLocale(val); l != "" {
 				return l
 			}
+			return "en"
 		}
 	}
 	return "en"
+}
+
+// langFromLocale maps a locale like "sv_SE.UTF-8" or "ja" to a course
+// language, or "" if it is not one of ours.
+func langFromLocale(val string) string {
+	val = strings.ToLower(val)
+	for _, l := range Languages {
+		if val == l || strings.HasPrefix(val, l+"_") || strings.HasPrefix(val, l+"-") || strings.HasPrefix(val, l+".") {
+			return l
+		}
+	}
+	return ""
 }
 
 // extractLangFlag removes "--lang xx" / "--lang=xx" from args.

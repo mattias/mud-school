@@ -1,8 +1,8 @@
-# Ledtrådar
+# Hints
 
-## En evig loop
+## An endless loop
 
-Go har bara en loop-sats: `for`. En evig loop skrivs `for { ... }`.
+Go has only one loop statement: `for`. An endless loop is written `for { ... }`.
 
 ```go
 for {
@@ -14,13 +14,13 @@ for {
 }
 ```
 
-## Skriva till anslutningen
+## Writing to the connection
 
-`net.Conn` uppfyller gränssnittet `io.Writer`, så du kan använda
-`fmt.Fprint(conn, "text\r\n")` eller `conn.Write([]byte("text\r\n"))`.
-Glöm inte att importera `"fmt"` och `"bufio"` överst i filen.
+`net.Conn` satisfies the `io.Writer` interface, so you can use
+`fmt.Fprint(conn, "text\r\n")` or `conn.Write([]byte("text\r\n"))`.
+Don't forget to import `"fmt"` and `"bufio"` at the top of the file.
 
-## Läsa rader
+## Reading lines
 
 ```go
 scanner := bufio.NewScanner(conn)
@@ -30,5 +30,5 @@ for scanner.Scan() {
 }
 ```
 
-`scanner.Scan()` returnerar `false` när klienten kopplar ner – då tar loopen
-slut, funktionen returnerar och din `defer conn.Close()` körs.
+`scanner.Scan()` returns `false` when the client disconnects – then the loop
+ends, the function returns and your `defer conn.Close()` runs.

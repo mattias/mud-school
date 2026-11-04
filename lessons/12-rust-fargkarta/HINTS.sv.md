@@ -1,4 +1,4 @@
-# Hints
+# Ledtrådar
 
 ## tile
 
@@ -12,8 +12,8 @@ pub fn tile(meaning: &str) -> Cell {
 }
 ```
 
-A small helper function `const fn cell(glyph: char, fg: Rgb) -> Cell` saves a
-lot of typing.
+En liten hjälpfunktion `const fn cell(glyph: char, fg: Rgb) -> Cell` sparar
+mycket skrivande.
 
 ## render_map
 
@@ -26,7 +26,7 @@ map.rows
                 ' ' => BLANK,
                 _ => match map.meaning(code) {
                     Some(meaning) => tile(meaning),
-                    None => /* show code in grey */,
+                    None => /* visa code i grått */,
                 },
             })
             .collect()
@@ -44,7 +44,7 @@ for (i, row) in grid.iter().enumerate() {
     for c in row {
         let Rgb(r, g, b) = c.fg;
         write!(out, "\x1b[38;2;{r};{g};{b}m").unwrap();
-        // background if c.bg is Some(...)
+        // bakgrund om c.bg är Some(...)
         out.push(c.glyph);
         out.push_str("\x1b[0m");
     }

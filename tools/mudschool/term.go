@@ -9,6 +9,7 @@ import (
 var useColor = os.Getenv("NO_COLOR") == "" && os.Getenv("TERM") != "dumb"
 
 func ansi(code, s string) string {
+	s = fixSelf(s)
 	if !useColor {
 		return s
 	}
@@ -53,5 +54,5 @@ func renderMarkdown(md string) string {
 		line = boldText.ReplaceAllString(line, bold("$1"))
 		b.WriteString(line + "\n")
 	}
-	return b.String()
+	return fixSelf(b.String())
 }

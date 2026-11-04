@@ -1,6 +1,6 @@
 # プロトコル – mudschool 1
 
-> [🇸🇪 Svenska](../sv/PROTOCOL.md) · [🇬🇧 English](../en/PROTOCOL.md) · 🇯🇵 日本語
+> [🇬🇧 English](../en/PROTOCOL.md) · [🇸🇪 Svenska](../sv/PROTOCOL.md) · 🇯🇵 日本語
 
 これはサーバー（Go）とクライアント（Rust）の間の契約です。レッスン 10（サーバー）と
 レッスン 11（クライアント）で導入します。

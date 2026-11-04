@@ -1,6 +1,6 @@
 # Idéer att bygga vidare på
 
-> 🇸🇪 Svenska · [🇬🇧 English](../en/IDEAS.md) · [🇯🇵 日本語](../ja/IDEAS.md)
+> [🇬🇧 English](../en/IDEAS.md) · 🇸🇪 Svenska · [🇯🇵 日本語](../ja/IDEAS.md)
 
 En samling idéer: till spelet, till klienten och till själva kursen. Många
 passar som utmaningar, egna projekt eller framtida lektioner.

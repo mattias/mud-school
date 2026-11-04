@@ -1,4 +1,4 @@
-# Hints
+# Ledtrådar
 
 ## push_log
 
@@ -27,11 +27,11 @@ match key.code {
 None
 ```
 
-The order of the `match` arms matters: `Char('c') if ...` must come before `Char(c)`.
+Ordningen på `match`-grenarna spelar roll: `Char('c') if ...` måste stå före `Char(c)`.
 
 ## draw_log
 
-The border takes two rows. Only show the last `area.height - 2` lines:
+Ramen tar två rader. Visa bara de sista `area.height - 2` raderna:
 
 ```rust
 let visible = area.height.saturating_sub(2) as usize;
@@ -52,7 +52,7 @@ render_map(map)
     .collect::<Vec<Line>>()
 ```
 
-## The main loop
+## Huvudloopen
 
 ```rust
 let mut terminal = ratatui::init();
@@ -69,5 +69,5 @@ while !app.quit {
 ratatui::restore();
 ```
 
-Make sure `ratatui::restore()` runs even if `?` returns early – e.g. by
-putting the loop in a function of its own and calling `restore` afterwards.
+Se till att `ratatui::restore()` körs även om `?` returnerar tidigt – t.ex.
+genom att lägga loopen i en egen funktion och anropa `restore` efteråt.

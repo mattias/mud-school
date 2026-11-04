@@ -1,6 +1,6 @@
 # Ideas to build on
 
-> [🇸🇪 Svenska](../sv/IDEAS.md) · 🇬🇧 English · [🇯🇵 日本語](../ja/IDEAS.md)
+> 🇬🇧 English · [🇸🇪 Svenska](../sv/IDEAS.md) · [🇯🇵 日本語](../ja/IDEAS.md)
 
 A collection of ideas: for the game, for the client and for the course itself.
 Many of them work as challenges, projects of your own or future lessons.
@@ -77,4 +77,4 @@ Many of them work as challenges, projects of your own or future lessons.
   redesigning when global constants are no longer enough.
 - **More languages:** the same protocol makes it easy to add a track where the
   client is written in a third language – and the course itself can be
-  translated into more languages in the same way as Swedish, English and Japanese.
+  translated into more languages in the same way as English, Swedish and Japanese.

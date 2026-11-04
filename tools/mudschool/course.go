@@ -165,7 +165,7 @@ func (c *course) saveProgress(p *Progress) error {
 func (c *course) current(p *Progress) (*Lesson, error) { return c.lesson(p.Current) }
 
 // localized returns the path to name (e.g. "README") in the active language:
-// README.<lang>.md, falling back to README.md (Swedish, the original).
+// README.<lang>.md, falling back to README.md (English, the default).
 func localized(dir, name string) string {
 	p := filepath.Join(dir, name+"."+lang+".md")
 	if exists(p) {

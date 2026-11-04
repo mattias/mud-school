@@ -1,5 +1,7 @@
 # För lärare och kursförfattare
 
+> [🇬🇧 English](../en/TEACHERS.md) · 🇸🇪 Svenska · [🇯🇵 日本語](../ja/TEACHERS.md)
+
 Så här är kursen uppbyggd och så lägger du till eller ändrar lektioner.
 
 ## Katalogstruktur
@@ -16,8 +18,8 @@ lessons/
   _shared/rust/...           motsvarande för Rust (tests/mudschool_common/)
   NN-namn/
     lesson.json              titel och sammanfattning på alla språk, spår ("go"/"rust")
-    README.md                instruktionerna på svenska (README.en.md, README.ja.md)
-    HINTS.md                 ledtrådar, en per "## "-rubrik (HINTS.en.md, HINTS.ja.md)
+    README.md                instruktionerna på engelska (README.sv.md, README.ja.md)
+    HINTS.md                 ledtrådar, en per "## "-rubrik (HINTS.sv.md, HINTS.ja.md)
     scaffold/                NYA filer studenten får när lektionen börjar
     scaffold.<språk>/        språkberoende nya filer (t.ex. världen)
     tests/                   tester som kopieras in vid `mudschool check`
@@ -36,7 +38,7 @@ Kursen finns på svenska (`sv`), engelska (`en`) och japanska (`ja`).
 
 | Vad | Hur det översätts |
 |---|---|
-| Instruktioner och ledtrådar | `README.<språk>.md`, `HINTS.<språk>.md` (svenska är `README.md`) |
+| Instruktioner och ledtrådar | `README.<språk>.md`, `HINTS.<språk>.md` (engelska, standardspråket, är `README.md`) |
 | Titel och sammanfattning | objekt i `lesson.json`: `{"sv": ..., "en": ..., "ja": ...}` |
 | Kursverktygets texter | `L(sv, en, ja)` i `tools/mudschool` |
 | Spelets texter | `starter.<språk>/server/mud/messages.go` och `.../client/src/messages.rs` |
@@ -45,7 +47,7 @@ Kursen finns på svenska (`sv`), engelska (`en`) och japanska (`ja`).
 | Dokumentation | `docs/<språk>/` |
 | Kod och kodkommentarer | **engelska** – gemensamt för alla |
 
-Språket väljs med `./mudschool init --lang sv|en|ja` (annars gissas det
+Språket väljs med `./mudschool init --lang en|sv|ja` (annars gissas det
 från `$LANG`) och kan bytas med `./mudschool lang <språk>`. Det sparas i
 `workspace/.mudschool.json` och skickas till testerna som `MUDSCHOOL_LANG`.
 
@@ -100,6 +102,14 @@ språk. För varje lektion kontrolleras att
 `./mudschool reference <katalog> [id]` bygger hela referenslösningen (till och
 med en viss lektion) så att du kan köra den. Kör `verify` innan du checkar in;
 CI (`.github/workflows/verify.yml`) gör samma sak.
+
+## Skärmbilder
+
+`docs/images/client-<språk>.png` genereras från referenslösningen med
+`tools/screenshots/make.sh` (kräver tmux, nc, Node med Playwright och ett
+japanskt typsnitt som Noto CJK). Kör det igen när klientens utseende ändras.
+Använd bilder istället för textdiagram när japansk text och ramtecken måste
+ligga i linje – GitHubs typsnitt ritar inte CJK-tecken exakt två kolumner breda.
 
 ## Skriva en ny lektion
 

@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -68,10 +69,7 @@ func (c *course) cmdDoctor() error {
 	if client != "" {
 		ok("telnet/nc", client)
 	} else {
-		warn("telnet/nc", L("hittades inte (frivilligt)", "not found (optional)", "見つかりません（任意）"), L(
-			"Bra för att prova servern för hand: t.ex. `sudo apt install telnet` eller `brew install telnet`",
-			"Handy for trying the server by hand: e.g. `sudo apt install telnet` or `brew install telnet`",
-			"サーバーを手で試すのに便利です: 例 `sudo apt install telnet` または `brew install telnet`"))
+		warn("telnet/nc", L("hittades inte (frivilligt)", "not found (optional)", "見つかりません（任意）"), telnetHint())
 	}
 
 	// C compiler for -race
@@ -80,29 +78,42 @@ func (c *course) cmdDoctor() error {
 	} else if _, err := exec.LookPath("clang"); err == nil {
 		ok("clang", L("finns (behövs för --race)", "found (needed for --race)", "あり（--race に必要）"))
 	} else {
-		warn("gcc", L("hittades inte (frivilligt)", "not found (optional)", "見つかりません（任意）"), L(
-			"Behövs bara för `./mudschool check --race`",
-			"Only needed for `./mudschool check --race`",
-			"`./mudschool check --race` を使うときだけ必要です"))
+		warn("gcc", L("hittades inte (frivilligt)", "not found (optional)", "見つかりません（任意）"), gccHint())
 	}
 
 	// Terminal
-	loc := strings.ToUpper(os.Getenv("LC_ALL") + os.Getenv("LC_CTYPE") + os.Getenv("LANG"))
-	if strings.Contains(loc, "UTF-8") || strings.Contains(loc, "UTF8") {
-		ok("UTF-8", loc)
-	} else {
-		warn("UTF-8", L("okänt", "unknown", "不明"), L(
-			"Kartan använder tecken som ♣ ≈ ▲. Använd en terminal med UTF-8 (t.ex. LANG=sv_SE.UTF-8)",
-			"The map uses characters like ♣ ≈ ▲. Use a UTF-8 terminal (e.g. LANG=en_US.UTF-8)",
-			"マップは ♣ ≈ ▲ などの文字を使います。UTF-8 の端末を使ってください（例: LANG=ja_JP.UTF-8）"))
-	}
-	if ct := os.Getenv("COLORTERM"); ct == "truecolor" || ct == "24bit" {
-		ok(L("färg", "color", "色"), "truecolor")
-	} else {
-		warn(L("färg", "color", "色"), "COLORTERM="+ct, L(
-			"Kartan använder 24-bitars färg. De flesta moderna terminaler klarar det även om COLORTERM inte är satt.",
-			"The map uses 24-bit color. Most modern terminals support it even if COLORTERM is not set.",
-			"マップは 24 ビットカラーを使います。COLORTERM が未設定でも、最近の端末ならたいてい対応しています。"))
+	t := detectTerminal()
+	label := L("terminal", "terminal", "端末")
+	switch {
+	case t.name != "" && t.utf8 && t.truecolor:
+		ok(label, t.name+L(" (UTF-8, 24-bitars färg)", " (UTF-8, 24-bit colour)", "（UTF-8、24 ビットカラー）"))
+	case t.name != "" && !t.truecolor:
+		warn(label, t.name+L(" har ofta saknat 24-bitars färg", " has often lacked 24-bit colour", " は 24 ビットカラーに対応していないことがあります"), L(
+			"Ser kartans färger fel ut, byt terminal – se SETUP.md.",
+			"If the map's colours look wrong, switch terminals – see SETUP.md.",
+			"マップの色がおかしければ端末を変えてください。SETUP.md を参照。"))
+	case runtime.GOOS == "windows":
+		warn(label, L("inte Windows Terminal", "not Windows Terminal", "Windows Terminal ではありません"), L(
+			"Den gamla Windows-konsolen visar varken färgerna eller tecknen rätt. Använd Windows Terminal (`winget install Microsoft.WindowsTerminal`).",
+			"The old Windows console shows neither the colours nor the characters correctly. Use Windows Terminal (`winget install Microsoft.WindowsTerminal`).",
+			"古い Windows コンソールでは色も文字も正しく表示されません。Windows Terminal を使ってください（`winget install Microsoft.WindowsTerminal`）。"))
+	default:
+		if t.utf8 {
+			ok("UTF-8", t.locale)
+		} else {
+			warn("UTF-8", L("okänt", "unknown", "不明"), L(
+				"Kartan använder tecken som ♣ ≈ ▲. Använd UTF-8 (t.ex. LANG=sv_SE.UTF-8)",
+				"The map uses characters like ♣ ≈ ▲. Use UTF-8 (e.g. LANG=en_US.UTF-8)",
+				"マップは ♣ ≈ ▲ などの文字を使います。UTF-8 を使ってください（例: LANG=ja_JP.UTF-8）"))
+		}
+		if t.truecolor {
+			ok(L("färg", "colour", "色"), "truecolor")
+		} else {
+			warn(L("färg", "colour", "色"), L("okänt", "unknown", "不明"), L(
+				"Kartan använder 24-bitars färg. De flesta moderna terminaler klarar det även om COLORTERM inte är satt.",
+				"The map uses 24-bit colour. Most modern terminals support it even if COLORTERM is not set.",
+				"マップは 24 ビットカラーを使います。COLORTERM が未設定でも、最近の端末ならたいてい対応しています。"))
+		}
 	}
 
 	fmt.Println()
@@ -115,4 +126,83 @@ func (c *course) cmdDoctor() error {
 	}
 	fmt.Println(green(L("Allt ser bra ut!", "Everything looks good!", "準備完了です！")), L("Nästa steg:", "Next step:", "次のステップ:"), cyan(next))
 	return nil
+}
+
+type terminalInfo struct {
+	name      string // "" if unknown
+	locale    string
+	utf8      bool
+	truecolor bool
+}
+
+// detectTerminal recognises common terminals from their environment variables.
+func detectTerminal() terminalInfo {
+	t := terminalInfo{locale: firstNonEmpty(os.Getenv("LC_ALL"), os.Getenv("LC_CTYPE"), os.Getenv("LANG"))}
+	up := strings.ToUpper(t.locale)
+	t.utf8 = strings.Contains(up, "UTF-8") || strings.Contains(up, "UTF8")
+	ct := os.Getenv("COLORTERM")
+	t.truecolor = ct == "truecolor" || ct == "24bit"
+
+	switch {
+	case os.Getenv("WT_SESSION") != "":
+		t.name, t.truecolor = "Windows Terminal", true
+	case os.Getenv("TERM_PROGRAM") == "vscode":
+		t.name, t.truecolor = "VS Code", true
+	case os.Getenv("TERM_PROGRAM") == "mintty":
+		t.name, t.truecolor = "mintty", true
+	case os.Getenv("TERM_PROGRAM") == "Apple_Terminal":
+		t.name, t.utf8, t.truecolor = "Terminal.app", true, false
+	case os.Getenv("TERM_PROGRAM") == "iTerm.app":
+		t.name, t.truecolor = "iTerm2", true
+	case os.Getenv("TERM_PROGRAM") == "WezTerm":
+		t.name, t.truecolor = "WezTerm", true
+	case os.Getenv("TERM_PROGRAM") == "ghostty":
+		t.name, t.truecolor = "Ghostty", true
+	case os.Getenv("KITTY_WINDOW_ID") != "":
+		t.name, t.truecolor = "kitty", true
+	}
+	if runtime.GOOS == "windows" && t.name != "" {
+		t.utf8 = true // Go and Rust write Unicode to the Windows console directly
+	}
+	if t.name != "" && !t.utf8 && t.locale == "" && runtime.GOOS == "darwin" {
+		t.utf8 = true // macOS terminals use UTF-8 even when LANG is unset
+	}
+	return t
+}
+
+func firstNonEmpty(vals ...string) string {
+	for _, v := range vals {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
+func telnetHint() string {
+	switch runtime.GOOS {
+	case "windows":
+		return L(
+			"Aktivera Telnet-klienten (PowerShell som administratör): `dism /online /Enable-Feature /FeatureName:TelnetClient`",
+			"Enable the Telnet client (PowerShell as administrator): `dism /online /Enable-Feature /FeatureName:TelnetClient`",
+			"Telnet クライアントを有効にする（管理者として PowerShell）: `dism /online /Enable-Feature /FeatureName:TelnetClient`")
+	case "darwin":
+		return L("Bra för att prova servern för hand: `brew install telnet`", "Handy for trying the server by hand: `brew install telnet`", "サーバーを手で試すのに便利です: `brew install telnet`")
+	default:
+		return L("Bra för att prova servern för hand: t.ex. `sudo apt install telnet`", "Handy for trying the server by hand: e.g. `sudo apt install telnet`", "サーバーを手で試すのに便利です: 例 `sudo apt install telnet`")
+	}
+}
+
+func gccHint() string {
+	switch runtime.GOOS {
+	case "windows":
+		return L(
+			"Behövs bara för `./mudschool check --race`. Installera MSYS2 (`winget install MSYS2.MSYS2`), kör `pacman -S --needed mingw-w64-ucrt-x86_64-gcc` i \"MSYS2 UCRT64\" och lägg till C:\\msys64\\ucrt64\\bin i PATH. Se SETUP.md.",
+			"Only needed for `./mudschool check --race`. Install MSYS2 (`winget install MSYS2.MSYS2`), run `pacman -S --needed mingw-w64-ucrt-x86_64-gcc` in \"MSYS2 UCRT64\" and add C:\\msys64\\ucrt64\\bin to PATH. See SETUP.md.",
+			"`./mudschool check --race` を使うときだけ必要です。MSYS2 を入れ（`winget install MSYS2.MSYS2`）、「MSYS2 UCRT64」で `pacman -S --needed mingw-w64-ucrt-x86_64-gcc` を実行し、C:\\msys64\\ucrt64\\bin を PATH に追加します。SETUP.md を参照。")
+	case "darwin":
+		return L("Behövs bara för `./mudschool check --race`: `xcode-select --install`", "Only needed for `./mudschool check --race`: `xcode-select --install`", "`./mudschool check --race` を使うときだけ必要です: `xcode-select --install`")
+	default:
+		return L("Behövs bara för `./mudschool check --race`: t.ex. `sudo apt install build-essential`", "Only needed for `./mudschool check --race`: e.g. `sudo apt install build-essential`", "`./mudschool check --race` を使うときだけ必要です: 例 `sudo apt install build-essential`")
+	}
 }

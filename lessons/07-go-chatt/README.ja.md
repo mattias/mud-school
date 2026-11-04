@@ -19,10 +19,13 @@ Ludvig の回線が悪い（あるいは読み込みを止めたバグだらけ�
 > メッセージを **チャネル**（プレイヤーの送信箱）に入れて、すぐに先へ進む。
 
 ```
- Anna のゴルーチン ──┐
- Bertil のゴルーチン ┼──► [ Ludvig の送信箱 (chan string) ] ──► Ludvig の書き込みゴルーチン ──► ソケット
- ...                 ┘
+ goroutine (Anna)   ──┐
+ goroutine (Bertil) ──┼──► [ outbox (Ludvig): chan string ] ──► writer goroutine (Ludvig) ──► socket
+ ...                ──┘
 ```
+
+（Anna や Bertil のゴルーチンは Ludvig の送信箱にメッセージを入れるだけ。ソケットに
+書き込むのは Ludvig の書き込みゴルーチンだけです。）
 
 ## 目標
 

@@ -1,52 +1,52 @@
-# Lektion 05 – Spelare
+# Lesson 05 – Players
 
-Dags att veta *vem* som spelar. Spelaren väljer ett namn när hen ansluter,
-och servern håller reda på alla inloggade. Det är första gången flera
-goroutines delar på samma data – och därmed första gången du kan skriva en
-riktigt lömsk bugg: en **data race**.
+Time to know *who* is playing. Players choose a name when they connect, and
+the server keeps track of everyone logged in. It is the first time several
+goroutines share the same data – and therefore the first time you can write a
+truly sneaky bug: a **data race**.
 
-## Mål
+## Goals
 
-- Skapa och jämföra fel med `errors.New`, `errors.Is` och `%w`.
-- Förstå skillnaden mellan *bytes* och *runor* (Unicode-tecken) i Go-strängar.
-- Skydda delad data med `sync.Mutex`.
-- Se race detectorn hitta en bugg.
+- Create and compare errors with `errors.New`, `errors.Is` and `%w`.
+- Understand the difference between *bytes* and *runes* (Unicode characters) in Go strings.
+- Protect shared data with `sync.Mutex`.
+- See the race detector find a bug.
 
-## Inloggningsflödet
+## The login flow
 
 ```
-Välkommen till MUD School!
-Vad heter du?
+Welcome to MUD School!
+What is your name?
 > x
-Ogiltigt namn: namnet måste vara minst 2 tecken.
-Vad heter du?
+Invalid name: the name must be at least 2 characters.
+What is your name?
 > anna
-Välkommen, Anna!
+Welcome, Anna!
 > who
-Spelare online (2): Anna, Bertil
+Players online (2): Anna, Bertil
 ```
 
-## Go-koncept
+## Go concepts
 
-### Fel är värden – även dina egna
+### Errors are values – your own ones too
 
 ```go
-var ErrNameTooShort = errors.New(MsgErrNameTooShort) // texten finns i messages.go
+var ErrNameTooShort = errors.New(MsgErrNameTooShort) // the text is in messages.go
 
 func ValidateName(name string) error {
-    if len(name) < 2 { return ErrNameTooShort }  // (fast len räknar bytes, se nedan!)
+    if len(name) < 2 { return ErrNameTooShort }  // (but len counts bytes, see below!)
     return nil
 }
 
-err := fmt.Errorf("%w: %s", ErrNameTaken, name) // "wrappa" ett fel med mer info
-errors.Is(err, ErrNameTaken)                    // true – Is tittar igenom wrappningen
+err := fmt.Errorf("%w: %s", ErrNameTaken, name) // "wrap" an error with more information
+errors.Is(err, ErrNameTaken)                    // true – Is looks through the wrapping
 ```
 
-### Bytes och runor
+### Bytes and runes
 
-Go-strängar är UTF-8-bytes. `len("Ö")` är **2**. För att räkna tecken
-använder du `utf8.RuneCountInString`, och `for _, r := range s` loopar över
-runor (`rune` = ett Unicode-tecken), inte bytes.
+Go strings are UTF-8 bytes. `len("Ö")` is **2**, and `len("空")` is **3**. To
+count characters use `utf8.RuneCountInString`, and `for _, r := range s` loops
+over runes (`rune` = one Unicode character), not bytes.
 
 ```go
 for i, r := range "Åsa" {
@@ -54,64 +54,67 @@ for i, r := range "Åsa" {
 }
 ```
 
+`unicode.IsLetter` also says yes to Japanese kana and kanji – so `さくら` is a
+valid name.
+
 ### Mutex
 
-En `sync.Mutex` ser till att bara en goroutine i taget kör koden mellan
-`Lock` och `Unlock`:
+A `sync.Mutex` makes sure only one goroutine at a time runs the code between
+`Lock` and `Unlock`:
 
 ```go
 type Server struct {
-    mu      sync.Mutex          // skyddar players
+    mu      sync.Mutex          // protects players
     players map[string]*Player
 }
 
 func (s *Server) addPlayer(p *Player) error {
     s.mu.Lock()
-    defer s.mu.Unlock()        // lås alltid upp, även vid tidig return
+    defer s.mu.Unlock()        // always unlock, even on an early return
     ...
 }
 ```
 
-Maps i Go är **inte** säkra att använda från flera goroutines samtidigt. Gör
-du det utan lås kan programmet krascha med `fatal error: concurrent map writes`.
+Maps in Go are **not** safe to use from several goroutines at once. If you do
+it without a lock the program can crash with `fatal error: concurrent map writes`.
 
-## Uppgift
+## Task
 
-1. **`names.go`** (ny fil): skriv `ValidateName` och `NormalizeName`.
+1. **`names.go`** (new file): write `ValidateName` and `NormalizeName`.
 2. **`server.go`**:
-   - lägg till `mu sync.Mutex` och `players map[string]*Player` i `Server`,
-   - skriv `addPlayer(p) error` (ger `ErrNameTaken` om namnet finns),
-     `removePlayer(p)` och `PlayerNames() []string` (sorterade),
-   - i `handle`: efter `Welcome`, fråga `MsgAskName` tills spelaren anger
-     ett giltigt, ledigt namn. Vid fel skriver du `MsgInvalidName` med felet
-     (`p.Sendf(MsgInvalidName, err)`) och frågar igen. Skriv sedan
-     `MsgWelcomeName` med namnet,
-   - ta bort spelaren när hen kopplar ner (tips: `defer`).
-3. **`commands.go`**: lägg till `who` som skriver `MsgWho` med antal och
-   namnen, sorterade och åtskilda med `MsgListSep`:
-   `Spelare online (2): Anna, Bertil`.
+   - add `mu sync.Mutex` and `players map[string]*Player` to `Server`,
+   - write `addPlayer(p) error` (returns `ErrNameTaken` if the name exists),
+     `removePlayer(p)` and `PlayerNames() []string` (sorted),
+   - in `handle`: after `Welcome`, ask `MsgAskName` until the player gives a
+     valid, free name. On error send `MsgInvalidName` with the error
+     (`p.Sendf(MsgInvalidName, err)`) and ask again. Then send
+     `MsgWelcomeName` with the name,
+   - remove the player when they disconnect (hint: `defer`).
+3. **`commands.go`**: add `who`, which sends `MsgWho` with the count and the
+   names, sorted and separated by `MsgListSep`:
+   `Players online (2): Anna, Bertil`.
 
-Alla texter (`MsgAskName`, `MsgErrNameTooShort`, ...) finns i `messages.go`.
-Felvariablerna i `names.go` är redan skapade från dem.
+All the texts (`MsgAskName`, `MsgErrNameTooShort`, ...) are in `messages.go`.
+The error variables in `names.go` are already created from them.
 
-## Testa själv: hitta en data race
+## Try it yourself: find a data race
 
-Ta tillfälligt bort `s.mu.Lock()` och `defer s.mu.Unlock()` i `addPlayer` och kör
+Temporarily remove `s.mu.Lock()` and `defer s.mu.Unlock()` in `addPlayer` and run
 
 ```
 ./mudschool check --race
 ```
 
-Läs rapporten – den visar exakt vilka två goroutines som krockade och var.
-Sätt sedan tillbaka låset.
+Read the report – it shows exactly which two goroutines collided and where.
+Then put the lock back.
 
-## Fundera på
+## Think about
 
-- Varför normaliserar vi namnet *innan* vi kollar om det är upptaget?
-- Vad händer om en spelare kopplar ner mitt i inloggningen?
+- Why do we normalize the name *before* checking whether it is taken?
+- What happens if a player disconnects in the middle of logging in?
 
-## Utmaningar
+## Challenges
 
-- Spara lösenord (hashade med `golang.org/x/crypto/bcrypt`) så att ingen
-  annan kan ta ditt namn. Det kommer tillbaka i fas 3 när vi sparar spelare.
-- Förbjud några namn (`admin`, `gud`, ...) med ett nytt fel `ErrNameReserved`.
+- Store passwords (hashed with `golang.org/x/crypto/bcrypt`) so nobody else
+  can take your name. This comes back in phase 3 when we save players.
+- Forbid some names (`admin`, `god`, ...) with a new error `ErrNameReserved`.

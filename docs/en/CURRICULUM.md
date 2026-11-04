@@ -1,6 +1,6 @@
 # Curriculum – MUD School
 
-> [🇸🇪 Svenska](../sv/CURRICULUM.md) · 🇬🇧 English · [🇯🇵 日本語](../ja/CURRICULUM.md)
+> 🇬🇧 English · [🇸🇪 Svenska](../sv/CURRICULUM.md) · [🇯🇵 日本語](../ja/CURRICULUM.md)
 
 > Learn **Go** and **Rust** by building a MUD server and a matching client
 > from scratch – from a 20-line echo server to an extensible game world with
@@ -114,8 +114,8 @@ your code however you like – as long as it behaves correctly.
 ### 7. The course is available in three languages
 
 Instructions, hints, the course tool, the tests' failure messages, the game's
-texts and the game world are available in **Swedish, English and Japanese**
-(`./mudschool init --lang sv|en|ja`, change later with `./mudschool lang`).
+texts and the game world are available in **English, Swedish and Japanese**
+(`./mudschool init --lang en|sv|ja`, change later with `./mudschool lang`).
 Code and code comments are in English – that is how you will meet code in
 the real world, and it lets every student read each other's solutions. Having
 all player-facing text in a file of its own (`messages.go`) is also a first

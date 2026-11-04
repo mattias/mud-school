@@ -1,4 +1,4 @@
-# Ledtrådar
+# Hints
 
 ## writeLoop
 
@@ -11,9 +11,9 @@ func (p *Player) writeLoop() {
 }
 ```
 
-Starta den med `go p.writeLoop()` i `newPlayer`, efter att kanalerna skapats.
+Start it with `go p.writeLoop()` in `newPlayer`, after the channels are created.
 
-## Send som aldrig blockerar
+## A Send that never blocks
 
 ```go
 msg := strings.ReplaceAll(text, "\n", "\r\n") + "\r\n"
@@ -24,20 +24,20 @@ default:
 }
 ```
 
-## Säker stängning
+## Closing safely
 
-Ingen får anropa `Send` efter `close(p.outbox)`. Därför: ta bort spelaren ur
-`s.players` (under låset) *innan* du stänger utkorgen, och låt `broadcast`
-hålla låset medan den skickar. Då kan ingen hitta spelaren efter borttagningen.
+Nobody may call `Send` after `close(p.outbox)`. So: remove the player from
+`s.players` (under the lock) *before* closing the outbox, and let `broadcast`
+hold the lock while it sends. Then nobody can find the player after the removal.
 
-## Ordningen i handle
+## The order in handle
 
 ```go
-defer conn.Close()   // körs sist
+defer conn.Close()   // runs last
 p := newPlayer(conn)
-defer p.close()      // körs näst sist
+defer p.close()      // runs second to last
 ...
-defer func() {       // körs först
+defer func() {       // runs first
     s.removePlayer(p)
     s.broadcast(p, fmt.Sprintf(MsgLeft, p.Name))
 }()

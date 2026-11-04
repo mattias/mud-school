@@ -1,6 +1,6 @@
 # Protokollet – mudschool 1
 
-> 🇸🇪 Svenska · [🇬🇧 English](../en/PROTOCOL.md) · [🇯🇵 日本語](../ja/PROTOCOL.md)
+> [🇬🇧 English](../en/PROTOCOL.md) · 🇸🇪 Svenska · [🇯🇵 日本語](../ja/PROTOCOL.md)
 
 Det här är kontraktet mellan servern (Go) och klienten (Rust). Det införs i
 lektion 10 (servern) och 11 (klienten).

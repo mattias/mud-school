@@ -1,100 +1,101 @@
-# Lektion 07 – Chatt
+# Lesson 07 – Chat
 
-Nu blir det socialt: `say hej` ska höras av alla andra. Det låter enkelt –
-loopa över spelarna och skriv till deras anslutningar – men det döljer en
-fälla som har fällt många riktiga MUD:ar.
+Now it gets social: `say hello` should be heard by everyone else. It sounds
+simple – loop over the players and write to their connections – but it hides
+a trap that has caught many real MUDs.
 
-## Fällan
+## The trap
 
-Tänk dig att Ludvig har dålig uppkoppling (eller en buggig klient som slutat
-läsa). Du skriver `say hej`. Din goroutine försöker skriva till Ludvigs
-socket. Operativsystemets buffert för Ludvig är full, så `Write` **blockerar**
-– tills Ludvig läser. Medan din goroutine väntar håller den kanske låset
-`s.mu`. Nu kan ingen logga in, ingen kan skriva `who` ... *en* långsam spelare
-har fryst hela servern.
+Imagine Ludvig has a bad connection (or a buggy client that stopped reading).
+You type `say hello`. Your goroutine tries to write to Ludvig's socket. The
+operating system's buffer for Ludvig is full, so `Write` **blocks** – until
+Ludvig reads. While your goroutine waits it may be holding the lock `s.mu`.
+Now nobody can log in, nobody can type `who` ... *one* slow player has frozen
+the whole server.
 
-Lösningen är ett klassiskt Go-mönster:
+The solution is a classic Go pattern:
 
-> **Varje anslutning har exakt en goroutine som skriver till den.** Alla andra
-> lägger meddelanden i en **kanal** (spelarens utkorg) och går vidare direkt.
+> **Every connection has exactly one goroutine that writes to it.** Everyone
+> else puts messages into a **channel** (the player's outbox) and moves on
+> immediately.
 
 ```
- Annas goroutine ──┐
- Bertils goroutine ┼──► [ Ludvigs utkorg (chan string) ] ──► Ludvigs skrivargoroutine ──► socket
- ...               ┘
+ Anna's goroutine ──┐
+ Bertil's goroutine ┼──► [ Ludvig's outbox (chan string) ] ──► Ludvig's writer goroutine ──► socket
+ ...                ┘
 ```
 
-## Mål
+## Goals
 
-- Skapa och använda **kanaler**, både obuffrade och buffrade.
-- Använda `select` med `default` för att skicka *utan att blockera*.
-- Stänga en kanal och förstå vad `range` över en kanal gör.
-- Förstå mottryck (backpressure): vad gör man när mottagaren inte hänger med?
+- Create and use **channels**, both unbuffered and buffered.
+- Use `select` with `default` to send *without blocking*.
+- Close a channel and understand what `range` over a channel does.
+- Understand backpressure: what do you do when the receiver can't keep up?
 
-## Go-koncept
+## Go concepts
 
 ```go
-ch := make(chan string, 256)  // buffrad: rymmer 256 meddelanden innan send blockerar
+ch := make(chan string, 256)  // buffered: holds 256 messages before send blocks
 
-ch <- "hej"                   // skicka (blockerar om bufferten är full)
-msg := <-ch                   // ta emot (blockerar om kanalen är tom)
+ch <- "hi"                    // send (blocks if the buffer is full)
+msg := <-ch                   // receive (blocks if the channel is empty)
 
-for msg := range ch { ... }   // ta emot tills kanalen stängs
-close(ch)                     // bara SÄNDAREN stänger; skicka på stängd kanal = panik!
+for msg := range ch { ... }   // receive until the channel is closed
+close(ch)                     // only the SENDER closes; sending on a closed channel = panic!
 
-select {                      // välj det första som är redo ...
+select {                      // pick the first one that is ready ...
 case ch <- msg:
-    // skickat
+    // sent
 default:
-    // ... eller gör detta direkt om inget är redo
+    // ... or do this at once if nothing is ready
 }
 ```
 
-Kanalen `done chan struct{}` är ett idiom för "signal utan data":
-`close(done)` väcker alla som väntar på `<-done`.
+The channel `done chan struct{}` is an idiom for "a signal without data":
+`close(done)` wakes everyone waiting on `<-done`.
 
-## Uppgift
+## Task
 
 1. **`player.go`**:
-   - ge `Player` fälten `outbox chan string` (buffrad, t.ex. 256) och
+   - give `Player` the fields `outbox chan string` (buffered, e.g. 256) and
      `done chan struct{}`,
-   - starta en `writeLoop`-goroutine i `newPlayer` som är den **enda** som
-     skriver till `conn`, och som stänger `done` när den är klar,
-   - låt `Send` lägga meddelandet i utkorgen med `select`/`default`. Är
-     utkorgen full: koppla ner spelaren (`p.conn.Close()`),
-   - skriv `close()` som stänger utkorgen och väntar på `done`.
+   - start a `writeLoop` goroutine in `newPlayer` that is the **only** one
+     writing to `conn`, and that closes `done` when it finishes,
+   - let `Send` put the message in the outbox with `select`/`default`. If the
+     outbox is full: disconnect the player (`p.conn.Close()`),
+   - write `close()`, which closes the outbox and waits for `done`.
 2. **`server.go`**:
-   - skriv `broadcast(except *Player, text string)` som skickar till alla
-     inloggade utom `except`,
-   - meddela andra när någon ansluter (`MsgJoined`: `Bertil har anslutit.`) och lämnar
-     (`MsgLeft`: `Bertil har lämnat.`) – oavsett om det sker med `quit` eller genom att
-     koppla ner,
-   - anropa `p.close()` innan anslutningen stängs, annars hinner `MsgGoodbye`
-     kanske aldrig skickas.
-3. **`commands.go`**: lägg till `say`. Avsändaren ser `MsgYouSay`
-   (`Du säger: hej`), alla andra `MsgSays` (`Anna säger: hej`). Utan text:
-   `MsgSayWhat` (`Säg vad?`).
+   - write `broadcast(except *Player, text string)`, which sends to everyone
+     logged in except `except`,
+   - tell the others when someone connects (`MsgJoined`: `Bertil has connected.`)
+     and leaves (`MsgLeft`: `Bertil has left.`) – whether with `quit` or by
+     disconnecting,
+   - call `p.close()` before the connection is closed, otherwise `MsgGoodbye`
+     may never be sent.
+3. **`commands.go`**: add `say`. The speaker sees `MsgYouSay`
+   (`You say: hello`), everyone else `MsgSays` (`Anna says: hello`). Without
+   text: `MsgSayWhat` (`Say what?`).
 
-Testet `TestSlowClientDoesNotBlockOthers` loggar in en spelare som aldrig
-läser och låter en annan prata ~8 MB text. Med den naiva lösningen hänger
-testet; med utkorgar går det igenom.
+The test `TestSlowClientDoesNotBlockOthers` logs in a player who never reads
+and lets another one say ~8 MB of text. With the naive solution the test
+hangs; with outboxes it passes.
 
-## Testa själv
+## Try it yourself
 
-Starta servern, två klienter (telnet eller din Rust-klient från lektion 06)
-och prata med dig själv. Kör `./mudschool check --race` också.
+Start the server and two clients (telnet or your Rust client from lesson 06)
+and talk to yourself. Run `./mudschool check --race` too.
 
-## Fundera på
+## Think about
 
-- Ordningen på `defer` i `handle` spelar roll. Vad händer om `conn.Close()`
-  körs före `p.close()`?
-- Vi kopplar ner en långsam spelare. Vilka andra strategier finns?
-  (Släppa meddelanden? Slå ihop dem? Vad gör t.ex. ett chattprogram?)
-- Ett alternativ till mutex + kanaler är att ha en *enda* goroutine som äger
-  hela spelvärlden och som alla andra skickar kommandon till. Det kallas
-  ibland "actor"-mönstret och vi använder det i fas 3 för spelloopen.
+- The order of the `defer`s in `handle` matters. What happens if
+  `conn.Close()` runs before `p.close()`?
+- We disconnect a slow player. What other strategies are there? (Drop
+  messages? Merge them? What does a chat app do?)
+- An alternative to mutex + channels is to have a *single* goroutine that
+  owns the whole game world, to which everyone else sends commands. This is
+  sometimes called the "actor" pattern, and we use it in phase 3 for the game loop.
 
-## Utmaningar
+## Challenges
 
-- `tell <namn> <text>` – viska till en enda spelare.
-- `emote dansar` → `Anna dansar.`
+- `tell <name> <text>` – whisper to a single player.
+- `emote dances` → `Anna dances.`

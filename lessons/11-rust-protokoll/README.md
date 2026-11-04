@@ -1,8 +1,8 @@
-# Lektion 11 – Protokoll i Rust
+# Lesson 11 – The protocol in Rust
 
-Servern kan nu prata JSON. Dags för klienten att förstå den. I Go skickade
-vi en platt struct `Frame` med ett `Type`-fält. I Rust gör vi något mycket
-kraftfullare: en **enum där varje variant bär sin egen data**.
+The server can speak JSON now. Time for the client to understand it. In Go we
+sent a flat struct `Frame` with a `Type` field. In Rust we do something much
+more powerful: an **enum in which every variant carries its own data**.
 
 ```rust
 pub enum ServerMsg {
@@ -14,43 +14,43 @@ pub enum ServerMsg {
 }
 ```
 
-Ett `ServerMsg::Map` *har* alltid en karta, och ett `ServerMsg::Text` har
-*aldrig* en. Felaktiga tillstånd går inte ens att uttrycka. Jämför med Go,
-där `Frame{Type: "text", Map: &m}` kompilerar utan protester.
+A `ServerMsg::Map` *always* has a map, and a `ServerMsg::Text` *never* has
+one. Invalid states cannot even be expressed. Compare with Go, where
+`Frame{Type: "text", Map: &m}` compiles without complaint.
 
-## Mål
+## Goals
 
-- Använda enums med data och `match` för att hantera alla fall.
-- Lägga till externa **crates** med Cargo.
-- Använda `serde` för att avkoda JSON med attribut som `tag`, `default`, `other`.
-- Implementera en trait från standardbiblioteket: `Display`.
-- Tänka på **framåtkompatibilitet**: en gammal klient ska inte krascha mot en ny server.
+- Use enums with data and `match` to handle every case.
+- Add external **crates** with Cargo.
+- Use `serde` to decode JSON with attributes like `tag`, `default`, `other`.
+- Implement a trait from the standard library: `Display`.
+- Think about **forward compatibility**: an old client must not crash against a new server.
 
-## Rust-koncept
+## Rust concepts
 
-### match måste vara uttömmande
+### match must be exhaustive
 
 ```rust
 match msg {
     ServerMsg::Text { text } => println!("{text}"),
     ServerMsg::Map { map } => draw(&map),
     ServerMsg::Status { status } => println!("[{status}]"),
-    ServerMsg::Hello { .. } | ServerMsg::Unknown => {}   // .. = bry dig inte om fälten
+    ServerMsg::Hello { .. } | ServerMsg::Unknown => {}   // .. = don't care about the fields
 }
 ```
 
-Lägger du till en variant och glömmer ett ställe vägrar kompilatorn. Det
-är en av Rusts största styrkor när ett program växer.
+If you add a variant and forget a place, the compiler refuses. That is one of
+Rust's greatest strengths as a program grows.
 
-`let ... else` är praktiskt när du bara bryr dig om *ett* fall:
+`let ... else` is handy when you only care about *one* case:
 
 ```rust
 let ServerMsg::Map { map } = msg else {
-    return;   // måste lämna funktionen
+    return;   // must leave the function
 };
 ```
 
-### Crates och serde
+### Crates and serde
 
 ```
 cd workspace/client
@@ -63,19 +63,19 @@ cargo add serde_json
 #[serde(tag = "type", rename_all = "lowercase")]  // {"type":"text", ...} -> Text
 enum ServerMsg {
     Text {
-        #[serde(default)]   // saknas fältet? använd String::default() = ""
+        #[serde(default)]   // field missing? use String::default() = ""
         text: String,
     },
-    #[serde(other)]         // alla okända "type" hamnar här
+    #[serde(other)]         // every unknown "type" ends up here
     Unknown,
 }
 
 let msg: ServerMsg = serde_json::from_str(line)?;
 ```
 
-**Go ↔ Rust:** struct-taggarna `` `json:"max_hp"` `` i Go motsvaras av
-attribut som `#[serde(rename = "max_hp")]` i Rust. Här behövs de inte –
-fälten heter redan likadant.
+**Go ↔ Rust:** the struct tags `` `json:"max_hp"` `` in Go correspond to
+attributes like `#[serde(rename = "max_hp")]` in Rust. They are not needed
+here – the fields already have the same names.
 
 ### Traits: Display
 
@@ -85,42 +85,42 @@ impl fmt::Display for Status {
         write!(f, "{} · HP {}/{}", self.name, self.hp, self.max_hp)
     }
 }
-// Nu fungerar println!("{status}") och status.to_string()
+// Now println!("{status}") and status.to_string() work
 ```
 
-**Go ↔ Rust:** samma idé som `String() string`-metoden (`fmt.Stringer`) i
-Go – men i Rust implementerar man traiten *explicit*.
+**Go ↔ Rust:** the same idea as the `String() string` method (`fmt.Stringer`)
+in Go – but in Rust you implement the trait *explicitly*.
 
-## Uppgift
+## Task
 
-1. Lägg till `serde` och `serde_json` (se ovan).
-2. **`src/protocol.rs`** (ny fil): fyll i varianterna, structarna,
-   `MapData::meaning`, `Display` för `Status` (använd `messages::ONLINE` för
-   ordet "online"), och `parse_line`:
-   - rader som börjar med `{` och är giltig JSON blir rätt variant,
-   - allt annat (vanlig text, trasig JSON) blir `ServerMsg::Text` med hela raden.
-3. Lägg till `pub mod protocol;` i `lib.rs`.
-4. **`src/main.rs`**: skicka `HELLO` direkt efter anslutningen och skriv ut
-   meddelandena snyggt: text som den är, kartans rader, statusen inom `[...]`.
+1. Add `serde` and `serde_json` (see above).
+2. **`src/protocol.rs`** (new file): fill in the variants, the structs,
+   `MapData::meaning`, `Display` for `Status` (use `messages::ONLINE` for the
+   word "online"), and `parse_line`:
+   - lines that start with `{` and are valid JSON become the right variant,
+   - everything else (plain text, broken JSON) becomes `ServerMsg::Text` with the whole line.
+3. Add `pub mod protocol;` to `lib.rs`.
+4. **`src/main.rs`**: send `HELLO` right after connecting and print the
+   messages nicely: text as it is, the map's rows, the status inside `[...]`.
 
-## Testa själv
+## Try it yourself
 
 ```
 ./mudschool run server
 ./mudschool run client
 ```
 
-Gå runt i världen – nu ritas kartan efter varje steg!
+Walk around the world – now the map is drawn after every step!
 
-## Fundera på
+## Think about
 
-- Varför är det bättre att en okänd frame-typ blir `Unknown` än ett fel?
-- `parse_line` returnerar `ServerMsg`, inte `Result<ServerMsg, _>`. Vad
-  vinner och förlorar vi på det?
+- Why is it better for an unknown frame type to become `Unknown` than an error?
+- `parse_line` returns `ServerMsg`, not `Result<ServerMsg, _>`. What do we
+  gain and lose by that?
 
-## Utmaningar
+## Challenges
 
-- Skriv en egen feltyp `enum ProtocolError { NotJson, BadFrame(serde_json::Error) }`
-  och en `fn parse_frame(line) -> Result<ServerMsg, ProtocolError>`.
-  Implementera `Display` och `std::error::Error` för den.
-- Lägg till `Serialize` och skriv ett test som kodar och avkodar (round-trip).
+- Write your own error type `enum ProtocolError { NotJson, BadFrame(serde_json::Error) }`
+  and a `fn parse_frame(line) -> Result<ServerMsg, ProtocolError>`. Implement
+  `Display` and `std::error::Error` for it.
+- Add `Serialize` and write a test that encodes and decodes (a round trip).

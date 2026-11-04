@@ -1,6 +1,13 @@
 {
-  "title": "Protokoll i Rust – enums, match och serde",
+  "title": {
+    "sv": "Protokoll i Rust – enums, match och serde",
+    "en": "The protocol in Rust – enums, match and serde",
+    "ja": "Rust でプロトコル – enum、match、serde"
+  },
   "track": "rust",
-  "summary": "Förhandla fram JSON-protokollet och tolka serverns meddelanden till en Rust-enum med serde.",
-  "concepts": ["enums med data", "match och mönster", "crates och Cargo.toml", "serde derive och attribut", "Display-traiten", "framåtkompatibilitet"]
+  "summary": {
+    "sv": "Förhandla fram JSON-protokollet och tolka serverns meddelanden till en Rust-enum med serde.",
+    "en": "Negotiate the JSON protocol and parse the server's messages into a Rust enum with serde.",
+    "ja": "JSON プロトコルに切り替え、サーバーのメッセージを serde で Rust の enum に変換する。"
+  }
 }

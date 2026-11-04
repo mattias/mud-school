@@ -90,6 +90,7 @@ kvar – ett vanligt knep när man vill *flytta ut* något ur en `&mut`.
    `ratatui::crossterm`).
 2. **`src/app.rs`** (ny fil): fyll i `From<Rgb> for Color`, `push_log`,
    `on_server`, `on_key`, `draw_status`, `draw_log` och `draw_map`.
+   Rubriker och andra texter finns i `messages.rs` (`messages::TITLE_LOG`, ...).
    Lägg till `pub mod app;` i `lib.rs`.
 3. **`src/main.rs`**: skriv om klienten:
    - en `enum Event { Key(KeyEvent), Server(ServerMsg), Disconnected }`,

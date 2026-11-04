@@ -1,0 +1,19 @@
+{
+  "name": "MUD School (Go + Rust)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/go:1": { "version": "1.24" },
+    "ghcr.io/devcontainers/features/rust:1": { "version": "stable" }
+  },
+  "containerEnv": {
+    "LANG": "C.UTF-8",
+    "COLORTERM": "truecolor"
+  },
+  "forwardPorts": [4000],
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y telnet netcat-openbsd && ./mudschool doctor",
+  "customizations": {
+    "vscode": {
+      "extensions": ["golang.go", "rust-lang.rust-analyzer"]
+    }
+  }
+}

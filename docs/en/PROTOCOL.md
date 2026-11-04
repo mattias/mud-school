@@ -1,0 +1,130 @@
+# The protocol – mudschool 1
+
+> [🇸🇪 Svenska](../sv/PROTOCOL.md) · 🇬🇧 English · [🇯🇵 日本語](../ja/PROTOCOL.md)
+
+This is the contract between the server (Go) and the client (Rust). It is
+introduced in lesson 10 (the server) and 11 (the client).
+
+## Ground rules
+
+- Transport: TCP. All text is **UTF-8**.
+- Every message is **one line** ending in `\r\n` (CR LF), in both directions.
+- The client always sends plain text: commands like `look` or `say hello`.
+- The server sends **plain text** until the client has sent a greeting.
+  After that the server sends **one JSON frame per line**.
+
+That way `telnet` and `nc` work just as before, while a client that
+understands the protocol gets structured data.
+
+## Handshake
+
+The client sends, at any time (usually right after connecting):
+
+```
+@hello mudschool 1
+```
+
+The server replies with a `hello` frame and sends JSON from then on:
+
+```json
+{"type":"hello","text":"mudschool 1"}
+```
+
+Lines starting with `@hello` are never interpreted as game commands.
+
+## Frames
+
+Every frame is a JSON object with the field `type`.
+
+### `text`
+
+```json
+{"type":"text","text":"Mudby Square\nA cobbled square with an old well in the middle."}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `text` | string | Text to show. May contain `\n`. Left out if the text is empty. |
+
+The text is in the server's language (see `messages.go`).
+
+### `map`
+
+Sent after every `look` (and therefore also after moving and logging in) and
+in reply to the command `map`.
+
+```json
+{"type":"map","map":{
+  "width":5,"height":5,
+  "rows":["  +  ","  |  ","  @-+","     ","\"    "],
+  "legend":{"+":"inside","|":"path_ns","@":"self","-":"path_ew","\"":"field"}
+}}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `width`, `height` | integer | The size of the map in characters. |
+| `rows` | list of strings | `height` rows of `width` characters. Every character is a **code**. Space = nothing. |
+| `legend` | object | Code → meaning, for the codes used in `rows`. |
+
+Rooms are on even rows and columns; exits are drawn between them. The player
+is always in the middle.
+
+Meanings in version 1:
+
+| Meaning | Code | Explanation |
+|---|---|---|
+| `town` | `#` | street, square |
+| `inside` | `+` | indoors |
+| `road` | `.` | road |
+| `field` | `"` | meadow, field |
+| `forest` | `T` | forest |
+| `water` | `~` | water |
+| `mountain` | `^` | mountain |
+| `cave` | `o` | cave |
+| `stairs_up` | `<` | a room with an exit up |
+| `stairs_down` | `>` | a room with an exit down |
+| `path_ew` | `-` | an east–west exit |
+| `path_ns` | `\|` | a north–south exit |
+| `self` | `@` | you |
+
+> **Important:** the client should draw based on the **meaning** (`legend`),
+> not the code. The codes are chosen to look sensible in telnet, but may change.
+
+### `status`
+
+Sent after every `look`.
+
+```json
+{"type":"status","status":{"name":"Anna","room":"Mudby Square","terrain":"town","hp":10,"max_hp":10,"online":2}}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | string | The player's name |
+| `room` | string | The room's name |
+| `terrain` | string | The room's terrain (one of the meanings above) |
+| `hp`, `max_hp` | integer | Health (always 10/10 until combat exists, phase 3) |
+| `online` | integer | Number of players logged in |
+
+## Compatibility
+
+The protocol must be able to grow without breaking old clients:
+
+1. **Clients must ignore frames with an unknown `type`** (in Rust: `#[serde(other)] Unknown`).
+2. **Clients must ignore unknown fields.** New fields are only ever added, never changed.
+3. **Clients must cope with optional fields being missing** (e.g. `text`).
+4. A line that is not valid JSON is shown as plain text.
+5. Incompatible changes require a new version: `@hello mudschool 2`.
+
+## Planned extensions
+
+| Version | Frame / field | Phase |
+|---|---|---|
+| 1 | `text.kind` (`say`, `combat`, `system`, ...) for a coloured log | 3 |
+| 1 | `status.target` (who you are fighting) | 3 |
+| 1 | `hello.lang` – the player's language, so the server can choose texts per player | 6 |
+| 2 | `zone` – a whole zone with tiles | 4 |
+| 2 | `delta` – changes since the last tick (entities moving, tiles becoming visible) | 4 |
+| 2 | `fov` – which cells the player sees right now | 4 |
+| 2 | `sound`, `effect` – sounds and visual effects | 4 |

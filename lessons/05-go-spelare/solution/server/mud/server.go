@@ -1,4 +1,4 @@
-// Paket mud innehåller all spellogik för din MUD-server.
+// Package mud contains all the game logic of your MUD server.
 package mud
 
 import (
@@ -10,18 +10,15 @@ import (
 	"sync"
 )
 
-// Welcome är det första servern säger till en ny spelare.
-const Welcome = "Välkommen till MUD School!"
-
-// Server är din MUD-server.
+// Server is your MUD server.
 type Server struct {
 	commands map[string]CommandFunc
 
-	mu      sync.Mutex         // skyddar fälten nedanför
-	players map[string]*Player // inloggade spelare, nyckel = namn
+	mu      sync.Mutex         // protects the fields below
+	players map[string]*Player // logged-in players, keyed by name
 }
 
-// NewServer skapar en ny server.
+// NewServer creates a new server.
 func NewServer() *Server {
 	s := &Server{
 		commands: make(map[string]CommandFunc),
@@ -31,8 +28,8 @@ func NewServer() *Server {
 	return s
 }
 
-// Serve tar emot anslutningar från l tills l stängs. Varje anslutning
-// hanteras i en egen goroutine.
+// Serve accepts connections from l until l is closed. Each connection is
+// handled in its own goroutine.
 func (s *Server) Serve(l net.Listener) error {
 	for {
 		conn, err := l.Accept()
@@ -43,11 +40,11 @@ func (s *Server) Serve(l net.Listener) error {
 	}
 }
 
-// handle pratar med en ansluten klient tills den kopplar ner.
+// handle talks to one connected client until it disconnects.
 func (s *Server) handle(conn net.Conn) {
 	defer conn.Close()
-	log.Printf("ny anslutning från %s", conn.RemoteAddr())
-	defer log.Printf("%s kopplade ner", conn.RemoteAddr())
+	log.Printf("new connection from %s", conn.RemoteAddr())
+	defer log.Printf("%s disconnected", conn.RemoteAddr())
 
 	p := newPlayer(conn)
 	p.Send(Welcome)
@@ -55,8 +52,8 @@ func (s *Server) handle(conn net.Conn) {
 		return
 	}
 	defer s.removePlayer(p)
-	log.Printf("%s loggade in", p.Name)
-	p.Sendf("Välkommen, %s!", p.Name)
+	log.Printf("%s logged in", p.Name)
+	p.Sendf(MsgWelcomeName, p.Name)
 
 	for !p.quit {
 		line, ok := p.readLine()
@@ -67,23 +64,23 @@ func (s *Server) handle(conn net.Conn) {
 	}
 }
 
-// login frågar efter ett namn tills spelaren anger ett giltigt och ledigt.
-// Returnerar false om spelaren kopplar ner under tiden.
+// login asks for a name until the player gives a valid, free one.
+// Returns false if the player disconnects meanwhile.
 func (s *Server) login(p *Player) bool {
 	for {
-		p.Send("Vad heter du?")
+		p.Send(MsgAskName)
 		line, ok := p.readLine()
 		if !ok {
 			return false
 		}
 		name := strings.TrimSpace(line)
 		if err := ValidateName(name); err != nil {
-			p.Sendf("Ogiltigt namn: %v.", err)
+			p.Sendf(MsgInvalidName, err)
 			continue
 		}
 		p.Name = NormalizeName(name)
 		if err := s.addPlayer(p); err != nil {
-			p.Sendf("Ogiltigt namn: %v.", err)
+			p.Sendf(MsgInvalidName, err)
 			continue
 		}
 		return true
@@ -106,7 +103,7 @@ func (s *Server) removePlayer(p *Player) {
 	delete(s.players, p.Name)
 }
 
-// PlayerNames returnerar namnen på alla inloggade spelare, sorterade.
+// PlayerNames returns the names of all logged-in players, sorted.
 func (s *Server) PlayerNames() []string {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -1,35 +1,32 @@
-// Paket mud innehåller all spellogik för din MUD-server.
+// Package mud contains all the game logic of your MUD server.
 package mud
 
 import (
 	"net"
 )
 
-// Welcome är det första servern säger till en ny spelare.
-const Welcome = "Välkommen till MUD School!"
-
-// Server är din MUD-server. Just nu har den inga fält, men den kommer att
-// växa: spelare, rum, kommandon ...
+// Server is your MUD server. It has no fields yet, but it will grow:
+// players, rooms, commands ...
 type Server struct{}
 
-// NewServer skapar en ny server.
+// NewServer creates a new server.
 func NewServer() *Server {
 	return &Server{}
 }
 
-// Serve tar emot anslutningar från l, en i taget, tills l stängs.
+// Serve accepts connections from l, one at a time, until l is closed.
 func (s *Server) Serve(l net.Listener) error {
-	// TODO(lektion 1): ta emot anslutningar i en loop med l.Accept().
-	// Om Accept returnerar ett fel ska Serve returnera felet.
-	// Varje ny anslutning ska hanteras av s.handle(conn).
+	// TODO(lesson 1): accept connections in a loop with l.Accept().
+	// If Accept returns an error, Serve must return that error.
+	// Each new connection is handled by s.handle(conn).
 	return nil
 }
 
-// handle pratar med en ansluten klient tills den kopplar ner.
+// handle talks to one connected client until it disconnects.
 func (s *Server) handle(conn net.Conn) {
-	// TODO(lektion 1):
-	//  1. Se till att conn stängs när funktionen är klar (tips: defer).
-	//  2. Skicka Welcome följt av "\r\n".
-	//  3. Läs rader från klienten (tips: bufio.NewScanner) och skicka
-	//     tillbaka varje rad (utan radbrytningen) följt av "\r\n".
+	// TODO(lesson 1):
+	//  1. Make sure conn is closed when the function returns (hint: defer).
+	//  2. Send Welcome (see messages.go) followed by "\r\n".
+	//  3. Read lines from the client (hint: bufio.NewScanner) and send each
+	//     line back (without its line break) followed by "\r\n".
 }

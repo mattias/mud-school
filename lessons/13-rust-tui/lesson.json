@@ -1,6 +1,13 @@
 {
-  "title": "Ett riktigt gränssnitt – ratatui",
+  "title": {
+    "sv": "Ett riktigt gränssnitt – ratatui",
+    "en": "A real user interface – ratatui",
+    "ja": "本格的な画面 – ratatui"
+  },
   "track": "rust",
-  "summary": "Bygg ett terminalgränssnitt med statusrad, logg, färgkarta och inmatningsrad, och en händelseloop som kopplar ihop tangentbord och server.",
-  "concepts": ["ratatui och omedelbar rendering", "Layout och Constraint", "From/Into", "enum för händelser", "flera producenter på en kanal", "testa UI med TestBackend", "std::mem::take"]
+  "summary": {
+    "sv": "Bygg ett terminalgränssnitt med statusrad, logg, färgkarta och inmatningsrad.",
+    "en": "Build a terminal UI with a status bar, a log, a colour map and an input line.",
+    "ja": "ステータスバー、ログ、カラーマップ、入力欄のある端末 UI を作る。"
+  }
 }

@@ -1,6 +1,13 @@
 {
-  "title": "Trådar och kanaler – lyssna och skriv samtidigt",
+  "title": {
+    "sv": "Trådar och kanaler – lyssna och skriv samtidigt",
+    "en": "Threads and channels – listen and type at the same time",
+    "ja": "スレッドとチャネル – 受信と入力を同時に"
+  },
   "track": "rust",
-  "summary": "Läs från servern i en egen tråd och skicka raderna över en kanal, så att klienten kan ta emot meddelanden när som helst.",
-  "concepts": ["std::thread", "move-closures", "mpsc-kanaler", "generics och trait bounds", "Send och 'static", "Iterator", "att flytta ägarskap"]
+  "summary": {
+    "sv": "Läs från servern i en egen tråd och skicka raderna över en kanal.",
+    "en": "Read from the server in its own thread and send the lines over a channel.",
+    "ja": "サーバーからの受信を別スレッドで行い、行をチャネルで渡す。"
+  }
 }

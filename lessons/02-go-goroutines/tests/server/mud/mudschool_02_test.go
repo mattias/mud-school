@@ -9,19 +9,19 @@ import (
 func TestSecondClientIsNotBlockedByFirst(t *testing.T) {
 	addr := startServer(t, NewServer())
 	idle := connect(t, addr)
-	idle.name = "första klienten"
+	idle.name = L("första klienten", "first client", "1 番目のクライアント")
 	idle.expect(Welcome)
-	// Den första klienten sitter tyst. Den andra ska ändå få svar direkt.
+	// The first client stays silent. The second one must still get answers right away.
 
 	busy := connect(t, addr)
-	busy.name = "andra klienten"
+	busy.name = L("andra klienten", "second client", "2 番目のクライアント")
 	busy.expect(Welcome)
-	busy.send("hallå?")
-	busy.expect("hallå?")
+	busy.send("hello?")
+	busy.expect("hello?")
 
-	// ... och den första klienten fungerar fortfarande.
-	idle.send("jag är kvar")
-	idle.expect("jag är kvar")
+	// ... and the first client still works.
+	idle.send("still here")
+	idle.expect("still here")
 }
 
 func TestManyClientsAtOnce(t *testing.T) {
@@ -30,24 +30,23 @@ func TestManyClientsAtOnce(t *testing.T) {
 	clients := make([]*testClient, n)
 	for i := range clients {
 		clients[i] = connect(t, addr)
-		clients[i].name = fmt.Sprintf("klient %d", i)
+		clients[i].name = fmt.Sprintf("#%d", i)
 	}
 	for _, c := range clients {
 		c.expect(Welcome)
 	}
 
-	// Alla skickar samtidigt.
+	// Everybody sends at the same time.
 	var wg sync.WaitGroup
 	for i, c := range clients {
 		wg.Add(1)
 		go func(i int, c *testClient) {
 			defer wg.Done()
-			msg := fmt.Sprintf("meddelande från %d", i)
-			fmt.Fprint(c.conn, msg+"\r\n")
+			fmt.Fprintf(c.conn, "message from %d\r\n", i)
 		}(i, c)
 	}
 	wg.Wait()
 	for i, c := range clients {
-		c.expect(fmt.Sprintf("meddelande från %d", i))
+		c.expect(fmt.Sprintf("message from %d", i))
 	}
 }

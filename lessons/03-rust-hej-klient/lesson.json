@@ -1,6 +1,13 @@
 {
-  "title": "Hej, Rust! – en första klient",
+  "title": {
+    "sv": "Hej, Rust! – en första klient",
+    "en": "Hello, Rust! – a first client",
+    "ja": "こんにちは Rust！ – 最初のクライアント"
+  },
   "track": "rust",
-  "summary": "Skriv en klient i Rust som ansluter till din server, läser rader och skickar det du skriver.",
-  "concepts": ["cargo", "moduler", "struct och impl", "Result och ?-operatorn", "Option", "ägarskap och lån (&, &mut)", "String vs &str", "TcpStream och BufReader"]
+  "summary": {
+    "sv": "Skriv en klient i Rust som ansluter till din server, läser rader och skickar det du skriver.",
+    "en": "Write a client in Rust that connects to your server, reads lines and sends what you type.",
+    "ja": "サーバーに接続し、行を読み、入力を送る Rust のクライアントを書く。"
+  }
 }

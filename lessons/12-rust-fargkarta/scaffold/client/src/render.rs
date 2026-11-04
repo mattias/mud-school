@@ -1,53 +1,53 @@
-//! Gör om kartans koder till färgade tecken ("tiles").
+//! Turns the map's codes into coloured characters ("tiles").
 //!
-//! Servern säger *vad* som finns ("forest"), den här modulen bestämmer hur
-//! det ska *se ut*. Byt glyfer och färger hur du vill – det är din klient!
+//! The server says *what* is there ("forest"), this module decides how it
+//! should *look*. Change glyphs and colours as you like – it's your client!
 
 use std::fmt::Write;
 
 use crate::protocol::MapData;
 
-/// En färg med röd, grön och blå komponent (0–255).
+/// A colour with red, green and blue components (0–255).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Rgb(pub u8, pub u8, pub u8);
 
-/// En ruta på skärmen: ett tecken med förgrundsfärg och kanske bakgrundsfärg.
+/// A cell on the screen: a character with a foreground colour and maybe a background colour.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Cell {
     pub glyph: char,
     pub fg: Rgb,
-    pub bg: Option<Rgb>, // None = terminalens vanliga bakgrund
+    pub bg: Option<Rgb>, // None = the terminal's normal background
 }
 
-/// En tom ruta.
+/// An empty cell.
 pub const BLANK: Cell = Cell {
     glyph: ' ',
     fg: Rgb(0, 0, 0),
     bg: None,
 };
 
-/// Hur en sak med en viss betydelse ska se ut.
+/// How a thing with a certain meaning should look.
 ///
-/// Betydelser: town, inside, road, field, forest, water, mountain, cave,
+/// Meanings: town, inside, road, field, forest, water, mountain, cave,
 /// stairs_up, stairs_down, path_ew, path_ns, self, player.
-/// Inspiration: '♣' '≈' '▲' '·' '■' 'Ω' '─' '│' (kodsida 437, som Dwarf Fortress).
+/// Inspiration: '♣' '≈' '▲' '·' '■' 'Ω' '─' '│' (code page 437, like Dwarf Fortress).
 pub fn tile(meaning: &str) -> Cell {
-    // TODO(lektion 12)
+    // TODO(lesson 12)
     todo!()
 }
 
-/// Gör om hela kartan till ett rutnät av celler.
+/// Turns the whole map into a grid of cells.
 pub fn render_map(map: &MapData) -> Vec<Vec<Cell>> {
-    // TODO(lektion 12)
+    // TODO(lesson 12)
     todo!()
 }
 
-/// Ritar rutnätet som text med ANSI-färgkoder (24-bitars "truecolor").
-/// Raderna skiljs åt med '\n'.
+/// Draws the grid as text with ANSI colour codes (24-bit "truecolor").
+/// Rows are separated by '\n'.
 pub fn to_ansi(grid: &[Vec<Cell>]) -> String {
     let mut out = String::new();
-    // TODO(lektion 12): för varje cell: "\x1b[38;2;R;G;Bm", kanske
-    // "\x1b[48;2;R;G;Bm", tecknet, och sist "\x1b[0m".
-    // Tips: write!(out, "...")  fungerar på en String tack vare fmt::Write.
+    // TODO(lesson 12): for every cell: "\x1b[38;2;R;G;Bm", maybe
+    // "\x1b[48;2;R;G;Bm", the character, and finally "\x1b[0m".
+    // Hint: write!(out, "...") works on a String thanks to fmt::Write.
     out
 }

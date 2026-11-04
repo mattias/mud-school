@@ -1,6 +1,13 @@
 {
-  "title": "Kartan i färg – tiles, iteratorer och ANSI",
+  "title": {
+    "sv": "Kartan i färg – tiles, iteratorer och ANSI",
+    "en": "The map in colour – tiles, iterators and ANSI",
+    "ja": "カラーのマップ – タイル、イテレータ、ANSI"
+  },
   "track": "rust",
-  "summary": "Översätt kartans koder till färgade tecken i Dwarf Fortress-stil och rita dem med ANSI-färgkoder.",
-  "concepts": ["Copy-typer", "match på strängar", "Option", "iteratorer: map, collect, enumerate", "Vec<Vec<T>>", "fmt::Write", "ANSI escape-koder", "truecolor"]
+  "summary": {
+    "sv": "Översätt kartans koder till färgade tecken i Dwarf Fortress-stil och rita dem med ANSI-koder.",
+    "en": "Turn the map codes into coloured Dwarf Fortress-style characters and draw them with ANSI codes.",
+    "ja": "マップのコードを Dwarf Fortress 風の色付き文字に変え、ANSI コードで描く。"
+  }
 }

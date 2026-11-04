@@ -6,28 +6,28 @@ import (
 	"strings"
 )
 
-// HelloPrefix är det en grafisk klient skickar för att få JSON istället för text.
+// HelloPrefix is what a graphical client sends to get JSON instead of text.
 const HelloPrefix = "@hello"
 
-// Frame är ett meddelande från servern till klienten. Se docs/PROTOKOLL.md.
+// Frame is a message from the server to the client. See docs/<lang>/PROTOCOL.md.
 //
-// En telnet-klient får bara texten. En klient som har skickat "@hello" får
-// varje Frame som en rad JSON:
+// A telnet client only gets the text. A client that has sent "@hello" gets
+// every Frame as one line of JSON:
 //
-//	{"type":"text","text":"Du säger: hej"}
+//	{"type":"text","text":"You say: hello"}
 //	{"type":"map","map":{"width":5,"height":5,"rows":[...],"legend":{...}}}
-//	{"type":"status","status":{"name":"Anna","room":"Torget",...}}
+//	{"type":"status","status":{"name":"Anna","room":"Mudby Square",...}}
 type Frame struct {
-	Type   string   `json:"type"` // "hello", "text", "map" eller "status"
+	Type   string   `json:"type"` // "hello", "text", "map" or "status"
 	Text   string   `json:"text,omitempty"`
 	Map    *MapData `json:"map,omitempty"`
 	Status *Status  `json:"status,omitempty"`
 }
 
-// MapData är en bit av kartan runt spelaren. Varje tecken i Rows är en kod
-// som Legend översätter till ett namn ("town", "forest", "self", ...).
-// Klienten bestämmer själv hur en kod ska ritas – som ett färgat tecken, en
-// bild ... Servern skickar BETYDELSE, klienten bestämmer UTSEENDE.
+// MapData is a piece of the map around the player. Every character in Rows is
+// a code that Legend translates to a meaning ("town", "forest", "self", ...).
+// The client decides how a code is drawn – as a coloured character, an image ...
+// The server sends MEANING, the client decides APPEARANCE.
 type MapData struct {
 	Width  int               `json:"width"`
 	Height int               `json:"height"`
@@ -35,7 +35,7 @@ type MapData struct {
 	Legend map[string]string `json:"legend"`
 }
 
-// Status är det som visas i klientens statusrad.
+// Status is what the client shows in its status bar.
 type Status struct {
 	Name    string `json:"name"`
 	Room    string `json:"room"`
@@ -45,13 +45,13 @@ type Status struct {
 	Online  int    `json:"online"`
 }
 
-// TextFrame är en Frame med vanlig text.
+// TextFrame is a Frame with ordinary text.
 func TextFrame(text string) Frame {
 	return Frame{Type: "text", Text: text}
 }
 
-// encodeText gör om en Frame till det en telnet-klient ska se.
-// Tom sträng betyder "skicka ingenting".
+// encodeText turns a Frame into what a telnet client should see.
+// An empty string means "send nothing".
 func encodeText(f Frame) string {
 	switch f.Type {
 	case "text":
@@ -59,15 +59,15 @@ func encodeText(f Frame) string {
 	case "map":
 		return strings.Join(f.Map.Rows, "\r\n") + "\r\n"
 	default:
-		return "" // statusrader m.m. är bara för grafiska klienter
+		return "" // status bars etc. are only for graphical clients
 	}
 }
 
-// encodeJSON gör om en Frame till en rad JSON.
+// encodeJSON turns a Frame into one line of JSON (ending in \r\n).
 func encodeJSON(f Frame) string {
 	data, err := json.Marshal(f)
 	if err != nil {
-		log.Printf("kunde inte koda %+v: %v", f, err)
+		log.Printf("cannot encode %+v: %v", f, err)
 		return ""
 	}
 	return string(data) + "\r\n"

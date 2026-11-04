@@ -1,5 +1,7 @@
 # MUD School 🐉
 
+> 🇸🇪 Svenska · [🇬🇧 English](README.en.md) · [🇯🇵 日本語](README.ja.md)
+
 **Lär dig Go och Rust genom att bygga ett eget onlinespel – från grunden.**
 
 Du bygger en **MUD-server i Go** och en **MUD-klient i Rust**, steg för steg.
@@ -28,7 +30,7 @@ terminalklient med färgkarta i Dwarf Fortress-stil, statusrad och logg:
 ```
 
 (Det här är en riktig skärmbild av referenslösningen. Telnet fungerar också,
-så då blir kartan ren ASCII.)
+då blir kartan ren ASCII.)
 
 Sedan fortsätter kursplanen: strid och NPC:er, zoner med tiles och
 procedurgenerering à la Caves of Qud, en grafisk klient med tileset, och en
@@ -36,30 +38,35 @@ server som kan byggas ut **medan den kör** – med omladdning av världen,
 Lua-skript, plugins skrivna i Rust och kompilerade till WebAssembly, och
 den klassiska MUD-tekniken *copyover*.
 
+Kursen finns på **svenska, engelska och japanska** – instruktioner, ledtrådar,
+testernas felmeddelanden, spelets texter och spelvärlden.
+
 ## Kom igång
 
-Du behöver:
+**1. Installera verktygen.** Du behöver Go 1.22+, Rust (stable) och en
+terminal med UTF-8 och färg – telnet eller nc är bra att ha. Steg för steg
+för macOS, Linux och Windows finns i **[docs/sv/SETUP.md](docs/sv/SETUP.md)**.
 
-- [Go](https://go.dev/dl/) 1.22 eller senare
-- [Rust](https://rustup.rs) (stabil, 2021-utgåvan)
-- `telnet` eller `nc` (netcat) för att prova servern
-- en terminal med UTF-8 och truecolor (de flesta moderna har det)
-- en editor med `gopls` och `rust-analyzer` (t.ex. VS Code) rekommenderas
+Snabbast: öppna repot i **GitHub Codespaces** eller en **VS Code Dev
+Container** – allt är förinstallerat (`.devcontainer/`).
+
+**2. Kontrollera och börja.**
 
 ```
-git clone <det här repot> && cd mud-school
-./mudschool init      # skapar workspace/ med din egen kod
-./mudschool show      # läs första lektionen
-./mudschool watch     # testerna körs varje gång du sparar
+git clone https://github.com/mattias/mud-school.git && cd mud-school
+./mudschool doctor             # kontrollerar att allt är installerat
+./mudschool init --lang sv     # skapar workspace/ med din egen kod (sv | en | ja)
+./mudschool show               # läs första lektionen
+./mudschool watch              # testerna körs varje gång du sparar
 ```
 
-På Windows: kör kommandona i WSL eller Git Bash, eller direkt med
-`go run ./tools/mudschool <kommando>` från `tools/mudschool`.
+På Windows utan WSL: se [SETUP.md](docs/sv/SETUP.md#c-windows).
 
 ## Kursverktyget
 
 | Kommando | Vad det gör |
 |---|---|
+| `./mudschool doctor` | kontrollerar Go, Rust, telnet/nc, UTF-8 och färg |
 | `./mudschool list` | alla lektioner och din status |
 | `./mudschool show [id]` | instruktionerna för en lektion |
 | `./mudschool check [--race]` | kör lektionens tester; vid grönt går du vidare |
@@ -68,6 +75,7 @@ På Windows: kör kommandona i WSL eller Git Bash, eller direkt med
 | `./mudschool run server` / `run client` | starta din server eller klient |
 | `./mudschool solution [--apply]` | visa (eller kopiera in) referenslösningen |
 | `./mudschool goto <id>` | hoppa till en lektion |
+| `./mudschool lang sv\|en\|ja` | byt språk |
 
 All din kod ligger i `workspace/` – `server/` (Go) och `client/` (Rust).
 Du kan också köra `go test ./...` och `cargo test` direkt där.
@@ -90,18 +98,21 @@ Du kan också köra `go test ./...` och `cargo test` direkt där.
 | 12 | Rust | Kartan i färg | iteratorer, `Copy`, ANSI truecolor |
 | 13 | Rust | Ett riktigt gränssnitt | ratatui, händelseloop, testa UI |
 
-Fas 3–6 (lektion 14–36 och valfria spår) beskrivs i **[docs/KURSPLAN.md](docs/KURSPLAN.md)**.
+Fas 3–6 (lektion 14–36 och valfria spår) beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
 
 ## Dokumentation
 
-- **[docs/KURSPLAN.md](docs/KURSPLAN.md)** – den pedagogiska idén, alla faser, begreppskarta Go ↔ Rust, läsanvisningar
-- **[docs/PROTOKOLL.md](docs/PROTOKOLL.md)** – protokollet mellan server och klient
-- **[docs/IDEER.md](docs/IDEER.md)** – idéer för spelet, klienten och kursen
-- **[docs/FOR-LARARE.md](docs/FOR-LARARE.md)** – hur kursen är byggd och hur du lägger till lektioner
+| | 🇸🇪 | 🇬🇧 | 🇯🇵 |
+|---|---|---|---|
+| Installation och miljö | [SETUP](docs/sv/SETUP.md) | [SETUP](docs/en/SETUP.md) | [SETUP](docs/ja/SETUP.md) |
+| Kursplan: pedagogik, alla faser, Go ↔ Rust | [CURRICULUM](docs/sv/CURRICULUM.md) | [CURRICULUM](docs/en/CURRICULUM.md) | [CURRICULUM](docs/ja/CURRICULUM.md) |
+| Protokollet mellan server och klient | [PROTOCOL](docs/sv/PROTOCOL.md) | [PROTOCOL](docs/en/PROTOCOL.md) | [PROTOCOL](docs/ja/PROTOCOL.md) |
+| Idéer för spelet, klienten och kursen | [IDEAS](docs/sv/IDEAS.md) | [IDEAS](docs/en/IDEAS.md) | [IDEAS](docs/ja/IDEAS.md) |
+| För lärare: hur kursen är byggd | [TEACHERS](docs/sv/TEACHERS.md) | [TEACHERS](docs/en/TEACHERS.md) | [TEACHERS](docs/ja/TEACHERS.md) |
 
 ## För lärare
 
-`./mudschool verify` bygger upp referenslösningen lektion för lektion och
-kontrollerar att varje lektions tester **misslyckas före** och **går igenom
-efter** lösningen. `./mudschool reference <katalog> [id]` ger dig hela
-referenslösningen till och med en viss lektion. CI kör `verify` vid varje push.
+`./mudschool verify` bygger upp referenslösningen lektion för lektion, på alla
+tre språken, och kontrollerar att varje lektions tester **misslyckas före** och
+**går igenom efter** lösningen. `./mudschool reference <katalog> [id]` ger dig
+hela referenslösningen till och med en viss lektion. CI kör `verify` vid varje push.

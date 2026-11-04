@@ -2,16 +2,16 @@ package mud
 
 import "strings"
 
-// Command är en tolkad rad från spelaren.
+// Command is a parsed line from the player.
 //
 //	"Get Sword from chest" -> Command{Verb: "get", Args: []string{"Sword", "from", "chest"}, Rest: "Sword from chest"}
 type Command struct {
-	Verb string   // första ordet, med små bokstäver och förkortningar expanderade
-	Args []string // resten av orden
-	Rest string   // resten av raden som den skrevs (utan mellanslag i början/slutet)
+	Verb string   // the first word, lower case, with abbreviations expanded
+	Args []string // the remaining words
+	Rest string   // the rest of the line as typed (trimmed)
 }
 
-// aliases mappar förkortningar till fullständiga verb.
+// aliases maps abbreviations to full verbs.
 var aliases = map[string]string{
 	"n": "north",
 	"s": "south",
@@ -24,13 +24,13 @@ var aliases = map[string]string{
 	"q": "quit",
 }
 
-// ParseCommand tolkar en rad från spelaren.
+// ParseCommand parses a line from the player.
 func ParseCommand(line string) Command {
 	line = strings.TrimSpace(line)
 	if line == "" {
 		return Command{}
 	}
-	// 'hej  ==  say hej  (klassisk MUD-genväg)
+	// 'hello  ==  say hello  (a classic MUD shortcut)
 	if rest, ok := strings.CutPrefix(line, "'"); ok {
 		rest = strings.TrimSpace(rest)
 		return Command{Verb: "say", Args: strings.Fields(rest), Rest: rest}

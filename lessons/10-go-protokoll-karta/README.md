@@ -19,7 +19,7 @@ server: {"type":"map","map":{"width":13,"height":13,"rows":[...],"legend":{"#":"
 server: {"type":"status","status":{"name":"Anna","room":"Torget i Mudby","hp":10,...}}
 ```
 
-Hela protokollet beskrivs i `docs/PROTOKOLL.md`. Det är **kontraktet**
+Hela protokollet beskrivs i `docs/sv/PROTOCOL.md`. Det är **kontraktet**
 mellan din Go-server och din Rust-klient.
 
 ## Den viktigaste idén i lektionen

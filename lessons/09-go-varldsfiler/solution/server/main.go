@@ -1,5 +1,5 @@
-// Startpunkten för din MUD-server. Kör med: ./mudschool run server
-// (eller `go run .` i den här katalogen). Anslut med: telnet localhost 4000
+// Entry point of your MUD server. Run it with: ./mudschool run server
+// (or `go run .` in this directory). Connect with: telnet localhost 4000
 package main
 
 import (
@@ -11,24 +11,24 @@ import (
 )
 
 func main() {
-	addr := flag.String("addr", ":4000", "adress att lyssna på")
-	worldPath := flag.String("world", "", "världsfil (JSON); tom = den inbyggda världen")
+	addr := flag.String("addr", ":4000", "address to listen on")
+	worldPath := flag.String("world", "", "world file (JSON); empty = the built-in world")
 	flag.Parse()
 
 	world := mud.DefaultWorld()
 	if *worldPath != "" {
 		var err error
 		if world, err = mud.LoadWorldFile(*worldPath); err != nil {
-			log.Fatalf("kunde inte läsa världen:\n%v", err)
+			log.Fatalf("cannot load the world:\n%v", err)
 		}
 	}
-	log.Printf("världen har %d rum", len(world.Rooms))
+	log.Printf("the world has %d rooms", len(world.Rooms))
 
 	l, err := net.Listen("tcp", *addr)
 	if err != nil {
-		log.Fatalf("kunde inte lyssna på %s: %v", *addr, err)
+		log.Fatalf("cannot listen on %s: %v", *addr, err)
 	}
-	log.Printf("MUD-servern lyssnar på %s", l.Addr())
+	log.Printf("MUD server listening on %s", l.Addr())
 
 	srv := mud.NewServerWithWorld(world)
 	log.Fatal(srv.Serve(l))

@@ -1,4 +1,4 @@
-// Startpunkten för din MUD-klient. Kör med: ./mudschool run client [adress]
+// Entry point of your MUD client. Run it with: ./mudschool run client [address]
 
 use std::io;
 use std::sync::mpsc;
@@ -7,10 +7,11 @@ use std::thread;
 use ratatui::crossterm::event::{self, Event as TermEvent, KeyEvent};
 
 use mud_client::app::{draw, App};
+use mud_client::messages;
 use mud_client::net::Connection;
 use mud_client::protocol::{parse_line, ServerMsg, HELLO};
 
-/// Allt som kan hända – från tangentbordet eller servern – samlat i en typ.
+/// Everything that can happen – from the keyboard or the server – in one type.
 enum Event {
     Key(KeyEvent),
     Server(ServerMsg),
@@ -27,7 +28,7 @@ fn main() -> io::Result<()> {
 
     let (tx, rx) = mpsc::channel();
 
-    // Tråd 1: läs från servern.
+    // Thread 1: read from the server.
     let server_tx = tx.clone();
     thread::spawn(move || {
         use std::io::BufRead;
@@ -40,7 +41,7 @@ fn main() -> io::Result<()> {
         let _ = server_tx.send(Event::Disconnected);
     });
 
-    // Tråd 2: läs tangentbordet.
+    // Thread 2: read the keyboard.
     thread::spawn(move || loop {
         match event::read() {
             Ok(TermEvent::Key(key)) => {
@@ -48,16 +49,16 @@ fn main() -> io::Result<()> {
                     return;
                 }
             }
-            Ok(_) => {} // t.ex. ändrad fönsterstorlek – vi ritar om ändå
+            Ok(_) => {} // e.g. a resized window – we redraw anyway
             Err(_) => return,
         }
     });
 
     let mut terminal = ratatui::init();
     let mut app = App::new();
-    app.push_log(&format!("Ansluten till {addr}."));
+    app.push_log(&format!("{} {addr}", messages::CONNECTED_TO));
 
-    // Huvudloopen: rita, vänta på en händelse, uppdatera.
+    // The main loop: draw, wait for an event, update.
     let result = (|| -> io::Result<()> {
         while !app.quit {
             terminal.draw(|f| draw(f, &app))?;

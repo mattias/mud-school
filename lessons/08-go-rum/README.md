@@ -47,8 +47,9 @@ for _, dir := range Directions {
 
 ## Uppgift
 
-1. **`world.go`** (ny fil, mest färdig): skriv `NewWorld` och `World.Room`.
-   Läs `DefaultWorld` – det är byn Mudby. Lägg gärna till fler rum!
+1. **`world.go`** (ny fil): skriv `NewWorld` och `World.Room`.
+   **`defaultworld.go`** (ny fil, färdig) innehåller `DefaultWorld` – byn
+   Mudby. Lägg gärna till fler rum!
 2. **`player.go`**: ge `Player` ett fält `Room *Room`. Det skyddas av `s.mu`
    (läs och skriv det bara när du håller låset).
 3. **`server.go`**:
@@ -56,26 +57,28 @@ for _, dir := range Directions {
    - `NewServerWithWorld(w *World) *Server` – och låt `NewServer()` anropa
      den med `DefaultWorld()`,
    - placera nya spelare i startrummet, och kör `look` direkt efter
-     `Välkommen, Anna!`.
+     `MsgWelcomeName`.
 4. **Kommandon** (lägg dem gärna i en ny fil `rooms.go`):
-   - `look` skriver
+   - `look` skriver rummets namn, beskrivning, utgångar och vilka andra som
+     är där:
 
      ```
-     Torget
-     Ett torg.
-     Utgångar: norr, öster
-     Här finns: Bertil
+     Torget                     ← Name
+     Ett torg.                  ← Description
+     Utgångar: norr, öster      ← MsgExits
+     Här finns: Bertil          ← MsgHere
      ```
 
-     Utgångarna i ordningen i `Directions`, på svenska (`directionNames`).
-     Saknas utgångar: `Utgångar: inga`. Raden `Här finns:` (andra spelare,
-     sorterade) skrivs bara om någon annan är där.
+     Utgångarna i ordningen i `Directions`, med namnen i `directionNames`
+     (i `messages.go`) och åtskilda med `MsgListSep`. Saknas utgångar:
+     `MsgNoExits`. Raden `MsgHere` (andra spelare, sorterade) skrivs bara om
+     någon annan är där.
    - `north`, `east`, `south`, `west`, `up`, `down`: finns ingen utgång,
-     skriv `Du kan inte gå åt det hållet.` Annars: de i gamla rummet ser
-     `Anna går norrut.`, de i nya ser `Anna kommer in.`, och Anna själv får
-     det nya rummets `look`.
+     skriv `MsgCantGo`. Annars: de i gamla rummet ser `MsgLeaves` med
+     `directionTravel[dir]` (`Anna går norrut.`), de i nya ser `MsgArrives`
+     (`Anna kommer in.`), och Anna själv får det nya rummets `look`.
    - `say` hörs nu bara i samma rum. Nytt kommando `shout` hörs överallt:
-     `Du ropar: hej` / `Anna ropar: hej`.
+     `MsgYouShout` / `MsgShouts` (`Du ropar: hej` / `Anna ropar: hej`).
 
 ## En konvention för lås
 

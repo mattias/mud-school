@@ -1,11 +1,14 @@
 package mud
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
-// Kommandon och hjälpfunktioner som har med rum att göra.
-// Alla funktioner med "Locked" i namnet förutsätter att s.mu redan är låst.
+// Commands and helpers that deal with rooms.
+// Every function whose name ends in "Locked" assumes that s.mu is already held.
 
-// describeRoomLocked beskriver rummet som spelaren står i.
+// describeRoomLocked describes the room the player is standing in.
 func (s *Server) describeRoomLocked(p *Player) string {
 	r := p.Room
 	var b strings.Builder
@@ -19,9 +22,9 @@ func (s *Server) describeRoomLocked(p *Player) string {
 		}
 	}
 	if len(exits) == 0 {
-		b.WriteString("Utgångar: inga")
+		b.WriteString(MsgNoExits)
 	} else {
-		b.WriteString("Utgångar: " + strings.Join(exits, ", "))
+		b.WriteString(fmt.Sprintf(MsgExits, strings.Join(exits, MsgListSep)))
 	}
 
 	var others []string
@@ -29,12 +32,12 @@ func (s *Server) describeRoomLocked(p *Player) string {
 		others = append(others, other.Name)
 	}
 	if len(others) > 0 {
-		b.WriteString("\nHär finns: " + strings.Join(others, ", "))
+		b.WriteString("\n" + fmt.Sprintf(MsgHere, strings.Join(others, MsgListSep)))
 	}
 	return b.String()
 }
 
-// playersInRoomLocked returnerar spelarna i rummet utom except, sorterade på namn.
+// playersInRoomLocked returns the players in the room except except, sorted by name.
 func (s *Server) playersInRoomLocked(r *Room, except *Player) []*Player {
 	var list []*Player
 	for _, name := range s.playerNamesLocked() {
@@ -45,14 +48,14 @@ func (s *Server) playersInRoomLocked(r *Room, except *Player) []*Player {
 	return list
 }
 
-// broadcastRoomLocked skickar text till alla i rummet utom except.
+// broadcastRoomLocked sends text to everyone in the room except except.
 func (s *Server) broadcastRoomLocked(r *Room, except *Player, text string) {
 	for _, other := range s.playersInRoomLocked(r, except) {
 		other.Send(text)
 	}
 }
 
-// lookLocked visar rummet för spelaren. Grafiska klienter får också karta och status.
+// lookLocked shows the room to the player. Graphical clients also get a map and a status.
 func (s *Server) lookLocked(p *Player) {
 	p.Send(s.describeRoomLocked(p))
 	if p.Structured() {
@@ -61,7 +64,7 @@ func (s *Server) lookLocked(p *Player) {
 	}
 }
 
-// mapRadius är hur många rum åt varje håll kartan visar.
+// mapRadius is how many rooms in each direction the map shows.
 const mapRadius = 3
 
 func (s *Server) sendMapLocked(p *Player) {
@@ -74,7 +77,7 @@ func (s *Server) sendStatusLocked(p *Player) {
 		Name:    p.Name,
 		Room:    p.Room.Name,
 		Terrain: p.Room.Terrain,
-		HP:      10, // strid kommer i fas 3!
+		HP:      10, // combat arrives in phase 3!
 		MaxHP:   10,
 		Online:  len(s.players),
 	}})
@@ -92,40 +95,40 @@ func cmdMap(s *Server, p *Player, cmd Command) {
 	s.sendMapLocked(p)
 }
 
-// moveCommand skapar ett kommando för att gå i riktningen dir.
-// Funktionen returnerar en closure som "kommer ihåg" dir.
+// moveCommand creates a command that walks in direction dir.
+// It returns a closure that "remembers" dir.
 func moveCommand(dir string) CommandFunc {
 	return func(s *Server, p *Player, cmd Command) {
 		s.mu.Lock()
 		defer s.mu.Unlock()
 		to := s.world.Room(p.Room.Exits[dir])
 		if to == nil {
-			p.Send("Du kan inte gå åt det hållet.")
+			p.Send(MsgCantGo)
 			return
 		}
-		s.broadcastRoomLocked(p.Room, p, p.Name+" går "+directionTravel[dir]+".")
+		s.broadcastRoomLocked(p.Room, p, fmt.Sprintf(MsgLeaves, p.Name, directionTravel[dir]))
 		p.Room = to
-		s.broadcastRoomLocked(to, p, p.Name+" kommer in.")
+		s.broadcastRoomLocked(to, p, fmt.Sprintf(MsgArrives, p.Name))
 		s.lookLocked(p)
 	}
 }
 
 func cmdSay(s *Server, p *Player, cmd Command) {
 	if cmd.Rest == "" {
-		p.Send("Säg vad?")
+		p.Send(MsgSayWhat)
 		return
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	p.Sendf("Du säger: %s", cmd.Rest)
-	s.broadcastRoomLocked(p.Room, p, p.Name+" säger: "+cmd.Rest)
+	p.Sendf(MsgYouSay, cmd.Rest)
+	s.broadcastRoomLocked(p.Room, p, fmt.Sprintf(MsgSays, p.Name, cmd.Rest))
 }
 
 func cmdShout(s *Server, p *Player, cmd Command) {
 	if cmd.Rest == "" {
-		p.Send("Ropa vad?")
+		p.Send(MsgShoutWhat)
 		return
 	}
-	p.Sendf("Du ropar: %s", cmd.Rest)
-	s.broadcast(p, p.Name+" ropar: "+cmd.Rest)
+	p.Sendf(MsgYouShout, cmd.Rest)
+	s.broadcast(p, fmt.Sprintf(MsgShouts, p.Name, cmd.Rest))
 }

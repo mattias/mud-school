@@ -76,6 +76,12 @@ for scanner.Scan() {                 // läs rad för rad
 2. `handle` ska stänga anslutningen med `defer`, skicka `Welcome` + `"\r\n"`
    och sedan eka varje rad den läser.
 
+> **Om `messages.go`:** all text som spelet visar för spelaren ligger i
+> `workspace/server/mud/messages.go` – på det språk du valt för kursen.
+> `Welcome` finns redan där. Testerna använder samma konstanter, så behåll
+> namnen, men ändra gärna texterna. Kod och kodkommentarer är på engelska,
+> som är brukligt i branschen; instruktionerna är på ditt språk.
+
 Kör `./mudschool check` för att testa.
 
 ## Testa själv
@@ -91,5 +97,5 @@ Varför? (Det fixar vi i nästa lektion.)
 ## Utmaningar (frivilliga)
 
 - Logga varje ny anslutning med `log.Printf("ny anslutning från %s", conn.RemoteAddr())`.
-- Låt servern svara `Hej då!` och koppla ner om klienten skriver `quit`.
+- Låt servern svara `MsgGoodbye` och koppla ner om klienten skriver `quit`.
 - Läs dokumentationen: `go doc net.Listener` och `go doc bufio.Scanner`.

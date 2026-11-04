@@ -1,17 +1,17 @@
-//! Protokollet mellan server och klient. Se docs/PROTOKOLL.md.
+//! The protocol between server and client. See docs/<lang>/PROTOCOL.md.
 
 use std::collections::HashMap;
 use std::fmt;
 
 use serde::Deserialize;
 
-/// Det klienten skickar för att få JSON istället för text.
+/// What the client sends to get JSON instead of text.
 pub const HELLO: &str = "@hello mudschool 1";
 
-/// Ett meddelande från servern.
+/// A message from the server.
 ///
-/// `#[serde(tag = "type")]` betyder att JSON-fältet "type" avgör vilken
-/// variant det är: `{"type":"text","text":"hej"}` blir `ServerMsg::Text { text: "hej" }`.
+/// `#[serde(tag = "type")]` means that the JSON field "type" decides which
+/// variant it is: `{"type":"text","text":"hi"}` becomes `ServerMsg::Text { text: "hi" }`.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub enum ServerMsg {
@@ -29,12 +29,12 @@ pub enum ServerMsg {
     Status {
         status: Status,
     },
-    /// En typ vi inte känner till än – från en nyare server.
+    /// A type we don't know yet – from a newer server.
     #[serde(other)]
     Unknown,
 }
 
-/// En bit av kartan. Varje tecken i `rows` är en kod som `legend` förklarar.
+/// A piece of the map. Every character in `rows` is a code that `legend` explains.
 #[derive(Debug, Clone, PartialEq, Default, Deserialize)]
 pub struct MapData {
     pub width: usize,
@@ -45,7 +45,7 @@ pub struct MapData {
 }
 
 impl MapData {
-    /// Vad betyder koden `code`? T.ex. 'T' -> Some("forest").
+    /// What does the code `code` mean? E.g. 'T' -> Some("forest").
     pub fn meaning(&self, code: char) -> Option<&str> {
         self.legend
             .get(code.to_string().as_str())
@@ -53,7 +53,7 @@ impl MapData {
     }
 }
 
-/// Det som visas i statusraden.
+/// What is shown in the status bar.
 #[derive(Debug, Clone, PartialEq, Default, Deserialize)]
 pub struct Status {
     pub name: String,
@@ -70,14 +70,19 @@ impl fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "{} · {} · HP {}/{} · {} online",
-            self.name, self.room, self.hp, self.max_hp, self.online
+            "{} · {} · HP {}/{} · {} {}",
+            self.name,
+            self.room,
+            self.hp,
+            self.max_hp,
+            self.online,
+            crate::messages::ONLINE
         )
     }
 }
 
-/// Tolkar en rad från servern. Rader som inte är giltig JSON (t.ex. innan
-/// handskakningen) blir vanlig text – så klienten fungerar med alla servrar.
+/// Parses a line from the server. Lines that are not valid JSON (e.g. before
+/// the handshake) become plain text – so the client works with any server.
 pub fn parse_line(line: &str) -> ServerMsg {
     if line.starts_with('{') {
         if let Ok(msg) = serde_json::from_str(line) {

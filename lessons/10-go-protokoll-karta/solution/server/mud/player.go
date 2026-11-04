@@ -10,22 +10,22 @@ import (
 	"sync/atomic"
 )
 
-// outboxSize är hur många meddelanden som får vänta på att skickas till en
-// spelare innan vi anser att klienten är för långsam.
+// outboxSize is how many messages may wait to be sent to a player before we
+// consider the client too slow.
 const outboxSize = 256
 
-// Player är en ansluten spelare.
+// Player is a connected player.
 type Player struct {
 	Name string
-	Room *Room // var spelaren står; skyddas av Server.mu
+	Room *Room // where the player is; protected by Server.mu
 
 	conn    net.Conn
 	scanner *bufio.Scanner
-	quit    bool // sätts till true när spelaren vill sluta
+	quit    bool // set to true when the player wants to leave
 
-	structured atomic.Bool   // true = klienten vill ha JSON (se HelloPrefix)
-	outbox     chan Frame    // allt som ska skickas till spelaren
-	done       chan struct{} // stängs när skrivargoroutinen är klar
+	structured atomic.Bool   // true = the client wants JSON (see HelloPrefix)
+	outbox     chan Frame    // everything to be sent to the player
+	done       chan struct{} // closed when the writer goroutine has finished
 }
 
 func newPlayer(conn net.Conn) *Player {
@@ -39,8 +39,8 @@ func newPlayer(conn net.Conn) *Player {
 	return p
 }
 
-// writeLoop är den ENDA goroutine som skriver till p.conn. Den bestämmer
-// också hur varje Frame ska kodas: som text eller som JSON.
+// writeLoop is the ONLY goroutine that writes to p.conn. It also decides how
+// each Frame is encoded: as text or as JSON.
 func (p *Player) writeLoop() {
 	defer close(p.done)
 	for f := range p.outbox {
@@ -54,39 +54,39 @@ func (p *Player) writeLoop() {
 			continue
 		}
 		if _, err := io.WriteString(p.conn, wire); err != nil {
-			continue // anslutningen är död; töm kanalen så att ingen fastnar
+			continue // the connection is dead; keep draining so nobody gets stuck
 		}
 	}
 }
 
-// SendFrame köar en Frame till spelaren. Den blockerar aldrig: är utkorgen
-// full kopplas spelaren ner istället.
+// SendFrame queues a Frame for the player. It never blocks: if the outbox is
+// full the player is disconnected instead.
 func (p *Player) SendFrame(f Frame) {
 	select {
 	case p.outbox <- f:
 	default:
-		log.Printf("%s är för långsam – kopplar ner", p.conn.RemoteAddr())
+		log.Printf("%s is too slow – disconnecting", p.conn.RemoteAddr())
 		p.conn.Close()
 	}
 }
 
-// Send skickar text till spelaren.
+// Send sends text to the player.
 func (p *Player) Send(text string) {
 	p.SendFrame(TextFrame(text))
 }
 
-// Sendf är som Send men med fmt.Sprintf-formatering.
+// Sendf is like Send but with fmt.Sprintf formatting.
 func (p *Player) Sendf(format string, args ...any) {
 	p.Send(fmt.Sprintf(format, args...))
 }
 
-// Structured talar om ifall klienten vill ha JSON.
+// Structured reports whether the client wants JSON.
 func (p *Player) Structured() bool {
 	return p.structured.Load()
 }
 
-// readLine läser nästa rad från spelaren. ok är false om spelaren kopplat ner.
-// Protokollrader (som "@hello") hanteras här och syns aldrig för kommandona.
+// readLine reads the next line from the player. ok is false if the player disconnected.
+// Protocol lines (like "@hello") are handled here and never reach the commands.
 func (p *Player) readLine() (line string, ok bool) {
 	for p.scanner.Scan() {
 		line := p.scanner.Text()
@@ -100,8 +100,8 @@ func (p *Player) readLine() (line string, ok bool) {
 	return "", false
 }
 
-// close stänger utkorgen och väntar tills allt i den har skickats.
-// Efter close får ingen anropa Send.
+// close closes the outbox and waits until everything in it has been sent.
+// Nobody may call Send after close.
 func (p *Player) close() {
 	close(p.outbox)
 	<-p.done

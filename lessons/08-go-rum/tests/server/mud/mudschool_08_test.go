@@ -1,53 +1,68 @@
 package mud
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
 
 func testWorld() *World {
 	return NewWorld("torg",
-		&Room{ID: "torg", Name: "Torget", Description: "Ett torg.", Exits: map[string]string{"north": "krog", "east": "smedja"}},
-		&Room{ID: "krog", Name: "Krogen", Description: "En krog.\nDet luktar öl.", Exits: map[string]string{"south": "torg"}},
-		&Room{ID: "smedja", Name: "Smedjan", Description: "Varmt.", Exits: map[string]string{"west": "torg"}},
-		&Room{ID: "cell", Name: "Cellen", Description: "Inga dörrar."},
+		&Room{ID: "torg", Name: "Square", Description: "A square.", Exits: map[string]string{"north": "krog", "east": "smedja"}},
+		&Room{ID: "krog", Name: "Tavern", Description: "A tavern.\nIt smells of ale.", Exits: map[string]string{"south": "torg"}},
+		&Room{ID: "smedja", Name: "Smithy", Description: "Hot.", Exits: map[string]string{"west": "torg"}},
+		&Room{ID: "cell", Name: "Cell", Description: "No doors."},
 	)
+}
+
+func exitsLine(dirs ...string) string {
+	names := ""
+	for i, d := range dirs {
+		if i > 0 {
+			names += MsgListSep
+		}
+		names += directionNames[d]
+	}
+	return fmt.Sprintf(MsgExits, names)
 }
 
 func TestNewWorld(t *testing.T) {
 	w := testWorld()
+	if w == nil {
+		t.Fatal("NewWorld returned nil")
+	}
 	if w.Start != "torg" {
-		t.Errorf("Start = %q, väntade %q", w.Start, "torg")
+		t.Errorf("Start = %q, %s %q", w.Start, L("väntade", "expected", "期待値"), "torg")
 	}
 	if len(w.Rooms) != 4 {
-		t.Errorf("världen har %d rum, väntade 4", len(w.Rooms))
+		t.Errorf(L("världen har %d rum, väntade 4", "the world has %d rooms, expected 4", "部屋が %d 個あります。期待値は 4 です"), len(w.Rooms))
 	}
-	if r := w.Room("krog"); r == nil || r.Name != "Krogen" {
-		t.Errorf("Room(%q) = %v, väntade Krogen", "krog", r)
+	if r := w.Room("krog"); r == nil || r.Name != "Tavern" {
+		t.Errorf("Room(%q) = %v, %s Tavern", "krog", r, L("väntade", "expected", "期待値"))
 	}
-	if r := w.Room("finns-inte"); r != nil {
-		t.Errorf("Room för okänt ID ska ge nil, fick %v", r)
+	if r := w.Room("missing"); r != nil {
+		t.Errorf(L("Room för okänt ID ska ge nil, fick %v", "Room for an unknown ID should return nil, got %v", "未知の ID に対して Room は nil を返すべきですが、%v でした"), r)
 	}
 }
 
 func TestDefaultWorldIsConsistent(t *testing.T) {
 	w := DefaultWorld()
 	if w.Room(w.Start) == nil {
-		t.Fatalf("startrummet %q finns inte", w.Start)
+		t.Fatalf(L("startrummet %q finns inte", "the start room %q does not exist", "開始部屋 %q が存在しません"), w.Start)
 	}
 	if len(w.Rooms) < 5 {
-		t.Errorf("standardvärlden har bara %d rum – minst 5, tack!", len(w.Rooms))
+		t.Errorf(L("standardvärlden har bara %d rum – minst 5, tack!", "the default world has only %d rooms – at least 5, please!", "標準の世界に部屋が %d 個しかありません。5 個以上にしてください！"), len(w.Rooms))
 	}
 	for id, r := range w.Rooms {
 		if r.ID != id {
-			t.Errorf("rummet %q ligger under nyckeln %q", r.ID, id)
+			t.Errorf(L("rummet %q ligger under nyckeln %q", "the room %q is stored under the key %q", "部屋 %q がキー %q に格納されています"), r.ID, id)
 		}
 		for dir, to := range r.Exits {
 			if w.Room(to) == nil {
-				t.Errorf("%s: utgången %s leder till %q som inte finns", id, dir, to)
+				t.Errorf(L("%s: utgången %s leder till %q som inte finns", "%s: exit %s leads to %q, which does not exist", "%s: 出口 %s の行き先 %q が存在しません"), id, dir, to)
 			}
 			if _, ok := directionNames[dir]; !ok {
-				t.Errorf("%s: okänd riktning %q", id, dir)
+				t.Errorf(L("%s: okänd riktning %q", "%s: unknown direction %q", "%s: 不明な方向 %q"), id, dir)
 			}
 		}
 	}
@@ -56,14 +71,14 @@ func TestDefaultWorldIsConsistent(t *testing.T) {
 func TestLookAfterLogin(t *testing.T) {
 	addr := startServer(t, NewServerWithWorld(testWorld()))
 	c := login(t, addr, "Anna")
-	c.expect("Torget")
-	c.expect("Ett torg.")
-	c.expect("Utgångar: norr, öster")
+	c.expect("Square")
+	c.expect("A square.")
+	c.expect(exitsLine("north", "east"))
 
 	c.send("look")
-	c.expect("Torget")
-	c.expect("Ett torg.")
-	c.expect("Utgångar: norr, öster")
+	c.expect("Square")
+	c.expect("A square.")
+	c.expect(exitsLine("north", "east"))
 }
 
 func TestMove(t *testing.T) {
@@ -71,34 +86,34 @@ func TestMove(t *testing.T) {
 	c := login(t, addr, "Anna")
 	c.drain()
 	c.send("north")
-	c.expect("Krogen")
-	c.expect("En krog.")
-	c.expect("Det luktar öl.")
-	c.expect("Utgångar: söder")
+	c.expect("Tavern")
+	c.expect("A tavern.")
+	c.expect("It smells of ale.")
+	c.expect(exitsLine("south"))
 
 	c.send("w")
-	c.expect("Du kan inte gå åt det hållet.")
+	c.expect(MsgCantGo)
 
 	c.send("s")
-	c.expect("Torget")
+	c.expect("Square")
 	c.drain()
 	c.send("e")
-	c.expect("Smedjan")
+	c.expect("Smithy")
 }
 
 func TestOthersSeeYouComeAndGo(t *testing.T) {
 	addr := startServer(t, NewServerWithWorld(testWorld()))
 	anna := login(t, addr, "Anna")
 	bertil := login(t, addr, "Bertil")
-	anna.expectContains("Bertil har anslutit.")
-	bertil.expectContains("Här finns: Anna")
+	anna.expectContains(fmt.Sprintf(MsgJoined, "Bertil"))
+	bertil.expectContains(fmt.Sprintf(MsgHere, "Anna"))
 
 	bertil.send("n")
-	anna.expect("Bertil går norrut.")
+	anna.expect(fmt.Sprintf(MsgLeaves, "Bertil", directionTravel["north"]))
 
 	anna.send("n")
-	bertil.expectContains("Anna kommer in.")
-	anna.expectContains("Här finns: Bertil")
+	bertil.expectContains(fmt.Sprintf(MsgArrives, "Anna"))
+	anna.expectContains(fmt.Sprintf(MsgHere, "Bertil"))
 }
 
 func TestSayIsLocalShoutIsGlobal(t *testing.T) {
@@ -107,20 +122,20 @@ func TestSayIsLocalShoutIsGlobal(t *testing.T) {
 	bertil := login(t, addr, "Bertil")
 	cecilia := login(t, addr, "Cecilia")
 	cecilia.send("e")
-	cecilia.expectContains("Smedjan")
+	cecilia.expectContains("Smithy")
 	anna.drain()
 	bertil.drain()
 	cecilia.drain()
 
-	anna.send("say hej")
-	anna.expect("Du säger: hej")
-	bertil.expect("Anna säger: hej")
+	anna.send("say hi")
+	anna.expect(fmt.Sprintf(MsgYouSay, "hi"))
+	bertil.expect(fmt.Sprintf(MsgSays, "Anna", "hi"))
 	cecilia.expectSilence(200 * time.Millisecond)
 
-	anna.send("shout HALLÅ")
-	anna.expect("Du ropar: HALLÅ")
-	bertil.expect("Anna ropar: HALLÅ")
-	cecilia.expect("Anna ropar: HALLÅ")
+	anna.send("shout HELLO")
+	anna.expect(fmt.Sprintf(MsgYouShout, "HELLO"))
+	bertil.expect(fmt.Sprintf(MsgShouts, "Anna", "HELLO"))
+	cecilia.expect(fmt.Sprintf(MsgShouts, "Anna", "HELLO"))
 }
 
 func TestNewServerUsesDefaultWorld(t *testing.T) {

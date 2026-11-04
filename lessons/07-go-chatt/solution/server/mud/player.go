@@ -9,20 +9,20 @@ import (
 	"strings"
 )
 
-// outboxSize är hur många meddelanden som får vänta på att skickas till en
-// spelare innan vi anser att klienten är för långsam.
+// outboxSize is how many messages may wait to be sent to a player before we
+// consider the client too slow.
 const outboxSize = 256
 
-// Player är en ansluten spelare.
+// Player is a connected player.
 type Player struct {
 	Name string
 
 	conn    net.Conn
 	scanner *bufio.Scanner
-	quit    bool // sätts till true när spelaren vill sluta
+	quit    bool // set to true when the player wants to leave
 
-	outbox chan string   // allt som ska skickas till spelaren
-	done   chan struct{} // stängs när skrivargoroutinen är klar
+	outbox chan string   // everything to be sent to the player
+	done   chan struct{} // closed when the writer goroutine has finished
 }
 
 func newPlayer(conn net.Conn) *Player {
@@ -36,35 +36,35 @@ func newPlayer(conn net.Conn) *Player {
 	return p
 }
 
-// writeLoop är den ENDA goroutine som skriver till p.conn.
+// writeLoop is the ONLY goroutine that writes to p.conn.
 func (p *Player) writeLoop() {
 	defer close(p.done)
 	for msg := range p.outbox {
 		if _, err := io.WriteString(p.conn, msg); err != nil {
-			// Anslutningen är död. Fortsätt tömma kanalen så att ingen fastnar.
+			// The connection is dead. Keep draining so nobody gets stuck.
 			continue
 		}
 	}
 }
 
-// Send köar text till spelaren. Send blockerar aldrig: är utkorgen full
-// kopplas spelaren ner istället.
+// Send queues text for the player. Send never blocks: if the outbox is full
+// the player is disconnected instead.
 func (p *Player) Send(text string) {
 	msg := strings.ReplaceAll(text, "\n", "\r\n") + "\r\n"
 	select {
 	case p.outbox <- msg:
 	default:
-		log.Printf("%s är för långsam – kopplar ner", p.conn.RemoteAddr())
+		log.Printf("%s is too slow – disconnecting", p.conn.RemoteAddr())
 		p.conn.Close()
 	}
 }
 
-// Sendf är som Send men med fmt.Sprintf-formatering.
+// Sendf is like Send but with fmt.Sprintf formatting.
 func (p *Player) Sendf(format string, args ...any) {
 	p.Send(fmt.Sprintf(format, args...))
 }
 
-// readLine läser nästa rad från spelaren. ok är false om spelaren kopplat ner.
+// readLine reads the next line from the player. ok is false if the player disconnected.
 func (p *Player) readLine() (line string, ok bool) {
 	if !p.scanner.Scan() {
 		return "", false
@@ -72,8 +72,8 @@ func (p *Player) readLine() (line string, ok bool) {
 	return p.scanner.Text(), true
 }
 
-// close stänger utkorgen och väntar tills allt i den har skickats.
-// Efter close får ingen anropa Send.
+// close closes the outbox and waits until everything in it has been sent.
+// Nobody may call Send after close.
 func (p *Player) close() {
 	close(p.outbox)
 	<-p.done

@@ -1,6 +1,13 @@
 {
-  "title": "Många spelare samtidigt – goroutines",
+  "title": {
+    "sv": "Många spelare samtidigt – goroutines",
+    "en": "Many players at once – goroutines",
+    "ja": "大勢で同時に遊ぶ – ゴルーチン"
+  },
   "track": "go",
-  "summary": "Hantera varje anslutning i en egen goroutine så att flera kan spela samtidigt.",
-  "concepts": ["goroutines", "go-nyckelordet", "closures", "sync.WaitGroup", "log-paketet", "go test -race"]
+  "summary": {
+    "sv": "Hantera varje anslutning i en egen goroutine så att flera kan spela samtidigt.",
+    "en": "Handle every connection in its own goroutine so that several people can play at once.",
+    "ja": "接続ごとにゴルーチンを使い、複数人が同時に遊べるようにする。"
+  }
 }

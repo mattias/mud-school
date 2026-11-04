@@ -1,21 +1,21 @@
-//! Nätverksdelen av klienten.
+//! The network part of the client.
 
 use std::io::{self, BufRead, BufReader, Write};
 use std::net::TcpStream;
 
-/// En anslutning till MUD-servern.
+/// A connection to the MUD server.
 pub struct Connection {
     reader: BufReader<TcpStream>,
     outgoing: Outgoing,
 }
 
-/// Skrivhalvan av en anslutning.
+/// The writing half of a connection.
 pub struct Outgoing {
     stream: TcpStream,
 }
 
 impl Outgoing {
-    /// Skickar en rad till servern (lägger till "\r\n").
+    /// Sends a line to the server (appends "\r\n").
     pub fn send_line(&mut self, line: &str) -> io::Result<()> {
         self.stream.write_all(line.as_bytes())?;
         self.stream.write_all(b"\r\n")?;
@@ -24,7 +24,7 @@ impl Outgoing {
 }
 
 impl Connection {
-    /// Ansluter till servern på `addr`, t.ex. "127.0.0.1:4000".
+    /// Connects to the server at `addr`, e.g. "127.0.0.1:4000".
     pub fn connect(addr: &str) -> io::Result<Connection> {
         let stream = TcpStream::connect(addr)?;
         let writer = stream.try_clone()?;
@@ -34,8 +34,8 @@ impl Connection {
         })
     }
 
-    /// Läser nästa rad från servern utan "\r\n" i slutet.
-    /// Returnerar Ok(None) när servern har stängt anslutningen.
+    /// Reads the next line from the server without the trailing "\r\n".
+    /// Returns Ok(None) when the server has closed the connection.
     pub fn read_line(&mut self) -> io::Result<Option<String>> {
         let mut buf = String::new();
         if self.reader.read_line(&mut buf)? == 0 {
@@ -45,13 +45,13 @@ impl Connection {
         Ok(Some(line.to_string()))
     }
 
-    /// Skickar en rad till servern (lägger till "\r\n").
+    /// Sends a line to the server (appends "\r\n").
     pub fn send_line(&mut self, line: &str) -> io::Result<()> {
         self.outgoing.send_line(line)
     }
 
-    /// Delar upp anslutningen i en läs- och en skrivhalva som kan användas
-    /// från olika trådar. `self` tas som värde: anslutningen *förbrukas*.
+    /// Splits the connection into a reading and a writing half that can be used
+    /// from different threads. `self` is taken by value: the connection is *consumed*.
     pub fn split(self) -> (BufReader<TcpStream>, Outgoing) {
         (self.reader, self.outgoing)
     }

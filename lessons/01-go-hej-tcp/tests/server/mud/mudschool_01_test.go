@@ -16,7 +16,7 @@ func TestEcho(t *testing.T) {
 	addr := startServer(t, NewServer())
 	c := connect(t, addr)
 	c.expect(Welcome)
-	for _, line := range []string{"hej", "titta på dig själv", "åäö fungerar också"} {
+	for _, line := range []string{"hello", "åäö works too", "日本語も大丈夫"} {
 		c.send(line)
 		c.expect(line)
 	}
@@ -30,8 +30,8 @@ func TestClientCanReconnect(t *testing.T) {
 
 	second := connect(t, addr)
 	second.expect(Welcome)
-	second.send("igen")
-	second.expect("igen")
+	second.send("again")
+	second.expect("again")
 }
 
 func TestServeReturnsErrorWhenListenerCloses(t *testing.T) {
@@ -45,7 +45,9 @@ func TestServeReturnsErrorWhenListenerCloses(t *testing.T) {
 	time.Sleep(50 * time.Millisecond)
 	select {
 	case err := <-done:
-		t.Fatalf("Serve returnerade direkt (%v) – den ska fortsätta ta emot anslutningar i en loop", err)
+		t.Fatalf(L("Serve returnerade direkt (%v) – den ska fortsätta ta emot anslutningar i en loop",
+			"Serve returned immediately (%v) – it should keep accepting connections in a loop",
+			"Serve がすぐに戻りました (%v)。ループで接続を受け付け続ける必要があります"), err)
 	default:
 	}
 
@@ -53,9 +55,13 @@ func TestServeReturnsErrorWhenListenerCloses(t *testing.T) {
 	select {
 	case err := <-done:
 		if err == nil {
-			t.Fatal("Serve returnerade nil när lyssnaren stängdes – den ska returnera felet från Accept")
+			t.Fatal(L("Serve returnerade nil när lyssnaren stängdes – den ska returnera felet från Accept",
+				"Serve returned nil when the listener was closed – it should return the error from Accept",
+				"リスナーを閉じたとき Serve が nil を返しました。Accept のエラーを返す必要があります"))
 		}
 	case <-time.After(testTimeout):
-		t.Fatal("Serve returnerade inte efter att lyssnaren stängts")
+		t.Fatal(L("Serve returnerade inte efter att lyssnaren stängts",
+			"Serve did not return after the listener was closed",
+			"リスナーを閉じても Serve が戻りませんでした"))
 	}
 }

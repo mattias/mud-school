@@ -1,8 +1,8 @@
-//! Klientens tillstånd och hur det ritas.
+//! The client's state and how it is drawn.
 //!
-//! Arkitekturen är "The Elm Architecture" i miniformat:
-//!   händelse (tangent / servermeddelande) -> uppdatera App -> rita App.
-//! All logik ligger i App och kan testas utan terminal och utan nätverk.
+//! The architecture is "The Elm Architecture" in miniature:
+//!   event (key / server message) -> update App -> draw App.
+//! All logic lives in App and can be tested without a terminal or a network.
 
 use ratatui::crossterm::event::{KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use ratatui::layout::{Constraint, Layout, Rect};
@@ -11,10 +11,11 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Paragraph};
 use ratatui::Frame;
 
+use crate::messages;
 use crate::protocol::{MapData, ServerMsg, Status};
 use crate::render::{render_map, Rgb};
 
-/// Max antal rader som sparas i loggen.
+/// The maximum number of lines kept in the log.
 pub const MAX_LOG: usize = 1000;
 
 impl From<Rgb> for Color {
@@ -23,7 +24,7 @@ impl From<Rgb> for Color {
     }
 }
 
-/// Allt klienten vet just nu.
+/// Everything the client knows right now.
 #[derive(Debug, Default)]
 pub struct App {
     pub log: Vec<String>,
@@ -38,7 +39,7 @@ impl App {
         App::default()
     }
 
-    /// Lägger till text i loggen (en rad per rad i texten).
+    /// Adds text to the log (one entry per line of the text).
     pub fn push_log(&mut self, text: &str) {
         self.log.extend(text.lines().map(str::to_string));
         if self.log.len() > MAX_LOG {
@@ -47,7 +48,7 @@ impl App {
         }
     }
 
-    /// Hanterar ett meddelande från servern.
+    /// Handles a message from the server.
     pub fn on_server(&mut self, msg: ServerMsg) {
         match msg {
             ServerMsg::Text { text } => self.push_log(&text),
@@ -57,13 +58,13 @@ impl App {
         }
     }
 
-    /// Servern kopplade ner.
+    /// The server disconnected.
     pub fn on_disconnect(&mut self) {
-        self.push_log("*** Anslutningen till servern stängdes. Tryck Esc för att avsluta.");
+        self.push_log(messages::DISCONNECTED);
     }
 
-    /// Hanterar en tangenttryckning. Returnerar en rad att skicka till
-    /// servern när spelaren trycker Enter.
+    /// Handles a key press. Returns a line to send to the server when the
+    /// player presses Enter.
     pub fn on_key(&mut self, key: KeyEvent) -> Option<String> {
         if key.kind != KeyEventKind::Press {
             return None;
@@ -86,14 +87,14 @@ impl App {
     }
 }
 
-/// Ritar hela gränssnittet:
+/// Draws the whole user interface:
 ///
 /// ```text
-/// ┌ statusrad ───────────────────────────────┐
-/// │ logg                       │   karta     │
+/// ┌ status bar ──────────────────────────────┐
+/// │ log                        │   map       │
 /// │                            │             │
 /// ├────────────────────────────┴─────────────┤
-/// │ > inmatning                              │
+/// │ > input                                  │
 /// └──────────────────────────────────────────┘
 /// ```
 pub fn draw(frame: &mut Frame, app: &App) {
@@ -112,8 +113,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
     draw_log(frame, app, log_area);
     draw_map(frame, app, map_area);
 
-    let input = Paragraph::new(format!("> {}", app.input))
-        .block(Block::default().borders(Borders::ALL).title(" Kommando "));
+    let input = Paragraph::new(format!("> {}", app.input)).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(messages::TITLE_INPUT),
+    );
     frame.render_widget(input, input_area);
     frame.set_cursor_position((
         input_area.x + 3 + app.input.chars().count() as u16,
@@ -124,7 +128,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 fn draw_status(frame: &mut Frame, app: &App, area: Rect) {
     let bar = Style::default().bg(Color::Rgb(40, 40, 60)).fg(Color::White);
     let line = match &app.status {
-        None => Line::from(" Inte inloggad"),
+        None => Line::from(messages::NOT_LOGGED_IN),
         Some(s) => {
             let hearts = 10;
             let full = if s.max_hp > 0 {
@@ -143,7 +147,13 @@ fn draw_status(frame: &mut Frame, app: &App, area: Rect) {
                     "♥".repeat(hearts as usize - full),
                     Style::default().fg(Color::Rgb(80, 80, 90)),
                 ),
-                Span::raw(format!(" HP {}/{} · {} online", s.hp, s.max_hp, s.online)),
+                Span::raw(format!(
+                    " HP {}/{} · {} {}",
+                    s.hp,
+                    s.max_hp,
+                    s.online,
+                    messages::ONLINE
+                )),
             ])
         }
     };
@@ -151,19 +161,23 @@ fn draw_status(frame: &mut Frame, app: &App, area: Rect) {
 }
 
 fn draw_log(frame: &mut Frame, app: &App, area: Rect) {
-    let visible = area.height.saturating_sub(2) as usize; // minus ramen
+    let visible = area.height.saturating_sub(2) as usize; // minus the border
     let start = app.log.len().saturating_sub(visible);
     let lines: Vec<Line> = app.log[start..]
         .iter()
         .map(|l| Line::from(l.as_str()))
         .collect();
-    let log = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title(" Logg "));
+    let log = Paragraph::new(lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(messages::TITLE_LOG),
+    );
     frame.render_widget(log, area);
 }
 
 fn draw_map(frame: &mut Frame, app: &App, area: Rect) {
     let lines: Vec<Line> = match &app.map {
-        None => vec![Line::from("(ingen karta)")],
+        None => vec![Line::from(messages::NO_MAP)],
         Some(map) => render_map(map)
             .into_iter()
             .map(|row| {
@@ -179,6 +193,8 @@ fn draw_map(frame: &mut Frame, app: &App, area: Rect) {
             })
             .collect(),
     };
-    let block = Block::default().borders(Borders::ALL).title(" Karta ");
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title(messages::TITLE_MAP);
     frame.render_widget(Paragraph::new(lines).block(block), area);
 }

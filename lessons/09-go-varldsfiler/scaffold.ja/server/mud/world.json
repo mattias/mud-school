@@ -1,0 +1,276 @@
+{
+  "start": "torget",
+  "rooms": [
+    {
+      "id": "torget",
+      "name": "マドビー広場",
+      "description": "石畳の広場。中央に古い井戸があり、\n北の酒場から笑い声とジョッキの音が聞こえる。",
+      "terrain": "town",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "north": "krogen",
+        "east": "smedjan",
+        "south": "porten",
+        "west": "templet"
+      }
+    },
+    {
+      "id": "krogen",
+      "name": "酒場「陽気な竜亭」",
+      "description": "エールと煙のにおいがする。階段が客室へ続いている。",
+      "terrain": "inside",
+      "x": 0,
+      "y": -1,
+      "z": 0,
+      "exits": {
+        "south": "torget",
+        "up": "gastrummet"
+      }
+    },
+    {
+      "id": "gastrummet",
+      "name": "小さな客室",
+      "description": "狭いベッドと、広場に面した窓がひとつ。",
+      "terrain": "inside",
+      "x": 0,
+      "y": -1,
+      "z": 1,
+      "exits": {
+        "down": "krogen"
+      }
+    },
+    {
+      "id": "smedjan",
+      "name": "鍛冶屋",
+      "description": "炉の熱が押し寄せてくる。槌の音が壁に響いている。",
+      "terrain": "inside",
+      "x": 1,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "west": "torget"
+      }
+    },
+    {
+      "id": "templet",
+      "name": "神殿",
+      "description": "静かでひんやりとした神殿。祭壇の前でろうそくが揺れている。",
+      "terrain": "inside",
+      "x": -1,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "east": "torget"
+      }
+    },
+    {
+      "id": "porten",
+      "name": "町の門",
+      "description": "町の城壁にある重い木の門。南へ森に向かう道が続いている。",
+      "terrain": "town",
+      "x": 0,
+      "y": 1,
+      "z": 0,
+      "exits": {
+        "north": "torget",
+        "south": "vagen1"
+      }
+    },
+    {
+      "id": "vagen1",
+      "name": "街道",
+      "description": "深いわだちのあるぬかるんだ道。北にマドビーの城壁が見える。",
+      "terrain": "road",
+      "x": 0,
+      "y": 2,
+      "z": 0,
+      "exits": {
+        "north": "porten",
+        "south": "vagen2"
+      }
+    },
+    {
+      "id": "vagen2",
+      "name": "街道",
+      "description": "低い石垣と野バラが道沿いに続いている。",
+      "terrain": "road",
+      "x": 0,
+      "y": 3,
+      "z": 0,
+      "exits": {
+        "north": "vagen1",
+        "south": "korsningen"
+      }
+    },
+    {
+      "id": "korsningen",
+      "name": "十字路",
+      "description": "道標が四方を指しているが、文字は風化して読めない。",
+      "terrain": "road",
+      "x": 0,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "north": "vagen2",
+        "east": "skogsbrynet",
+        "south": "stigen",
+        "west": "angen"
+      }
+    },
+    {
+      "id": "angen",
+      "name": "草原",
+      "description": "背の高い草が風に波打ち、花の間を蝶が舞っている。",
+      "terrain": "field",
+      "x": -1,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "korsningen",
+        "west": "stranden"
+      }
+    },
+    {
+      "id": "stranden",
+      "name": "湖畔",
+      "description": "砂と葦。西には暗い湖が広がっている。",
+      "terrain": "field",
+      "x": -2,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "angen",
+        "west": "sjon"
+      }
+    },
+    {
+      "id": "sjon",
+      "name": "湖の中",
+      "description": "腰まで冷たい水につかっている。足元で何かが動いた。",
+      "terrain": "water",
+      "x": -3,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "stranden"
+      }
+    },
+    {
+      "id": "skogsbrynet",
+      "name": "森のはずれ",
+      "description": "ここから大きな森が始まる。トウヒが密に立ち並んでいる。",
+      "terrain": "forest",
+      "x": 1,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "djupskogen",
+        "west": "korsningen"
+      }
+    },
+    {
+      "id": "djupskogen",
+      "name": "森の奥",
+      "description": "木々の間はほとんど暗い。枝がきしむ音がする。",
+      "terrain": "forest",
+      "x": 2,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "north": "glantan",
+        "south": "morkskogen",
+        "west": "skogsbrynet"
+      }
+    },
+    {
+      "id": "glantan",
+      "name": "日だまりの空き地",
+      "description": "小さな空き地に日の光が差し込む。中央に一本の樫の木が立っている。",
+      "terrain": "field",
+      "x": 2,
+      "y": 3,
+      "z": 0,
+      "exits": {
+        "south": "djupskogen"
+      }
+    },
+    {
+      "id": "morkskogen",
+      "name": "暗い森",
+      "description": "苔が足音を消す。誰か――あるいは何か――がこちらを見ている。",
+      "terrain": "forest",
+      "x": 2,
+      "y": 5,
+      "z": 0,
+      "exits": {
+        "north": "djupskogen"
+      }
+    },
+    {
+      "id": "stigen",
+      "name": "細い小道",
+      "description": "小道は南の山へと登っていく。足元で小石が転がる。",
+      "terrain": "road",
+      "x": 0,
+      "y": 5,
+      "z": 0,
+      "exits": {
+        "north": "korsningen",
+        "south": "bergsfoten"
+      }
+    },
+    {
+      "id": "bergsfoten",
+      "name": "山のふもと",
+      "description": "切り立った崖が空へそびえる。東に洞窟の入口が口を開けている。",
+      "terrain": "mountain",
+      "x": 0,
+      "y": 6,
+      "z": 0,
+      "exits": {
+        "north": "stigen",
+        "east": "grottmynningen"
+      }
+    },
+    {
+      "id": "grottmynningen",
+      "name": "洞窟の入口",
+      "description": "山の中から冷たい空気が流れ出てくる。天井から水が滴っている。",
+      "terrain": "cave",
+      "x": 1,
+      "y": 6,
+      "z": 0,
+      "exits": {
+        "south": "grottan",
+        "west": "bergsfoten"
+      }
+    },
+    {
+      "id": "grottan",
+      "name": "洞窟",
+      "description": "湿った壁がきらめいている。縦穴がまっすぐ闇の底へ続いている。",
+      "terrain": "cave",
+      "x": 1,
+      "y": 7,
+      "z": 0,
+      "exits": {
+        "north": "grottmynningen",
+        "down": "djupgrottan"
+      }
+    },
+    {
+      "id": "djupgrottan",
+      "name": "洞窟の深み",
+      "description": "真っ暗闇。自分のものではない息づかいが聞こえる。",
+      "terrain": "cave",
+      "x": 1,
+      "y": 7,
+      "z": -1,
+      "exits": {
+        "up": "grottan"
+      }
+    }
+  ]
+}

@@ -1,22 +1,22 @@
 package mud
 
-// Command är en tolkad rad från spelaren.
+// Command is a parsed line from the player.
 //
 //	"Get Sword from chest" -> Command{Verb: "get", Args: []string{"Sword", "from", "chest"}, Rest: "Sword from chest"}
 type Command struct {
-	Verb string   // första ordet, med små bokstäver och förkortningar expanderade
-	Args []string // resten av orden
-	Rest string   // resten av raden som den skrevs (utan mellanslag i början/slutet)
+	Verb string   // the first word, lower case, with abbreviations expanded
+	Args []string // the remaining words
+	Rest string   // the rest of the line as typed (trimmed)
 }
 
-// aliases mappar förkortningar till fullständiga verb.
+// aliases maps abbreviations to full verbs.
 var aliases = map[string]string{
 	"n": "north",
-	// TODO(lektion 4): lägg till s, e, w, u, d, l (look), ? (help) och q (quit)
+	// TODO(lesson 4): add s, e, w, u, d, l (look), ? (help) and q (quit)
 }
 
-// ParseCommand tolkar en rad från spelaren.
+// ParseCommand parses a line from the player.
 func ParseCommand(line string) Command {
-	// TODO(lektion 4)
+	// TODO(lesson 4)
 	return Command{}
 }

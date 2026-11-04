@@ -2,7 +2,7 @@
 
 ## Fälten
 
-Titta i `docs/PROTOKOLL.md` eller i Go-serverns `frame.go` – namnen ska vara
+Titta i `docs/sv/PROTOCOL.md` eller i Go-serverns `frame.go` – namnen ska vara
 exakt desamma som i JSON.
 
 ```rust

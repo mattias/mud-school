@@ -1,6 +1,13 @@
 {
-  "title": "Spelare – inloggning och delat tillstånd",
+  "title": {
+    "sv": "Spelare – inloggning och delat tillstånd",
+    "en": "Players – login and shared state",
+    "ja": "プレイヤー – ログインと共有状態"
+  },
   "track": "go",
-  "summary": "Låt spelare välja namn, håll reda på vilka som är inloggade och skydda delad data med en mutex.",
-  "concepts": ["egna feltyper", "errors.Is och %w", "unicode och runor", "sync.Mutex", "data races", "defer för att låsa upp"]
+  "summary": {
+    "sv": "Låt spelare välja namn, håll reda på vilka som är inloggade och skydda delad data med en mutex.",
+    "en": "Let players choose a name, keep track of who is logged in and protect shared data with a mutex.",
+    "ja": "名前を選ばせ、ログイン中のプレイヤーを管理し、共有データをミューテックスで守る。"
+  }
 }

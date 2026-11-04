@@ -1,16 +1,16 @@
-# Ledtrådar
+# Hints
 
-## Dela upp raden
+## Splitting the line
 
-`strings.Cut(line, " ")` delar vid första mellanslaget och returnerar
-`(före, efter, hittades)`:
+`strings.Cut(line, " ")` splits at the first space and returns
+`(before, after, found)`:
 
 ```go
 verb, rest, _ := strings.Cut("get sword from chest", " ")
 // verb = "get", rest = "sword from chest"
 ```
 
-## Förkortningar
+## Abbreviations
 
 ```go
 if full, ok := aliases[verb]; ok {
@@ -18,14 +18,14 @@ if full, ok := aliases[verb]; ok {
 }
 ```
 
-## Apostrof-genvägen
+## The apostrophe shortcut
 
-`strings.CutPrefix(line, "'")` returnerar resten och om prefixet fanns.
+`strings.CutPrefix(line, "'")` returns the rest and whether the prefix was there.
 
 ## help
 
-Samla nycklarna ur mappen i en slice, sortera med `sort.Strings` och sätt
-ihop dem med `strings.Join(verbs, MsgListSep)`. Sedan `p.Sendf(MsgCommands, lista)`.
+Collect the keys of the map in a slice, sort it with `sort.Strings` and join
+it with `strings.Join(verbs, MsgListSep)`. Then `p.Sendf(MsgCommands, list)`.
 
 ## handle
 

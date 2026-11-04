@@ -1,95 +1,96 @@
-# Lektion 03 – Hej, Rust!
+# Lesson 03 – Hello, Rust!
 
-Nu har du en server. Dags att byta språk och bygga **klienten** – det
-program som spelaren till slut kommer att se: karta i färg, statusrad,
-loggfönster. Allt det kommer, men först måste vi kunna prata med servern.
+You have a server. Time to switch languages and build the **client** – the
+program the player will eventually see: a colour map, a status bar, a log
+window. All of that is coming, but first we have to be able to talk to the
+server.
 
-## Varför två språk?
+## Why two languages?
 
-| | Go (servern) | Rust (klienten) |
+| | Go (the server) | Rust (the client) |
 |---|---|---|
-| Styrka | enkelt, snabbt att skriva, fantastiskt för nätverk och samtidighet | full kontroll, inga GC-pauser, kompilatorn fångar buggar tidigt |
-| Minne | skräpsamlare (GC) | ägarskap och lån – kontrolleras vid kompilering |
-| Fel | `error` som vanligt returvärde | `Result<T, E>` och `?` |
-| Saknat värde | `nil` | `Option<T>` – `Some(x)` eller `None` |
+| Strength | simple, quick to write, fantastic for networking and concurrency | full control, no GC pauses, the compiler catches bugs early |
+| Memory | garbage collector (GC) | ownership and borrowing – checked at compile time |
+| Errors | `error` as an ordinary return value | `Result<T, E>` and `?` |
+| Missing value | `nil` | `Option<T>` – `Some(x)` or `None` |
 
-Du har redan sett hur Go hanterar fel. Rust gör liknande – men kompilatorn
-**tvingar** dig att hantera dem.
+You have already seen how Go handles errors. Rust does something similar –
+but the compiler **forces** you to handle them.
 
-## Rust på fem minuter
+## Rust in five minutes
 
 ```rust
 pub struct Point { x: i32, y: i32 }        // struct
 
-impl Point {                               // metoder ligger i ett impl-block
-    pub fn new(x: i32, y: i32) -> Point {  // "associerad funktion" (som en konstruktor)
+impl Point {                               // methods live in an impl block
+    pub fn new(x: i32, y: i32) -> Point {  // "associated function" (like a constructor)
         Point { x, y }
     }
-    pub fn len2(&self) -> i32 {            // &self = lånar punkten (läsning)
-        self.x * self.x + self.y * self.y  // sista uttrycket utan ; returneras
+    pub fn len2(&self) -> i32 {            // &self = borrows the point (reading)
+        self.x * self.x + self.y * self.y  // the last expression without ; is returned
     }
-    pub fn move_right(&mut self) {         // &mut self = lånar för ändring
+    pub fn move_right(&mut self) {         // &mut self = borrows it for changing
         self.x += 1;
     }
 }
 
 fn parse_port(s: &str) -> Result<u16, std::num::ParseIntError> {
-    let port: u16 = s.parse()?;            // ? = returnera felet direkt om det blev Err
+    let port: u16 = s.parse()?;            // ? = return the error at once if it was Err
     Ok(port)
 }
 ```
 
-**Go ↔ Rust:** `x, err := f(); if err != nil { return err }` i Go motsvaras
-av `let x = f()?;` i Rust.
+**Go ↔ Rust:** `x, err := f(); if err != nil { return err }` in Go
+corresponds to `let x = f()?;` in Rust.
 
-### Ägarskap i en mening
+### Ownership in one sentence
 
-Varje värde har exakt en ägare; du kan *låna* ut det, antingen till många
-läsare (`&T`) eller till en enda skrivare (`&mut T`) – aldrig båda samtidigt.
+Every value has exactly one owner; you can *lend* it out, either to many
+readers (`&T`) or to one single writer (`&mut T`) – never both at once.
 
-### `String` och `&str`
+### `String` and `&str`
 
-`String` är en ägd, växbar textbuffert. `&str` är en lånad bit text. Funktioner
-tar oftast `&str` som argument (fungerar för båda) och returnerar `String`.
+`String` is an owned, growable text buffer. `&str` is a borrowed piece of
+text. Functions usually take `&str` as an argument (works for both) and
+return `String`.
 
-## Uppgift
+## Task
 
-Kursverktyget har skapat `workspace/client/src/net.rs` åt dig.
+The course tool has created `workspace/client/src/net.rs` for you.
 
-1. Lägg till `pub mod net;` i `src/lib.rs` så att modulen blir en del av
-   biblioteket. (I Rust hittas filer inte automatiskt – du måste deklarera
-   modulen.)
-2. Implementera de tre metoderna i `net.rs` (byt ut `todo!()`).
-3. Skriv `src/main.rs` så att klienten:
-   - ansluter till adressen i första argumentet, eller `127.0.0.1:4000`,
-   - skriver ut välkomstraden,
-   - i en loop läser en rad från tangentbordet, skickar den och skriver ut
-     svaret.
+1. Add `pub mod net;` to `src/lib.rs` so that the module becomes part of the
+   library. (Rust does not find files automatically – you have to declare the
+   module.)
+2. Implement the three methods in `net.rs` (replace `todo!()`).
+3. Write `src/main.rs` so that the client:
+   - connects to the address in the first argument, or `127.0.0.1:4000`,
+   - prints the welcome line,
+   - in a loop reads a line from the keyboard, sends it and prints the reply.
 
-Testerna (`tests/mudschool_03.rs`) startar en låtsasserver och testar bara
-`Connection`, men gör `main.rs` också – annars har du ingen klient att köra!
+The tests (`tests/mudschool_03.rs`) start a fake server and only test
+`Connection`, but do `main.rs` too – otherwise you have no client to run!
 
-> Klientens egna texter (t.ex. "Ansluten till") finns i `src/messages.rs` på
-> kursens språk: `println!("{} {addr}", messages::CONNECTED_TO);`
+> The client's own texts (e.g. "Connected to") are in `src/messages.rs` in
+> the course language: `println!("{} {addr}", messages::CONNECTED_TO);`
 
-## Testa själv
+## Try it yourself
 
 ```
 ./mudschool run server                    # terminal 1
 ./mudschool run client                    # terminal 2
-./mudschool run client 127.0.0.1:4000     # samma sak
+./mudschool run client 127.0.0.1:4000     # the same thing
 ```
 
-## Fundera på
+## Think about
 
-- Varför måste `read_line` ta `&mut self` och inte `&self`?
-- `TcpStream::try_clone` ger dig två handtag till *samma* socket. Varför
-  behöver vi två? (Tips: `BufReader` *äger* strömmen den läser från.)
-- Vad händer i klienten om servern skickar två rader men vi bara läser en?
-  Vi löser det i lektion 06.
+- Why does `read_line` have to take `&mut self` and not `&self`?
+- `TcpStream::try_clone` gives you two handles to the *same* socket. Why do
+  we need two? (Hint: `BufReader` *owns* the stream it reads from.)
+- What happens in the client if the server sends two lines but we only read
+  one? We solve that in lesson 06.
 
-## Utmaningar
+## Challenges
 
-- Byt `main`s returtyp till `Result<(), Box<dyn std::error::Error>>` och läs
-  om varför det låter dig använda `?` på olika feltyper.
-- Kör `cargo clippy` och åtgärda det den hittar.
+- Change the return type of `main` to `Result<(), Box<dyn std::error::Error>>`
+  and read about why that lets you use `?` on different error types.
+- Run `cargo clippy` and fix what it finds.

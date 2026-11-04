@@ -1,9 +1,9 @@
-# Ledtrådar
+# Hints
 
-## Fälten
+## The fields
 
-Titta i `docs/sv/PROTOCOL.md` eller i Go-serverns `frame.go` – namnen ska vara
-exakt desamma som i JSON.
+Look in `docs/en/PROTOCOL.md` or in the Go server's `frame.go` – the names
+must be exactly the same as in the JSON.
 
 ```rust
 pub struct MapData {
@@ -17,13 +17,13 @@ pub struct MapData {
 
 ## meaning
 
-`legend` har `String`-nycklar men vi frågar med en `char`:
+`legend` has `String` keys but we ask with a `char`:
 
 ```rust
 self.legend.get(code.to_string().as_str()).map(String::as_str)
 ```
 
-`.map(String::as_str)` gör om `Option<&String>` till `Option<&str>`.
+`.map(String::as_str)` turns `Option<&String>` into `Option<&str>`.
 
 ## parse_line
 
@@ -36,7 +36,7 @@ if line.starts_with('{') {
 ServerMsg::Text { text: line.to_string() }
 ```
 
-## Kompilerar inte?
+## Doesn't compile?
 
-`#[derive(Default)]` på en struct kräver att alla fält har `Default` – det
-har `String`, `usize`, `Vec` och `HashMap`.
+`#[derive(Default)]` on a struct requires that every field has `Default` –
+`String`, `usize`, `Vec` and `HashMap` all do.

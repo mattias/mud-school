@@ -1,4 +1,4 @@
-# Ledtrådar
+# Hints
 
 ## NewWorld
 
@@ -10,11 +10,11 @@ for _, r := range rooms {
 return w
 ```
 
-## Placera spelaren
+## Placing the player
 
-I `addPlayer`, som redan håller låset: `p.Room = s.world.Room(s.world.Start)`.
+In `addPlayer`, which already holds the lock: `p.Room = s.world.Room(s.world.Start)`.
 
-## Spelare i ett rum
+## Players in a room
 
 ```go
 func (s *Server) playersInRoomLocked(r *Room, except *Player) []*Player {
@@ -24,15 +24,15 @@ func (s *Server) playersInRoomLocked(r *Room, except *Player) []*Player {
             list = append(list, other)
         }
     }
-    // sortera på namn: sort.Slice(list, func(i, j int) bool { return list[i].Name < list[j].Name })
+    // sort by name: sort.Slice(list, func(i, j int) bool { return list[i].Name < list[j].Name })
     return list
 }
 ```
 
-## Gå
+## Walking
 
 ```go
-to := s.world.Room(p.Room.Exits[dir])  // saknas utgången blir ID "" -> nil
+to := s.world.Room(p.Room.Exits[dir])  // a missing exit gives ID "" -> nil
 if to == nil {
     p.Send(MsgCantGo)
     return
@@ -41,6 +41,6 @@ if to == nil {
 
 ## Deadlock?
 
-Hänger testerna? Kontrollera att ingen funktion låser `s.mu` medan låset
-redan är taget, t.ex. att `cmdSay` inte anropar `s.broadcast` (som låser)
-när den redan håller låset.
+Do the tests hang? Check that no function locks `s.mu` while the lock is
+already held, e.g. that `cmdSay` does not call `s.broadcast` (which locks)
+while it already holds the lock.

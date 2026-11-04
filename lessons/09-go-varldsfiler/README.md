@@ -1,24 +1,25 @@
-# Lektion 09 – Världsfiler
+# Lesson 09 – World files
 
-Att skriva rum i Go-kod fungerar för sex rum, men inte för sexhundra. Och
-det går inte att ändra världen utan att kompilera om. Riktiga MUD:ar har
-byggare (*builders*) som skapar områden i datafiler. Det är också första
-steget mot en server som kan **ladda om innehåll medan den kör** (fas 5).
+Writing rooms in Go code works for six rooms, but not for six hundred. And
+you cannot change the world without recompiling. Real MUDs have *builders*
+who create areas in data files. It is also the first step towards a server
+that can **reload content while it is running** (phase 5).
 
-Kursverktyget har lagt in `workspace/server/mud/world.json` med 21 rum:
-Mudby, landsvägen, sjön, skogen och en grotta. Varje rum har nu också
-**terräng** och **koordinater** – det behöver vi för kartan i nästa lektion.
+The course tool has put `workspace/server/mud/world.json` in place with 21
+rooms: Mudby, the country road, the lake, the forest and a cave. Every room
+now also has a **terrain** and **coordinates** – we need those for the map in
+the next lesson.
 
-## Mål
+## Goals
 
-- Läsa JSON med `encoding/json` och styra fältnamn med **struct-taggar**.
-- Programmera mot gränssnitt: `io.Reader` istället för filnamn.
-- Validera data ordentligt och rapportera *alla* fel med `errors.Join`.
-- Baka in filer i programmet med `//go:embed`.
+- Read JSON with `encoding/json` and control field names with **struct tags**.
+- Program against interfaces: `io.Reader` instead of file names.
+- Validate data properly and report *all* errors with `errors.Join`.
+- Bake files into the program with `//go:embed`.
 
-## Go-koncept
+## Go concepts
 
-### JSON och struct-taggar
+### JSON and struct tags
 
 ```go
 type Room struct {
@@ -27,29 +28,30 @@ type Room struct {
 }
 
 var r Room
-err := json.Unmarshal(data, &r)        // från []byte
+err := json.Unmarshal(data, &r)        // from []byte
 
-dec := json.NewDecoder(reader)         // från vilken io.Reader som helst
-dec.DisallowUnknownFields()            // "nmae" istället för "name" -> fel
+dec := json.NewDecoder(reader)         // from any io.Reader
+dec.DisallowUnknownFields()            // "nmae" instead of "name" -> error
 err = dec.Decode(&r)
 ```
 
 ### io.Reader
 
-`LoadWorld(r io.Reader)` kan läsa från en fil (`os.Open`), en sträng
-(`strings.NewReader` – så gör testerna), en byte-slice (`bytes.NewReader`),
-ett nätverk ... Gränssnitt i Go uppfylls *implicit*: alla typer med metoden
-`Read([]byte) (int, error)` är en `io.Reader`.
+`LoadWorld(r io.Reader)` can read from a file (`os.Open`), a string
+(`strings.NewReader` – that's what the tests do), a byte slice
+(`bytes.NewReader`), a network ... Interfaces in Go are satisfied
+*implicitly*: every type with the method `Read([]byte) (int, error)` is an
+`io.Reader`.
 
 ### errors.Join
 
 ```go
 var errs []error
-errs = append(errs, fmt.Errorf("rum %q: ...", id))
-return errors.Join(errs...)   // nil om listan är tom
+errs = append(errs, fmt.Errorf(MsgErrExitMissing, id, dir, to))
+return errors.Join(errs...)   // nil if the list is empty
 ```
 
-En byggare som har gjort fem fel vill se alla fem på en gång.
+A builder who has made five mistakes wants to see all five at once.
 
 ### go:embed
 
@@ -57,10 +59,10 @@ En byggare som har gjort fem fel vill se alla fem på en gång.
 import _ "embed"
 
 //go:embed world.json
-var defaultWorldJSON []byte   // filens innehåll, inbakat vid kompilering
+var defaultWorldJSON []byte   // the file's contents, baked in at compile time
 ```
 
-## Koordinatsystemet
+## The coordinate system
 
 ```
         y-1 (north)
@@ -68,43 +70,43 @@ var defaultWorldJSON []byte   // filens innehåll, inbakat vid kompilering
         y+1 (south)
 ```
 
-## Uppgift
+## Task
 
 1. **`world.go`**:
-   - lägg till fälten `Terrain string`, `X`, `Y`, `Z int` i `Room` och
-     JSON-taggar på alla fält (titta i `world.json` för namnen),
-   - `LoadWorld(r io.Reader) (*World, error)` – läs formatet
-     `{"start": "...", "rooms": [...]}`, med `DisallowUnknownFields`,
-     ge fel om samma ID förekommer två gånger, och validera,
+   - add the fields `Terrain string`, `X`, `Y`, `Z int` to `Room` and JSON
+     tags on every field (look in `world.json` for the names),
+   - `LoadWorld(r io.Reader) (*World, error)` – read the format
+     `{"start": "...", "rooms": [...]}`, with `DisallowUnknownFields`, return
+     an error if the same ID appears twice, and validate,
    - `LoadWorldFile(path string) (*World, error)`,
-   - `(w *World) Validate() error` som hittar **alla** dessa fel:
-     startrummet saknas · rum utan id eller namn · okänd terräng (inte i
-     `Terrains`, se nedan) · okänd riktning · utgång till ett rum som inte
-     finns · två rum med samma koordinater · en utgång vars koordinater inte
-     stämmer (går man `north` måste målet ligga på `y-1`). Felmeddelandena
-     finns färdiga i `messages.go` (`MsgErrStartMissing`, `MsgErrExitMissing`, ...);
-     använd dem med `fmt.Errorf`,
-   - `var Terrains = []string{"town", "inside", "road", "field", "forest", "water", "mountain", "cave"}`,
-2. **`defaultworld.go`**: skriv om `DefaultWorld()` så att den läser den
-   inbakade `world.json` (och får göra `panic` om den är trasig – det är ett
-   programmeringsfel).
-3. **`main.go`**: lägg till en flagga `-world fil.json` som laddar en annan värld.
+   - `(w *World) Validate() error`, which finds **all** of these mistakes:
+     the start room is missing · a room without id or name · unknown terrain
+     (not in `Terrains`, see below) · unknown direction · an exit to a room
+     that doesn't exist · two rooms with the same coordinates · an exit whose
+     coordinates don't match (walking `north` the target must be at `y-1`).
+     The error messages are ready in `messages.go` (`MsgErrStartMissing`,
+     `MsgErrExitMissing`, ...); use them with `fmt.Errorf`,
+   - `var Terrains = []string{"town", "inside", "road", "field", "forest", "water", "mountain", "cave"}`.
+2. **`defaultworld.go`**: rewrite `DefaultWorld()` so that it reads the
+   embedded `world.json` (and may `panic` if it is broken – that is a
+   programming error).
+3. **`main.go`**: add a flag `-world file.json` that loads a different world.
 
-## Testa själv
+## Try it yourself
 
 ```
 cd workspace/server
-cp mud/world.json /tmp/min-varld.json   # ändra något, gör gärna fel med flit
-go run . -world /tmp/min-varld.json
+cp mud/world.json /tmp/my-world.json   # change something, make mistakes on purpose
+go run . -world /tmp/my-world.json
 ```
 
-## Fundera på
+## Think about
 
-- Varför är `[3]int` en giltig map-nyckel men inte `[]int`?
-- Varför får `DefaultWorld` göra `panic` men inte `LoadWorldFile`?
+- Why is `[3]int` a valid map key but `[]int` is not?
+- Why may `DefaultWorld` `panic` but not `LoadWorldFile`?
 
-## Utmaningar
+## Challenges
 
-- Bygg ett eget område på minst fem rum och lägg till det i `world.json`.
-- Varna (logga, men ge inte fel) för enkelriktade utgångar.
-- Skriv ett litet verktyg `go run ./cmd/worldcheck fil.json` som bara validerar.
+- Build an area of your own with at least five rooms and add it to `world.json`.
+- Warn (log, but don't fail) about one-way exits.
+- Write a small tool `go run ./cmd/worldcheck file.json` that only validates.

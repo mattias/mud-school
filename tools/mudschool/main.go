@@ -16,8 +16,8 @@ func usage() string {
 
 Användning:
   mudschool doctor               kontrollera att Go, Rust m.m. är installerade
-  mudschool init [--lang sv|en|ja] skapa din arbetsyta (workspace/) från startkoden
-  mudschool lang <sv|en|ja>      byt språk för kursen och spelets texter
+  mudschool init [--lang en|sv|ja] skapa din arbetsyta (workspace/) från startkoden
+  mudschool lang <en|sv|ja>      byt språk för kursen och spelets texter
   mudschool list                 visa alla lektioner och din status
   mudschool show [id]            visa instruktionerna för aktuell (eller angiven) lektion
   mudschool hint                 visa nästa ledtråd för aktuell lektion
@@ -33,8 +33,8 @@ Användning:
 
 Usage:
   mudschool doctor               check that Go, Rust etc. are installed
-  mudschool init [--lang sv|en|ja] create your workspace (workspace/) from the starter code
-  mudschool lang <sv|en|ja>      switch the language of the course and the game texts
+  mudschool init [--lang en|sv|ja] create your workspace (workspace/) from the starter code
+  mudschool lang <en|sv|ja>      switch the language of the course and the game texts
   mudschool list                 list all lessons and your progress
   mudschool show [id]            show the instructions for the current (or given) lesson
   mudschool hint                 show the next hint for the current lesson
@@ -50,8 +50,8 @@ Usage:
 
 使い方:
   mudschool doctor               Go や Rust などがインストールされているか確認する
-  mudschool init [--lang sv|en|ja] スターターコードから作業領域 (workspace/) を作る
-  mudschool lang <sv|en|ja>      コースとゲーム内テキストの言語を切り替える
+  mudschool init [--lang en|sv|ja] スターターコードから作業領域 (workspace/) を作る
+  mudschool lang <en|sv|ja>      コースとゲーム内テキストの言語を切り替える
   mudschool list                 レッスン一覧と進捗を表示する
   mudschool show [id]            現在の（または指定した）レッスンの説明を表示する
   mudschool hint                 現在のレッスンの次のヒントを表示する

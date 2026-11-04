@@ -1,4 +1,4 @@
-# Hints
+# Ledtrådar
 
 ## encodeJSON
 
@@ -10,7 +10,7 @@ if err != nil {
 return string(data) + "\r\n"
 ```
 
-## A grid of spaces
+## Ett rutnät av mellanslag
 
 ```go
 size := 4*radius + 1
@@ -20,30 +20,30 @@ for i := range grid {
 }
 ```
 
-## Where does a room go?
+## Var hamnar ett rum?
 
 ```go
 dx, dy := r.X-center.X, r.Y-center.Y
-// skip rooms on another floor (Z) or outside -radius..radius
+// hoppa över rum på annan våning (Z) eller utanför -radius..radius
 col, row := 2*(dx+radius), 2*(dy+radius)
 grid[row][col] = terrainCodes[r.Terrain]
 ```
 
-Exit `east`: `grid[row][col+1] = '-'`. Exit `south`: `grid[row+1][col] = '|'`.
-Make sure you don't go outside the grid!
+Utgång `east`: `grid[row][col+1] = '-'`. Utgång `south`: `grid[row+1][col] = '|'`.
+Kolla att du inte hamnar utanför rutnätet!
 
-## Copy before you change
+## Kopiera innan du ändrar
 
 ```go
-rows := append([]string(nil), m.Rows...)   // a new slice with the same strings
-line := []byte(rows[mid])                  // strings can't be changed – bytes can
+rows := append([]string(nil), m.Rows...)   // ny slice med samma strängar
+line := []byte(rows[mid])                  // strängar går inte att ändra – bytes gör
 line[m.Width/2] = '@'
 rows[mid] = string(line)
 ```
 
-The same goes for `Legend`: create a new map and copy over.
+Samma sak för `Legend`: skapa en ny map och kopiera över.
 
-## Reading @hello
+## Läsa @hello
 
 ```go
 for p.scanner.Scan() {

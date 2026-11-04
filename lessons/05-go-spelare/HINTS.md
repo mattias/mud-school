@@ -1,6 +1,6 @@
-# Ledtrådar
+# Hints
 
-## Räkna tecken
+## Counting characters
 
 ```go
 n := utf8.RuneCountInString(name)
@@ -12,7 +12,7 @@ case n > 16:
 }
 ```
 
-## Bara bokstäver
+## Letters only
 
 ```go
 for _, r := range name {
@@ -22,18 +22,18 @@ for _, r := range name {
 }
 ```
 
-## Stor första bokstav
+## Upper-case first letter
 
-`utf8.DecodeRuneInString(name)` ger första runan och hur många bytes den tar.
-Sedan: `string(unicode.ToUpper(first)) + strings.ToLower(name[size:])`.
+`utf8.DecodeRuneInString(name)` gives the first rune and how many bytes it
+takes. Then: `string(unicode.ToUpper(first)) + strings.ToLower(name[size:])`.
 
-## Inloggningsloopen
+## The login loop
 
-Skriv en metod `func (s *Server) login(p *Player) bool` som loopar:
-skicka frågan, läs en rad (returnera false om `!ok`), validera, normalisera,
-försök `addPlayer`. Lyckas allt: `return true`.
+Write a method `func (s *Server) login(p *Player) bool` that loops: send the
+question, read a line (return false if `!ok`), validate, normalize, try
+`addPlayer`. If everything works: `return true`.
 
-I `handle`:
+In `handle`:
 
 ```go
 if !s.login(p) {

@@ -1,5 +1,7 @@
 # 講師・コース作成者向け
 
+> [🇬🇧 English](../en/TEACHERS.md) · [🇸🇪 Svenska](../sv/TEACHERS.md) · 🇯🇵 日本語
+
 コースの構成と、レッスンの追加・変更方法について。
 
 ## ディレクトリ構成
@@ -16,8 +18,8 @@ lessons/
   _shared/rust/...           Rust 版（tests/mudschool_common/）
   NN-名前/
     lesson.json              各言語のタイトルと要約、トラック（"go"/"rust"）
-    README.md                スウェーデン語の説明（README.en.md、README.ja.md）
-    HINTS.md                 ヒント。"## " 見出しごとに 1 つ（HINTS.en.md、HINTS.ja.md）
+    README.md                英語の説明（README.sv.md、README.ja.md）
+    HINTS.md                 ヒント。"## " 見出しごとに 1 つ（HINTS.sv.md、HINTS.ja.md）
     scaffold/                レッスン開始時に受講者が受け取る新しいファイル
     scaffold.<言語>/         言語ごとの新しいファイル（世界データなど）
     tests/                   `mudschool check` でコピーされるテスト
@@ -36,7 +38,7 @@ docs/<言語>/                 カリキュラム、プロトコル、環境構�
 
 | 対象 | 翻訳の方法 |
 |---|---|
-| 説明とヒント | `README.<言語>.md`、`HINTS.<言語>.md`（スウェーデン語は `README.md`） |
+| 説明とヒント | `README.<言語>.md`、`HINTS.<言語>.md`（標準の英語は `README.md`） |
 | タイトルと要約 | `lesson.json` のオブジェクト: `{"sv": ..., "en": ..., "ja": ...}` |
 | コースツールのテキスト | `tools/mudschool` の `L(sv, en, ja)` |
 | ゲーム内のテキスト | `starter.<言語>/server/mud/messages.go` と `.../client/src/messages.rs` |
@@ -45,7 +47,7 @@ docs/<言語>/                 カリキュラム、プロトコル、環境構�
 | ドキュメント | `docs/<言語>/` |
 | コードとコメント | **英語** – 全員共通 |
 
-言語は `./mudschool init --lang sv|en|ja` で選び（指定しなければ `$LANG` から推測）、
+言語は `./mudschool init --lang en|sv|ja` で選び（指定しなければ `$LANG` から推測）、
 `./mudschool lang <言語>` で変更できます。`workspace/.mudschool.json` に保存され、
 テストには `MUDSCHOOL_LANG` として渡されます。
 
@@ -53,7 +55,8 @@ docs/<言語>/                 カリキュラム、プロトコル、環境構�
 定数（`MsgAskName`、`fmt.Sprintf(MsgSays, "Anna", "hi")`）を使うので、どの言語でも
 動きます。受講者がテキストを変えるのも自由です。
 
-受講者が `./mudschool lang` で言語を切り替えると、変更済みの `messages.go`/`messages.rs` はまず `.bak` として保存されます。
+受講者が `./mudschool lang` で言語を切り替えると、変更済みの
+`messages.go`/`messages.rs` はまず `.bak` として保存されます。
 
 ## コースツールの動作
 
@@ -99,6 +102,14 @@ Rust: `tests/mudschool_NN.rs`（ライブラリ `mud_client` に対する結合�
 `./mudschool reference <dir> [id]` は（指定したレッスンまでの）模範解答全体を作るので、
 実際に動かせます。コミット前に `verify` を実行してください。CI
 （`.github/workflows/verify.yml`）も同じことをします。
+
+## スクリーンショット
+
+`docs/images/client-<言語>.png` は `tools/screenshots/make.sh` で模範解答から生成します
+（tmux、nc、Playwright 入りの Node、Noto CJK などの日本語フォントが必要）。クライアントの
+見た目が変わったら再実行してください。日本語と罫線文字をそろえる必要がある図は、
+テキストではなく画像にしましょう。GitHub のフォントでは CJK 文字がちょうど 2 列幅で
+描かれないためです。
 
 ## 新しいレッスンの書き方
 

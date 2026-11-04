@@ -34,14 +34,14 @@ func (c *course) cmdInit() error {
 	fmt.Println(L("  workspace/server/   din MUD-server i Go", "  workspace/server/   your MUD server in Go", "  workspace/server/   Go で書く MUD サーバー"))
 	fmt.Println(L("  workspace/client/   din MUD-klient i Rust", "  workspace/client/   your MUD client in Rust", "  workspace/client/   Rust で書く MUD クライアント"))
 	fmt.Println()
-	fmt.Println(L("Språk:", "Language:", "言語:"), lang, dim(L("(byt med ./mudschool lang en|sv|ja)", "(change with ./mudschool lang sv|en|ja)", "（./mudschool lang sv|en|ja で変更）")))
+	fmt.Println(L("Språk:", "Language:", "言語:"), lang, dim(L("(byt med ./mudschool lang en|sv|ja)", "(change with ./mudschool lang en|sv|ja)", "（./mudschool lang en|sv|ja で変更）")))
 	fmt.Println(L("Nästa steg:", "Next step:", "次のステップ:"), cyan("./mudschool show"))
 	return nil
 }
 
 func (c *course) cmdLang(args []string) error {
 	if len(args) != 1 || !validLang(args[0]) {
-		return errors.New(L("användning: mudschool lang sv|en|ja", "usage: mudschool lang sv|en|ja", "使い方: mudschool lang sv|en|ja"))
+		return errors.New(L("användning: mudschool lang en|sv|ja", "usage: mudschool lang en|sv|ja", "使い方: mudschool lang en|sv|ja"))
 	}
 	p, err := c.loadProgress()
 	if err != nil {

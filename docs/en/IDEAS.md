@@ -1,6 +1,6 @@
 # Ideas to build on
 
-> [🇸🇪 Svenska](../sv/IDEAS.md) · 🇬🇧 English · [🇯🇵 日本語](../ja/IDEAS.md)
+> 🇬🇧 English · [🇸🇪 Svenska](../sv/IDEAS.md) · [🇯🇵 日本語](../ja/IDEAS.md)
 
 A collection of ideas: for the game, for the client and for the course itself.
 Many of them work as challenges, projects of your own or future lessons.

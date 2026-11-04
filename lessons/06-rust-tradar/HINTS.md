@@ -1,21 +1,22 @@
-# Ledtrådar
+# Hints
 
-## Trådens kropp
+## The thread's body
 
 ```rust
 thread::spawn(move || {
     for line in reader.lines() {
-        // line är io::Result<String>
+        // line is io::Result<String>
     }
 });
 ```
 
-`lines()` tar redan bort både `\n` och `\r\n`.
+`lines()` already removes both `\n` and `\r\n`.
 
-## Fel och stängda kanaler
+## Errors and closed channels
 
-`let Ok(line) = line else { break };` avbryter loopen vid läsfel.
-`tx.send(line)` ger `Err` om mottagaren har släppts – då kan tråden också sluta.
+`let Ok(line) = line else { break };` stops the loop on a read error.
+`tx.send(line)` returns `Err` if the receiver has been dropped – then the
+thread can stop too.
 
 ## split
 
@@ -31,4 +32,4 @@ impl Connection {
 }
 ```
 
-(Om du byter fältet `writer` mot `outgoing: Outgoing` blir det `(self.reader, self.outgoing)`.)
+(If you replace the field `writer` with `outgoing: Outgoing` it becomes `(self.reader, self.outgoing)`.)

@@ -1,14 +1,14 @@
-# Ledtrådar
+# Hints
 
-## Ett ord
+## One word
 
-Sätt `go` framför anropet till `s.handle(conn)` i `Serve`.
+Put `go` in front of the call to `s.handle(conn)` in `Serve`.
 
-## Loggning
+## Logging
 
 ```go
-log.Printf("ny anslutning från %s", conn.RemoteAddr())
-defer log.Printf("%s kopplade ner", conn.RemoteAddr())
+log.Printf("new connection from %s", conn.RemoteAddr())
+defer log.Printf("%s disconnected", conn.RemoteAddr())
 ```
 
-Två `defer` i samma funktion körs i omvänd ordning (sist in, först ut).
+Two `defer`s in the same function run in reverse order (last in, first out).

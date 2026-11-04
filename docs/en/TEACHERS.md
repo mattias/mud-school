@@ -1,5 +1,7 @@
 # For teachers and course authors
 
+> 🇬🇧 English · [🇸🇪 Svenska](../sv/TEACHERS.md) · [🇯🇵 日本語](../ja/TEACHERS.md)
+
 How the course is built, and how to add or change lessons.
 
 ## Directory layout
@@ -16,8 +18,8 @@ lessons/
   _shared/rust/...           the same for Rust (tests/mudschool_common/)
   NN-name/
     lesson.json              title and summary in every language, track ("go"/"rust")
-    README.md                the instructions in Swedish (README.en.md, README.ja.md)
-    HINTS.md                 hints, one per "## " heading (HINTS.en.md, HINTS.ja.md)
+    README.md                the instructions in English (README.sv.md, README.ja.md)
+    HINTS.md                 hints, one per "## " heading (HINTS.sv.md, HINTS.ja.md)
     scaffold/                NEW files the student gets when the lesson starts
     scaffold.<lang>/         language-dependent new files (e.g. the world)
     tests/                   tests copied in by `mudschool check`
@@ -36,7 +38,7 @@ The course exists in Swedish (`sv`), English (`en`) and Japanese (`ja`).
 
 | What | How it is translated |
 |---|---|
-| Instructions and hints | `README.<lang>.md`, `HINTS.<lang>.md` (Swedish is `README.md`) |
+| Instructions and hints | `README.<lang>.md`, `HINTS.<lang>.md` (English, the default, is `README.md`) |
 | Title and summary | objects in `lesson.json`: `{"sv": ..., "en": ..., "ja": ...}` |
 | The course tool's texts | `L(sv, en, ja)` in `tools/mudschool` |
 | The game's texts | `starter.<lang>/server/mud/messages.go` and `.../client/src/messages.rs` |
@@ -45,7 +47,7 @@ The course exists in Swedish (`sv`), English (`en`) and Japanese (`ja`).
 | Documentation | `docs/<lang>/` |
 | Code and code comments | **English** – shared by everyone |
 
-The language is chosen with `./mudschool init --lang sv|en|ja` (otherwise it
+The language is chosen with `./mudschool init --lang en|sv|ja` (otherwise it
 is guessed from `$LANG`) and can be changed with `./mudschool lang <lang>`. It
 is stored in `workspace/.mudschool.json` and passed to the tests as `MUDSCHOOL_LANG`.
 
@@ -53,7 +55,8 @@ The tests never compare against hard-coded text. They use the same constants
 as the student's code (`MsgAskName`, `fmt.Sprintf(MsgSays, "Anna", "hi")`), so
 they work in every language – and the student is welcome to change the texts.
 
-If the student switches languages with `./mudschool lang`, an edited `messages.go`/`messages.rs` is first saved as `.bak`.
+If the student switches languages with `./mudschool lang`, an edited
+`messages.go`/`messages.rs` is first saved as `.bak`.
 
 ## How the course tool works
 
@@ -99,6 +102,14 @@ lesson it checks that
 `./mudschool reference <dir> [id]` builds the whole reference solution (up to
 a given lesson) so you can run it. Run `verify` before you commit; CI
 (`.github/workflows/verify.yml`) does the same.
+
+## Screenshots
+
+`docs/images/client-<lang>.png` are generated from the reference solution with
+`tools/screenshots/make.sh` (needs tmux, nc, Node with Playwright and a Japanese
+font such as Noto CJK). Run it again when the client's look changes. Use
+images rather than text diagrams when Japanese text and box-drawing characters
+must line up – GitHub's fonts don't draw CJK characters exactly two columns wide.
 
 ## Writing a new lesson
 

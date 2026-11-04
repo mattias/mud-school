@@ -1,129 +1,115 @@
-# Lektion 13 – Ett riktigt gränssnitt
+# Lesson 13 – A real user interface
 
-Dags att lämna "skriv ut rader och hoppas"-stadiet. Nu bygger vi en klient
-som ser ut som ett spel: en statusrad överst, loggen till vänster, kartan
-till höger och en inmatningsrad längst ner – allt ritat om flera gånger i
-sekunden.
+Time to leave the "print lines and hope" stage. Now we build a client that
+looks like a game: a status bar at the top, the log on the left, the map on
+the right and an input line at the bottom – all redrawn many times a second.
 
-```
- Anna · Torget i Mudby · ♥♥♥♥♥♥♥♥♥♥ HP 10/10 · 2 online
-┌ Logg ─────────────────────────────────┐┌ Karta ──────┐
-│Torget i Mudby                         ││      ■      │
-│Ett kullerstensbelagt torg. En gammal  ││      │      │
-│Utgångar: norr, öster, söder, väster   ││    ■─@─■    │
-│Bertil säger: hej!                     ││      │      │
-│> say hej själv                        ││      #      │
-└───────────────────────────────────────┘└─────────────┘
-┌ Kommando ────────────────────────────────────────────┐
-│> n_                                                  │
-└──────────────────────────────────────────────────────┘
-```
+![The finished client: status bar, log, map and input line](../../docs/images/client-en.png)
 
-## Mål
+## Goals
 
-- Använda **ratatui**: layouter, widgets och omedelbar rendering.
-- Implementera `From` för att konvertera mellan typer (`rgb.into()`).
-- Samla tangentbord och server i **en** händelseloop med en `enum Event`.
-- Testa ett användargränssnitt utan terminal med `TestBackend`.
+- Use **ratatui**: layouts, widgets and immediate-mode rendering.
+- Implement `From` to convert between types (`rgb.into()`).
+- Combine keyboard and server into **one** event loop with an `enum Event`.
+- Test a user interface without a terminal using `TestBackend`.
 
-## Arkitektur
+## Architecture
 
 ```
- tangentbordstråd ──Event::Key──────┐
-                                    ├──► kanal ──► huvudloop: uppdatera App ──► rita App
- serverstråd ──────Event::Server────┘
+ keyboard thread ──Event::Key──────┐
+                                   ├──► channel ──► main loop: update App ──► draw App
+ server thread ────Event::Server───┘
 ```
 
-Det här kallas ibland *The Elm Architecture*: all logik bor i `App`,
-som ändras av händelser och ritas av en ren funktion `draw(frame, &app)`.
-Det gör att nästan hela klienten kan testas utan nätverk och utan terminal –
-titta i `mudschool_13.rs`.
+This is sometimes called *The Elm Architecture*: all logic lives in `App`,
+which is changed by events and drawn by a pure function `draw(frame, &app)`.
+That means almost the whole client can be tested without a network or a
+terminal – look in `mudschool_13.rs`.
 
-**Go ↔ Rust:** kanalen med flera sändare (`tx.clone()`) är precis som när
-flera goroutines skickar till samma `chan` i Go.
+**Go ↔ Rust:** the channel with several senders (`tx.clone()`) is exactly like
+several goroutines sending to the same `chan` in Go.
 
-## Rust-koncept
+## Rust concepts
 
-### Omedelbar rendering
+### Immediate-mode rendering
 
-ratatui ritar **hela skärmen varje gång** från ditt tillstånd. Det finns
-inga widgets som "lever" mellan bildrutorna – du bygger dem på nytt i `draw`.
-ratatui jämför sedan med förra bildrutan och skickar bara ändringarna till
-terminalen.
+ratatui draws **the whole screen every time** from your state. There are no
+widgets that "live" between frames – you build them again in `draw`. ratatui
+then compares with the previous frame and only sends the changes to the terminal.
 
 ```rust
 let [top, middle, bottom] = Layout::vertical([
-    Constraint::Length(1),   // exakt en rad
-    Constraint::Min(3),      // resten
+    Constraint::Length(1),   // exactly one row
+    Constraint::Min(3),      // the rest
     Constraint::Length(3),
 ]).areas(frame.area());
 
-frame.render_widget(Paragraph::new("hej").block(Block::bordered().title(" Logg ")), middle);
+frame.render_widget(Paragraph::new("hi").block(Block::bordered().title(" Log ")), middle);
 ```
 
-Text byggs av `Line`s som består av `Span`s, och varje `Span` har en `Style`:
+Text is built from `Line`s made of `Span`s, and every `Span` has a `Style`:
 
 ```rust
 Line::from(vec![
     Span::styled("♣", Style::default().fg(Color::Rgb(40, 170, 70))),
-    Span::raw(" skog"),
+    Span::raw(" forest"),
 ])
 ```
 
-### From och Into
+### From and Into
 
 ```rust
 impl From<Rgb> for Color {
     fn from(Rgb(r, g, b): Rgb) -> Color { Color::Rgb(r, g, b) }
 }
-let c: Color = rgb.into();   // Into får du på köpet!
+let c: Color = rgb.into();   // you get Into for free!
 ```
 
 ### std::mem::take
 
-`std::mem::take(&mut self.input)` tar ut värdet och lämnar en tom `String`
-kvar – ett vanligt knep när man vill *flytta ut* något ur en `&mut`.
+`std::mem::take(&mut self.input)` takes the value out and leaves an empty
+`String` behind – a common trick when you want to *move out* of a `&mut`.
 
-## Uppgift
+## Task
 
-1. `cargo add ratatui` (den tar med sig `crossterm`, som du når som
+1. `cargo add ratatui` (it brings `crossterm` along, which you reach as
    `ratatui::crossterm`).
-2. **`src/app.rs`** (ny fil): fyll i `From<Rgb> for Color`, `push_log`,
-   `on_server`, `on_key`, `draw_status`, `draw_log` och `draw_map`.
-   Rubriker och andra texter finns i `messages.rs` (`messages::TITLE_LOG`, ...).
-   Lägg till `pub mod app;` i `lib.rs`.
-3. **`src/main.rs`**: skriv om klienten:
-   - en `enum Event { Key(KeyEvent), Server(ServerMsg), Disconnected }`,
-   - en tråd som läser servern och skickar `Event::Server` (och till sist
-     `Event::Disconnected`), och en tråd som läser tangentbordet med
-     `ratatui::crossterm::event::read()` och skickar `Event::Key`,
-   - `let mut terminal = ratatui::init();`, sedan en loop: rita, vänta på en
-     händelse, uppdatera `App`, skicka raden till servern om `on_key` gav en,
-   - avsluta med `ratatui::restore();` – **även** om något gick fel, annars
-     lämnas terminalen i "raw mode" (skriv `reset` om det händer).
+2. **`src/app.rs`** (new file): fill in `From<Rgb> for Color`, `push_log`,
+   `on_server`, `on_key`, `draw_status`, `draw_log` and `draw_map`. Titles and
+   other texts are in `messages.rs` (`messages::TITLE_LOG`, ...). Add
+   `pub mod app;` to `lib.rs`.
+3. **`src/main.rs`**: rewrite the client:
+   - an `enum Event { Key(KeyEvent), Server(ServerMsg), Disconnected }`,
+   - a thread that reads the server and sends `Event::Server` (and finally
+     `Event::Disconnected`), and a thread that reads the keyboard with
+     `ratatui::crossterm::event::read()` and sends `Event::Key`,
+   - `let mut terminal = ratatui::init();`, then a loop: draw, wait for an
+     event, update `App`, send the line to the server if `on_key` returned one,
+   - finish with `ratatui::restore();` – **even** if something went wrong,
+     otherwise the terminal is left in "raw mode" (type `reset` if that happens).
 
-## Testa själv
+## Try it yourself
 
 ```
 ./mudschool run server
 ./mudschool run client
 ```
 
-Öppna en till klient (eller telnet) och prata med dig själv. Gå runt och se
-kartan och statusraden uppdateras.
+Open another client (or telnet) and talk to yourself. Walk around and watch
+the map and the status bar update.
 
-## Fundera på
+## Think about
 
-- Varför läser vi tangentbordet i en egen tråd istället för i huvudloopen?
-- `draw` tar `&App`, inte `&mut App`. Varför är det en bra idé?
-- Vad händer om servern skickar 1000 rader på en gång? (Titta på
-  `rx.try_iter()` i lösningen.)
+- Why do we read the keyboard in a thread of its own instead of in the main loop?
+- `draw` takes `&App`, not `&mut App`. Why is that a good idea?
+- What happens if the server sends 1000 lines at once? (Look at
+  `rx.try_iter()` in the solution.)
 
-## Utmaningar
+## Challenges
 
-- Färglägg loggen: `Anna säger:` i en färg, `Du kan inte gå åt det hållet.`
-  i en annan. Kanske ska servern skicka *vilken sorts* text det är?
-  (Det är exakt en sådan protokollutökning vi gör i fas 3.)
-- Historik: pil upp/ner bläddrar bland tidigare kommandon.
-- Scrolla loggen med PageUp/PageDown.
-- Fäll ut ett hjälpfönster (`Clear` + `Paragraph` ovanpå allt annat) med F1.
+- Colour the log: `Anna says:` in one colour, `You can't go that way.` in
+  another. Maybe the server should send *what kind* of text it is? (That is
+  exactly the kind of protocol extension we make in phase 3.)
+- History: arrow up/down browse earlier commands.
+- Scroll the log with PageUp/PageDown.
+- Pop up a help window (`Clear` + `Paragraph` on top of everything else) with F1.

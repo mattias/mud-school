@@ -1,8 +1,8 @@
-# Ledtrådar
+# Hints
 
-## Filformatet
+## The file format
 
-Gör en egen struct för filen:
+Make a struct of its own for the file:
 
 ```go
 type worldFile struct {
@@ -11,12 +11,12 @@ type worldFile struct {
 }
 ```
 
-Avkoda till den och skapa sedan världen med `NewWorld(f.Start, f.Rooms...)`.
-De tre punkterna "packar upp" slicen till variadiska argument.
+Decode into it and then create the world with `NewWorld(f.Start, f.Rooms...)`.
+The three dots "unpack" the slice into variadic arguments.
 
-## Koordinater
+## Coordinates
 
-En tabell gör det enkelt:
+A table makes it easy:
 
 ```go
 var directionDelta = map[string][3]int{
@@ -25,13 +25,13 @@ var directionDelta = map[string][3]int{
 }
 ```
 
-Och för dubbletter: `positions := map[[3]int]string{}`.
+And for duplicates: `positions := map[[3]int]string{}`.
 
-## Finns terrängen?
+## Does the terrain exist?
 
-`slices.Contains(Terrains, r.Terrain)` (paketet `slices`, Go 1.21+).
+`slices.Contains(Terrains, r.Terrain)` (the `slices` package, Go 1.21+).
 
-## Inbakad fil
+## The embedded file
 
 ```go
 import (

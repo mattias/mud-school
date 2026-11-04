@@ -3,7 +3,7 @@
 // All text the game shows to players lives in this file, so that the course
 // can be taken in Swedish, English or Japanese. The tests use these constants
 // too, so keep the names – but feel free to change the texts.
-// `./mudschool lang <sv|en|ja>` replaces this file.
+// `./mudschool lang <en|sv|ja>` replaces this file.
 package mud
 
 const (

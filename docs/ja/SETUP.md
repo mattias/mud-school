@@ -1,156 +1,256 @@
 # 環境構築
 
-必要なのは **Go**、**Rust**、UTF-8 と色を扱える **端末**、そしてできれば **telnet** か
-**nc** です。方法は 3 つあります。どれか 1 つを選んでください。
+> [🇬🇧 English](../en/SETUP.md) · [🇸🇪 Svenska](../sv/SETUP.md) · 🇯🇵 日本語
 
-| 方法 | こんな人に | 所要時間 |
+必要なのは **Go 1.22 以降**、**Rust**（stable）、**Git**、UTF-8 と 24 ビットカラーに対応した
+**端末**、そしてできれば **telnet** か **nc** です。自分のシステムの節を選び、上から順に
+進めてください。どの節もそれだけで完結しています。
+
+| システム | 節 | 所要時間 |
 |---|---|---|
-| [A. Dev Container / Codespaces](#a-dev-container-または-github-codespaces) | パソコンに何もインストールせず、すぐに始めたい | 5 分 |
-| [B. 自分でインストール](#b-自分でインストール) | すべてを手元に置きたい（長い目で見るとおすすめ） | 15〜30 分 |
-| [C. Windows と WSL](#c-windows) | Windows を使っている | 20〜30 分 |
+| Windows 10/11 | [Windows（PowerShell）](#windowspowershell) – Windows ではこれがおすすめ | 20〜30 分 |
+| Windows で Linux のツールを使いたい | [Windows と WSL](#windows-と-wsl) | 20〜30 分 |
+| macOS | [macOS](#macos) | 15 分 |
+| Linux | [Linux](#linux) | 15 分 |
+| 何もインストールせずブラウザだけで | [Codespaces / Dev Container](#github-codespaces-または-dev-container) | 5 分 |
 
-準備ができたら、必ず次を実行します:
+その後: [エディタ](#エディタ) · [フォントと端末](#フォントと端末) · [トラブルシューティング](#トラブルシューティング)
 
-```
-./mudschool doctor             # Go、Rust、telnet/nc、gcc、UTF-8、色を確認
-./mudschool init --lang ja     # 日本語で workspace/ を作る（sv = スウェーデン語、en = 英語）
-./mudschool show               # 最初のレッスン
-```
+> **レッスン中のコマンドについて。** レッスンでは `./mudschool show` のように書いています。
+> Windows（PowerShell または cmd）では代わりに **`.\mudschool.cmd show`** と入力して
+> ください。コースツール自身が表示するコマンドは、あなたのシステムに合った形になります。
 
 ---
 
-## A. Dev Container または GitHub Codespaces
+## Windows（PowerShell）
 
-リポジトリには `.devcontainer/devcontainer.json` に完成済みの環境があります
-（Go 1.24、Rust stable、telnet、nc 入りの Ubuntu と、Go・Rust 用の VS Code 拡張）。
+以下はすべて **Windows Terminal** の中の **PowerShell** で入力します。
 
-- **GitHub Codespaces:** GitHub のリポジトリのページで **Code → Codespaces →
-  Create codespace** をクリック。すべてブラウザの中で動きます。
-- **手元の VS Code:** [Docker](https://www.docker.com/) と拡張機能 *Dev Containers* を
-  インストールし、フォルダを開いて **Reopen in Container** を選びます。
+### 1. Windows Terminal
 
-ポート 4000 は自動で転送されるので、自分のパソコンからもサーバーに接続できます。
+Windows 11 には最初から入っています。Windows 10 では:
 
-## B. 自分でインストール
-
-### 1. Go（1.22 以降）
-
-| システム | コマンド |
-|---|---|
-| macOS | `brew install go`、または <https://go.dev/dl/> のインストーラー |
-| Linux | <https://go.dev/dl/> からダウンロードして手順に従う（ディストリビューションのパッケージは古いことがあります。`go version` で確認） |
-| Windows | `winget install GoLang.Go`、または <https://go.dev/dl/> の MSI ファイル |
-
-確認: `go version` が `go1.22` 以降を表示すること。
-
-### 2. Rust（stable）
-
-公式のインストーラー **rustup** で入れます:
-
-```
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```powershell
+winget install Microsoft.WindowsTerminal
 ```
 
-Windows では <https://rustup.rs> の `rustup-init.exe` を実行します（または
-`winget install Rustlang.Rustup`）。Rust には「C++ によるデスクトップ開発」を含む
-*Visual Studio Build Tools* が必要で、インストーラーが確認してくれます。
+コースでは常に Windows Terminal を使ってください。古いコンソールウィンドウ（`conhost`）では
+色もマップの文字も正しく表示されません。フォントもすぐに選んでおきましょう:
+[フォントと端末](#フォントと端末) を参照。
 
-確認: `rustc --version` と `cargo --version`。
+### 2. Git、Go、Rust
 
-### 3. telnet と nc（任意だがおすすめ）
+```powershell
+winget install Git.Git
+winget install GoLang.Go
+winget install Rustlang.Rustup
+```
 
-| システム | コマンド |
-|---|---|
-| macOS | `brew install telnet`（`nc` は最初から入っています） |
-| Ubuntu/Debian | `sudo apt install telnet netcat-openbsd` |
-| Fedora | `sudo dnf install telnet nmap-ncat` |
-| Windows | 「Windows の機能の有効化または無効化」で *Telnet クライアント* を有効にするか、WSL を使う |
+Windows の Rust には Microsoft の C++ ビルドツール（リンカー）も必要です:
+
+```powershell
+winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+```
+
+`PATH` を反映させるため **Windows Terminal をいったん閉じて開き直し**、確認します:
+
+```powershell
+go version        # go1.22 以降
+rustc --version
+cargo --version
+```
+
+### 3. telnet（任意だがおすすめ）
+
+一度だけ **管理者として** PowerShell を開き、次を実行します:
+
+```powershell
+dism /online /Enable-Feature /FeatureName:TelnetClient
+```
+
+> Windows の telnet クライアントでは日本語が文字化けすることがあります。レッスン 03
+> からは自分の Rust クライアントがあり、そちらは正しく表示されます。
 
 ### 4. C コンパイラ（任意）
 
-`./mudschool check --race` を使うときだけ必要です（Go のレース検出器は cgo を使います）。
+`.\mudschool.cmd check --race` を使うときだけ必要です（Go のレース検出器は cgo を使います）。
+いちばん簡単なのは MSYS2 の GCC です:
 
-| システム | コマンド |
-|---|---|
-| macOS | `xcode-select --install` |
-| Ubuntu/Debian | `sudo apt install build-essential` |
-
-### 5. エディタ
-
-おすすめは **VS Code** と拡張機能 **Go**（`golang.go`）、**rust-analyzer**
-（`rust-lang.rust-analyzer`）です。補完、コード上のエラー表示、「定義へ移動」が
-使えます。JetBrains の GoLand/RustRover や、LSP を設定した Neovim もとても快適です。
-
-ツールが `go.mod` と `Cargo.toml` を見つけられるよう、`workspace/server` と
-`workspace/client` を別々のウィンドウで（またはリポジトリ全体を）開きましょう。
-
-### 6. 端末
-
-クライアントは `♣ ≈ ▲ ■ ─ │` などの文字と 24 ビットカラーでマップを描きます。
-
-- **macOS:** **iTerm2**、**WezTerm**、**Ghostty**、**kitty** を使ってください。
-  *ターミナル.app はトゥルーカラー非対応* で、色がおかしくなります。
-- **Windows:** **Windows Terminal**（Windows 11 には最初から入っています）。
-- **Linux:** GNOME Terminal、Konsole、kitty、Alacritty、WezTerm、どれでも動きます。
-- **フォント:** Unicode を広くカバーするもの。例: JetBrains Mono、Cascadia Code、
-  Fira Code、DejaVu Sans Mono。日本語も表示するなら、HackGen や UDEV Gothic などの
-  日本語プログラミングフォントが便利です。
-- **ロケール:** UTF-8。例: `export LANG=ja_JP.UTF-8`。
-- **文字幅（重要）:** `≈ ▲ ■ ─ │ ♣` などは「East Asian Ambiguous Width」の文字です。
-  端末の設定で曖昧幅を **全角（2）** にしているとマップがずれます。**半角（1）** に
-  してください（iTerm2: Profiles → Text → "Ambiguous characters are double-width" を
-  オフ、WezTerm: `treat_east_asian_ambiguous_width_as_wide = false`）。
-
-## C. Windows
-
-いちばん簡単なのは **WSL 2**（Windows Subsystem for Linux）です:
-
-```
-wsl --install -d Ubuntu
+```powershell
+winget install MSYS2.MSYS2
 ```
 
-再起動し、Windows Terminal で *Ubuntu* を開いたら、Linux のコマンドで
-[B](#b-自分でインストール) の手順に従ってください。VS Code の *WSL* 拡張を使えば、
-Windows 側からファイルを編集できます。
+スタートメニューから **「MSYS2 UCRT64」** を起動して実行します:
 
-Windows（PowerShell）で直接動かすこともできますが、`./mudschool` は sh スクリプト
-です。コースツールを一度だけビルドしましょう:
-
-```
-cd tools\mudschool
-go build -o ..\..\mudschool.exe .
-cd ..\..
-.\mudschool.exe doctor
+```sh
+pacman -S --needed mingw-w64-ucrt-x86_64-gcc
 ```
 
-以後は `./mudschool` の代わりに `.\mudschool.exe` を使います。
+`C:\msys64\ucrt64\bin` を `PATH` に追加し（スタート →「アカウントの環境変数を編集」→
+`Path` → 新規）、Windows Terminal を開き直して `gcc --version` で確認します。
+
+### 5. コースを入手して始める
+
+```powershell
+cd $HOME
+git clone https://github.com/mattias/mud-school.git
+cd mud-school
+.\mudschool.cmd doctor            # Go、Rust、telnet、gcc、端末を確認
+.\mudschool.cmd init --lang ja    # workspace\ を作る（en、sv、ja）
+.\mudschool.cmd show              # 最初のレッスン
+```
+
+`mudschool.cmd` は初回にコースツールを自動でビルドします。Rust のレッスンを初めて
+実行するときは Cargo がライブラリをダウンロードするので、少し時間がかかります。
+サーバーを起動すると Windows Defender ファイアウォールがネットワークアクセスを
+尋ねてくることがあります。プライベートネットワークで許可してください。
 
 ---
 
-## コースの入手
+## Windows と WSL
 
+WSL を使うと Windows の中で本物の Linux が動きます。Linux のツールが好きな人や、
+すでに WSL を使っている人向けです。
+
+```powershell
+wsl --install -d Ubuntu
 ```
+
+再起動したら Windows Terminal で **Ubuntu** のプロファイルを開き、Ubuntu の中で
+[Linux](#linux) の節に従ってください。コースは `/mnt/c/` の下ではなく Linux の
+ホームディレクトリ（`~/mud-school`）にクローンしましょう。そのほうがずっと速く
+動きます。VS Code の *WSL* 拡張を使えば Windows 側から編集できます。
+
+---
+
+## macOS
+
+### 1. ツール
+
+[Homebrew](https://brew.sh) で:
+
+```sh
+brew install go git telnet
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+xcode-select --install            # C コンパイラ（--race に必要）
+```
+
+端末を開き直し、`go version`、`rustc --version`、`cargo --version` を確認します。
+
+### 2. 24 ビットカラー対応の端末
+
+**ターミナル.app はトゥルーカラー非対応** で、マップの色がおかしくなります。
+**iTerm2**、**WezTerm**、**Ghostty**、**kitty** を使ってください（例: `brew install --cask iterm2`）。
+
+### 3. コースを入手して始める
+
+```sh
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
 ./mudschool doctor
 ./mudschool init --lang ja
+./mudschool show
 ```
 
-Rust のレッスンを初めて実行するときは、ライブラリ（クレート）をダウンロードする
-ので少し時間がかかります。初回だけです。
+---
+
+## Linux
+
+### 1. ツール
+
+Go: ディストリビューションのパッケージは古いことが多いです。<https://go.dev/dl/> の
+手順で最新版を入れるか、snap を使います: `sudo snap install go --classic`。
+
+Rust:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+その他（Ubuntu/Debian。Fedora では `sudo dnf install git telnet nmap-ncat gcc`）:
+
+```sh
+sudo apt install git telnet netcat-openbsd build-essential
+```
+
+端末を開き直し、`go version`、`rustc --version`、`cargo --version` を確認します。
+
+### 2. コースを入手して始める
+
+```sh
+git clone https://github.com/mattias/mud-school.git
+cd mud-school
+./mudschool doctor
+./mudschool init --lang ja
+./mudschool show
+```
+
+GNOME Terminal、Konsole、kitty、Alacritty、WezTerm はどれも UTF-8 と 24 ビットカラーに
+対応しています。ロケールが UTF-8 になっているか確認してください（例: `LANG=ja_JP.UTF-8`）。
+
+---
+
+## GitHub Codespaces または Dev Container
+
+リポジトリの `.devcontainer/` に完成済みの環境があります（Go 1.24、Rust、telnet、nc 入りの
+Ubuntu と、Go・Rust 用の VS Code 拡張）。
+
+- **GitHub Codespaces:** リポジトリのページで **Code → Codespaces → Create codespace** を
+  クリック。すべてブラウザの中で動きます。
+- **手元の VS Code:** [Docker](https://www.docker.com/) と拡張機能 *Dev Containers* を
+  インストールし、フォルダを開いて **Reopen in Container** を選びます。
+
+その後 [Linux の手順 2](#2-コースを入手して始める) に従ってください（クローンは済んで
+います）。ポート 4000 は自動で転送されます。
+
+---
+
+## エディタ
+
+おすすめは **VS Code** と拡張機能 **Go**（`golang.go`）、**rust-analyzer**
+（`rust-lang.rust-analyzer`）です。補完、コード上のエラー表示、「定義へ移動」が使えます。
+JetBrains の GoLand/RustRover や、LSP を設定した Neovim も快適です。ツールが `go.mod` と
+`Cargo.toml` を見つけられるよう、`mud-school` フォルダ全体（または `workspace/server` と
+`workspace/client` を別々に）開いてください。
+
+## フォントと端末
+
+クライアントは `♣ ≈ ▲ ■ Ω ─ │ ♥` などの文字と 24 ビットカラーでマップを描きます。
+
+| コースの言語 | おすすめのフォント |
+|---|---|
+| 英語、スウェーデン語 | **Cascadia Mono**（Windows Terminal の標準）、JetBrains Mono、Fira Code、DejaVu Sans Mono |
+| 日本語 | **UDEV Gothic** または **HackGen**（英字と日本語の両方を含む無料のプログラミングフォント）。Windows 標準なら **BIZ UDゴシック** |
+
+**Windows Terminal:** 設定（`Ctrl+,`）→ *プロファイル* → *既定値* → *外観* → *フォント フェイス*。
+ダウンロードしたフォントは先にインストールし（`.ttf` を右クリック → *インストール*）、
+Windows Terminal を再起動してください。フォントにない文字は、Windows Terminal が自動で
+別のフォントから補います。
+
+**日本語のテキストとマップ。** `≈ ▲ ■ ─ │ ♣` などは「East Asian Ambiguous Width（曖昧幅）」
+の文字です。マップはこれらを **1 マス幅** として描きます:
+
+- Windows Terminal は常に 1 マス幅で描くので、設定変更は不要です。
+- iTerm2: Profiles → Text → *Ambiguous characters are double-width* をオフ。
+- WezTerm: `treat_east_asian_ambiguous_width_as_wide = false`（既定値）。
+- UDEV Gothic/HackGen は通常版を選び、曖昧幅の文字を全角にする版
+  （例: 「UDEV Gothic JPDOC」）は避けてください。
+
+日本語の部屋名や説明そのものは 2 マス幅で、クライアントはそれを正しく扱います。
 
 ## トラブルシューティング
 
 | 問題 | 解決方法 |
 |---|---|
-| `go: command not found` / `cargo: command not found` | 端末を開き直す。`~/go/bin`、`/usr/local/go/bin`、`~/.cargo/bin` が `PATH` にあるか確認する。 |
+| `go`/`cargo` が「認識されません」/「command not found」 | 端末を開き直す。Go の `bin` フォルダと `~/.cargo/bin`（Windows: `%USERPROFILE%\.cargo\bin`）が `PATH` にあるか確認する。 |
+| Windows: Rust のビルドで `link.exe not found` | C++ ビルドツールを入れる（Windows の手順 2）。 |
 | プロキシの内側で `cargo` がクレートをダウンロードできない | `HTTPS_PROXY`（必要なら `CARGO_HTTP_CAINFO` も）を設定する。 |
-| クライアントが落ちた後、端末の様子がおかしい | `reset` と入力して Enter（クライアントが端末を「raw モード」のままにしました）。 |
+| クライアントが落ちた後、端末の様子がおかしい | `reset` と入力（Windows ではタブを閉じる）。クライアントが端末を「raw モード」のままにしました。 |
 | `address already in use` | ポート 4000 ですでに何かが動いています。止めるか、`./mudschool run server -addr :4001` と `./mudschool run client 127.0.0.1:4001` を使う。 |
-| マップに変な文字や四角が出る | 端末かフォントが UTF-8 に対応していません。[端末](#6-端末) を参照。 |
-| マップがずれる | 曖昧幅の文字が全角で表示されています。[端末](#6-端末) の「文字幅」を参照。 |
-| 色が出ない・おかしい | 端末がトゥルーカラー非対応です（例: macOS のターミナル.app）。端末を変えてください。 |
-| `-race requires cgo` | C コンパイラを入れる（手順 4）か、`--race` なしで実行する。 |
-| Windows ファイアウォールがネットワークアクセスを尋ねてくる | プライベートネットワークで許可する。サーバーはポート 4000 で待ち受けます。 |
+| マップに四角や変な文字が出る | フォントに文字がないか、端末が UTF-8 ではありません。[フォントと端末](#フォントと端末) を参照。 |
+| マップの列がずれる（日本語） | 曖昧幅の文字が全角で描かれています。[フォントと端末](#フォントと端末) を参照。 |
+| 色が出ない・おかしい | 端末が 24 ビットカラー非対応です（例: macOS のターミナル.app、古い Windows コンソール）。 |
+| `-race requires cgo` | C コンパイラを入れる（各システムの節を参照）か、`--race` なしで実行する。 |
+| 問題なく見えるのに `doctor` が UTF-8／色の警告を出す | 端末を判別できませんでした。マップが正しく見えるなら無視してかまいません。 |
 
-それでも動かない？ `./mudschool doctor` を実行し、赤い項目を読んでください。
+それでも動かない？ `doctor` を実行し、赤や黄色の項目を読んでください。

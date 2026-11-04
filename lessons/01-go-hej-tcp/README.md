@@ -1,101 +1,102 @@
-# Lektion 01 – Hej, TCP!
+# Lesson 01 – Hello, TCP!
 
-Alla MUD:ar sedan 1978 börjar på samma sätt: en server som lyssnar på en
-port och en spelare som ansluter med `telnet`. I den här lektionen bygger du
-den allra första versionen av din server – en **ekoserver** som hälsar och
-upprepar allt du skriver.
+Every MUD since 1978 starts the same way: a server listening on a port and a
+player connecting with `telnet`. In this lesson you build the very first
+version of your server – an **echo server** that greets you and repeats
+everything you type.
 
-## Mål
+## Goals
 
-- Förstå hur ett Go-program är uppbyggt: `package`, `import`, `func`.
-- Använda en `struct` med en **metod**.
-- Hantera fel på Go-sättet: `if err != nil { return err }`.
-- Lyssna på TCP, ta emot en anslutning och läsa rader.
+- Understand how a Go program is put together: `package`, `import`, `func`.
+- Use a `struct` with a **method**.
+- Handle errors the Go way: `if err != nil { return err }`.
+- Listen on TCP, accept a connection and read lines.
 
-## Go på fem minuter
+## Go in five minutes
 
 ```go
-package mud                 // varje fil tillhör ett paket
+package mud                 // every file belongs to a package
 
-import "fmt"                // importera standardbiblioteket
+import "fmt"                // import from the standard library
 
-type Server struct{}        // en struct (en "post" med fält – än så länge inga)
+type Server struct{}        // a struct (a record with fields – none yet)
 
-func NewServer() *Server {  // en funktion som returnerar en pekare till en Server
+func NewServer() *Server {  // a function returning a pointer to a Server
     return &Server{}
 }
 
-func (s *Server) Hello() string {  // en METOD på *Server – (s *Server) är "mottagaren"
-    return "hej"
+func (s *Server) Hello() string {  // a METHOD on *Server – (s *Server) is the "receiver"
+    return "hello"
 }
 
-func divide(a, b int) (int, error) { // funktioner kan returnera flera värden
+func divide(a, b int) (int, error) { // functions can return several values
     if b == 0 {
-        return 0, fmt.Errorf("kan inte dela %d med noll", a)
+        return 0, fmt.Errorf("cannot divide %d by zero", a)
     }
-    return a / b, nil               // nil betyder "inget fel"
+    return a / b, nil               // nil means "no error"
 }
 ```
 
-Go har inga undantag (exceptions). Fel är vanliga värden av typen `error`
-som du returnerar och kontrollerar. Det känns pratigt i början, men gör det
-väldigt tydligt var saker kan gå fel.
+Go has no exceptions. Errors are ordinary values of type `error` that you
+return and check. It feels verbose at first, but it makes it very clear where
+things can go wrong.
 
-`defer` schemalägger ett anrop som körs när funktionen returnerar – perfekt
-för att städa upp:
+`defer` schedules a call to run when the function returns – perfect for
+cleaning up:
 
 ```go
 func (s *Server) handle(conn net.Conn) {
-    defer conn.Close()   // körs oavsett hur vi lämnar funktionen
+    defer conn.Close()   // runs however we leave the function
     ...
 }
 ```
 
-## Nätverk i Go
+## Networking in Go
 
 ```go
-l, err := net.Listen("tcp", ":4000") // lyssna (görs redan i main.go)
-conn, err := l.Accept()              // vänta på nästa klient – blockerar!
-fmt.Fprint(conn, "hej\r\n")          // conn är en io.Writer ...
-scanner := bufio.NewScanner(conn)    // ... och en io.Reader
-for scanner.Scan() {                 // läs rad för rad
-    line := scanner.Text()           // raden utan radbrytning
+l, err := net.Listen("tcp", ":4000") // listen (already done in main.go)
+conn, err := l.Accept()              // wait for the next client – blocks!
+fmt.Fprint(conn, "hi\r\n")           // conn is an io.Writer ...
+scanner := bufio.NewScanner(conn)    // ... and an io.Reader
+for scanner.Scan() {                 // read line by line
+    line := scanner.Text()           // the line without its line break
 }
 ```
 
-> **Varför `\r\n`?** Telnet-protokollet (RFC 854) säger att en radbrytning är
-> CR LF. Många klienter klarar `\n`, men vi gör rätt från början.
+> **Why `\r\n`?** The telnet protocol (RFC 854) says a line break is CR LF.
+> Many clients cope with `\n`, but we do it right from the start.
 
-## Uppgift
+## Task
 
-Öppna `workspace/server/mud/server.go` och fyll i de två `TODO`:
+Open `workspace/server/mud/server.go` and fill in the two `TODO`s:
 
-1. `Serve` ska i en evig `for`-loop anropa `l.Accept()`. Får du ett fel ska
-   `Serve` returnera det (det händer t.ex. när lyssnaren stängs). Annars
-   anropar du `s.handle(conn)`.
-2. `handle` ska stänga anslutningen med `defer`, skicka `Welcome` + `"\r\n"`
-   och sedan eka varje rad den läser.
+1. `Serve` should call `l.Accept()` in an endless `for` loop. If you get an
+   error, `Serve` returns it (that happens e.g. when the listener is closed).
+   Otherwise call `s.handle(conn)`.
+2. `handle` should close the connection with `defer`, send `Welcome` +
+   `"\r\n"` and then echo every line it reads.
 
-> **Om `messages.go`:** all text som spelet visar för spelaren ligger i
-> `workspace/server/mud/messages.go` – på det språk du valt för kursen.
-> `Welcome` finns redan där. Testerna använder samma konstanter, så behåll
-> namnen, men ändra gärna texterna. Kod och kodkommentarer är på engelska,
-> som är brukligt i branschen; instruktionerna är på ditt språk.
+> **About `messages.go`:** all text the game shows to players lives in
+> `workspace/server/mud/messages.go` – in the language you chose for the
+> course. `Welcome` is already there. The tests use the same constants, so
+> keep the names, but feel free to change the texts. Code and code comments
+> are in English, as is customary in the industry; the instructions are in
+> your language.
 
-Kör `./mudschool check` för att testa.
+Run `./mudschool check` to test.
 
-## Testa själv
+## Try it yourself
 
 ```
-./mudschool run server            # i en terminal
-telnet localhost 4000             # i en annan (eller: nc localhost 4000)
+./mudschool run server            # in one terminal
+telnet localhost 4000             # in another (or: nc localhost 4000)
 ```
 
-Skriv några rader. Öppna sedan en *andra* telnet samtidigt. Vad händer?
-Varför? (Det fixar vi i nästa lektion.)
+Type a few lines. Then open a *second* telnet at the same time. What happens?
+Why? (We fix that in the next lesson.)
 
-## Utmaningar (frivilliga)
+## Challenges (optional)
 
-- Logga varje ny anslutning med `log.Printf("ny anslutning från %s", conn.RemoteAddr())`.
-- Låt servern svara `MsgGoodbye` och koppla ner om klienten skriver `quit`.
-- Läs dokumentationen: `go doc net.Listener` och `go doc bufio.Scanner`.
+- Log every new connection with `log.Printf("new connection from %s", conn.RemoteAddr())`.
+- Make the server reply `MsgGoodbye` and disconnect if the client types `quit`.
+- Read the documentation: `go doc net.Listener` and `go doc bufio.Scanner`.

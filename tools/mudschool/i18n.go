@@ -2,24 +2,43 @@ package main
 
 import (
 	"os"
+	"runtime"
 	"strings"
 )
 
 // Languages lists the supported course languages.
-var Languages = []string{"sv", "en", "ja"}
+var Languages = []string{"en", "sv", "ja"}
 
 // lang is the active language for this run of the tool.
 var lang = "en"
+
+// self is how the user starts the tool: "./mudschool" with a POSIX shell,
+// ".\mudschool.cmd" on Windows (cmd.exe and PowerShell).
+var self = func() string {
+	if runtime.GOOS == "windows" {
+		return `.\mudschool.cmd`
+	}
+	return "./mudschool"
+}()
+
+// fixSelf rewrites "./mudschool" in text shown to the user so that the
+// commands can be copied as they are on every platform.
+func fixSelf(s string) string {
+	if self == "./mudschool" {
+		return s
+	}
+	return strings.ReplaceAll(s, "./mudschool", self)
+}
 
 // L picks the text for the active language.
 func L(sv, en, ja string) string {
 	switch lang {
 	case "sv":
-		return sv
+		return fixSelf(sv)
 	case "ja":
-		return ja
+		return fixSelf(ja)
 	default:
-		return en
+		return fixSelf(en)
 	}
 }
 

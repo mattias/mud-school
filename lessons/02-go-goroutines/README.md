@@ -1,41 +1,41 @@
-# Lektion 02 – Många spelare samtidigt
+# Lesson 02 – Many players at once
 
-Testade du att ansluta med två telnet-fönster i förra lektionen? Den andra
-spelaren fick inte ens välkomstmeddelandet förrän den första kopplade ner.
-Servern gör bara en sak i taget. En MUD utan andra spelare är ganska ensam,
-så nu fixar vi det.
+Did you try connecting with two telnet windows in the last lesson? The second
+player didn't even get the welcome message until the first one disconnected.
+The server does one thing at a time. A MUD without other players is pretty
+lonely, so let's fix that.
 
-## Mål
+## Goals
 
-- Förstå vad en **goroutine** är och starta en med `go`.
-- Förstå skillnaden mellan *samtidighet* (concurrency) och *parallellism*.
-- Använda `sync.WaitGroup` för att vänta in flera goroutines.
-- Köra testerna med *race detector*: `./mudschool check --race`.
+- Understand what a **goroutine** is and start one with `go`.
+- Understand the difference between *concurrency* and *parallelism*.
+- Use `sync.WaitGroup` to wait for several goroutines.
+- Run the tests with the *race detector*: `./mudschool check --race`.
 
 ## Goroutines
 
-En goroutine är en lättviktig tråd som Gos runtime schemalägger. De är
-billiga – en server kan ha hundratusentals. Du startar en genom att sätta
-`go` framför ett funktionsanrop:
+A goroutine is a lightweight thread scheduled by the Go runtime. They are
+cheap – a server can have hundreds of thousands. You start one by putting
+`go` in front of a function call:
 
 ```go
-go s.handle(conn)   // returnerar direkt; handle körs "vid sidan av"
+go s.handle(conn)   // returns immediately; handle runs "on the side"
 ```
 
-Anonyma funktioner (closures) fungerar också:
+Anonymous functions (closures) work too:
 
 ```go
 for i := 0; i < 3; i++ {
     go func() {
-        fmt.Println("hej från goroutine", i)
+        fmt.Println("hello from goroutine", i)
     }()
 }
 ```
 
-> Sedan Go 1.22 får varje varv i en `for`-loop en egen kopia av `i`. I äldre
-> Go-versioner var det en klassisk bugg att alla goroutines såg samma `i`.
+> Since Go 1.22 every iteration of a `for` loop gets its own copy of `i`. In
+> older Go versions it was a classic bug that all goroutines saw the same `i`.
 
-Vill du vänta tills ett gäng goroutines är klara använder du en `WaitGroup`:
+To wait until a bunch of goroutines are done, use a `WaitGroup`:
 
 ```go
 var wg sync.WaitGroup
@@ -49,34 +49,34 @@ for _, job := range jobs {
 wg.Wait()
 ```
 
-Titta i `mudschool_02_test.go` – testerna använder exakt det mönstret för
-att låta 50 klienter skicka samtidigt.
+Look at `mudschool_02_test.go` – the tests use exactly that pattern to let 50
+clients send at the same time.
 
-## Uppgift
+## Task
 
-1. Ändra `Serve` så att varje anslutning hanteras i en egen goroutine.
-2. Logga när en klient ansluter och kopplar ner med `log.Printf`
-   (`conn.RemoteAddr()` ger klientens adress). Testerna kontrollerar inte
-   loggarna, men du kommer att vilja ha dem.
+1. Change `Serve` so that every connection is handled in its own goroutine.
+2. Log when a client connects and disconnects with `log.Printf`
+   (`conn.RemoteAddr()` gives the client's address). The tests don't check
+   the logs, but you will want them.
 
-Det är en ändring på ett tecken plus loggning – men begreppet är det
-viktigaste i hela Go-delen av kursen.
+It is a one-word change plus logging – but the concept is the most important
+one in the whole Go part of the course.
 
-## Testa själv
+## Try it yourself
 
-Starta servern och anslut med tre telnet-fönster samtidigt. Kör sedan
-`./mudschool check --race`. Race detectorn hittar ställen där två goroutines
-rör samma data utan synkronisering. Än så länge delar dina goroutines ingen
-data – men vänta bara till lektion 05!
+Start the server and connect with three telnet windows at once. Then run
+`./mudschool check --race`. The race detector finds places where two
+goroutines touch the same data without synchronization. Your goroutines share
+no data yet – but just wait for lesson 05!
 
-## Fundera på
+## Think about
 
-- Vad händer om tusen klienter ansluter? Vad kostar en goroutine i minne?
-  (Svar: några kilobyte stack som växer vid behov.)
-- `handle` blockerar på `scanner.Scan()` medan den väntar på klienten.
-  Varför är det helt okej nu, men inte i lektion 01?
+- What happens if a thousand clients connect? How much memory does a
+  goroutine cost? (Answer: a few kilobytes of stack that grows when needed.)
+- `handle` blocks on `scanner.Scan()` while waiting for the client. Why is
+  that perfectly fine now, but not in lesson 01?
 
-## Utmaningar
+## Challenges
 
-- Räkna antal anslutna klienter och logga det. Testa med `--race`. Får du en
-  varning? Läs om `sync/atomic` (`atomic.Int64`) och fixa den.
+- Count the connected clients and log the number. Test with `--race`. Do you
+  get a warning? Read about `sync/atomic` (`atomic.Int64`) and fix it.

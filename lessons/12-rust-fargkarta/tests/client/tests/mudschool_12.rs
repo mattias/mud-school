@@ -1,9 +1,12 @@
-// Den här filen hör till kursverktyget och skrivs över av `mudschool check`.
+// This file belongs to the course tool and is overwritten by `mudschool check`.
+
+mod mudschool_common;
 
 use std::collections::{HashMap, HashSet};
 
 use mud_client::protocol::MapData;
 use mud_client::render::{render_map, tile, to_ansi, Cell, Rgb, BLANK};
+use mudschool_common::l;
 
 const TERRAINS: [&str; 8] = [
     "town", "inside", "road", "field", "forest", "water", "mountain", "cave",
@@ -35,23 +38,46 @@ fn every_terrain_has_its_own_glyph() {
     assert_eq!(
         glyphs.len(),
         TERRAINS.len(),
-        "alla terränger ska ha olika tecken, men fick {glyphs:?}"
+        "{} {glyphs:?}",
+        l(
+            "alla terränger ska ha olika tecken, men fick",
+            "every terrain should have its own glyph, but got",
+            "地形ごとに異なる文字が必要ですが、実際は"
+        )
     );
     assert!(
         !glyphs.contains(&' '),
-        "ingen terräng får vara ett mellanslag"
+        "{}",
+        l(
+            "ingen terräng får vara ett mellanslag",
+            "no terrain may be a space",
+            "地形を空白にしてはいけません"
+        )
     );
 }
 
 #[test]
 fn colors_make_sense() {
     let Rgb(r, g, b) = tile("forest").fg;
-    assert!(g > r && g > b, "skog ska vara grön, är Rgb({r}, {g}, {b})");
+    assert!(
+        g > r && g > b,
+        "{} Rgb({r}, {g}, {b})",
+        l(
+            "skog ska vara grön, är",
+            "forest should be green, is",
+            "森は緑であるべきですが、実際は"
+        )
+    );
     let water = tile("water");
     let Rgb(r, g, b) = water.bg.unwrap_or(water.fg);
     assert!(
         b > r && b > g,
-        "vatten ska vara blått, är Rgb({r}, {g}, {b})"
+        "{} Rgb({r}, {g}, {b})",
+        l(
+            "vatten ska vara blått, är",
+            "water should be blue, is",
+            "水は青であるべきですが、実際は"
+        )
     );
 }
 
@@ -64,7 +90,7 @@ fn self_is_an_at_sign_and_paths_are_different() {
 
 #[test]
 fn unknown_meaning_does_not_panic() {
-    let c = tile("något-helt-nytt");
+    let c = tile("something-completely-new");
     assert_ne!(c, tile("forest"));
     assert_ne!(c.glyph, ' ');
 }
@@ -73,21 +99,35 @@ fn unknown_meaning_does_not_panic() {
 fn render_map_builds_a_grid() {
     let map = test_map();
     let grid = render_map(&map);
-    assert_eq!(grid.len(), 3, "en rad i rutnätet per rad i kartan");
+    assert_eq!(
+        grid.len(),
+        3,
+        "{}",
+        l(
+            "en rad i rutnätet per rad i kartan",
+            "one grid row per map row",
+            "マップの 1 行につきグリッドも 1 行です"
+        )
+    );
     assert!(
         grid.iter().all(|row| row.len() == 5),
-        "varje rad ska ha 5 celler"
+        "{}",
+        l(
+            "varje rad ska ha 5 celler",
+            "every row should have 5 cells",
+            "各行は 5 セルであるべきです"
+        )
     );
     assert_eq!(grid[0][0], tile("forest"));
     assert_eq!(grid[0][2], tile("water"));
     assert_eq!(grid[2][2], tile("self"));
     assert_eq!(grid[1][0], tile("path_ns"));
     assert_eq!(grid[0][4], BLANK);
-    // 'X' finns inte i legenden: visa tecknet som det är.
+    // 'X' is not in the legend: show the character as it is.
     assert_eq!(grid[2][4].glyph, 'X');
 }
 
-/// Tar bort ANSI-koder: ESC [ ... m
+/// Removes ANSI codes: ESC [ ... m
 fn strip_ansi(s: &str) -> String {
     let mut out = String::new();
     let mut chars = s.chars();
@@ -112,11 +152,21 @@ fn to_ansi_has_colors_and_the_right_text() {
     let Rgb(r, g, b) = tile("forest").fg;
     assert!(
         ansi.contains(&format!("\x1b[38;2;{r};{g};{b}m")),
-        "skogen ska ha sin förgrundsfärg som truecolor-kod"
+        "{}",
+        l(
+            "skogen ska ha sin förgrundsfärg som truecolor-kod",
+            "the forest should have its foreground colour as a truecolor code",
+            "森の前景色が truecolor コードで出力されるべきです"
+        )
     );
     assert!(
         ansi.contains("\x1b[0m"),
-        "färgerna ska återställas med \\x1b[0m"
+        "{}",
+        l(
+            "färgerna ska återställas med \\x1b[0m",
+            "colours should be reset with \\x1b[0m",
+            "色は \\x1b[0m でリセットするべきです"
+        )
     );
 
     let expected: Vec<String> = grid
@@ -137,6 +187,11 @@ fn background_colors() {
     assert!(ansi.contains("\x1b[38;2;1;2;3m"));
     assert!(
         ansi.contains("\x1b[48;2;4;5;6m"),
-        "bakgrundsfärg ska bli \\x1b[48;2;R;G;Bm"
+        "{}",
+        l(
+            "bakgrundsfärg ska bli \\x1b[48;2;R;G;Bm",
+            "a background colour should become \\x1b[48;2;R;G;Bm",
+            "背景色は \\x1b[48;2;R;G;Bm になるべきです"
+        )
     );
 }

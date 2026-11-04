@@ -1,6 +1,13 @@
 {
-  "title": "Chatt – kanaler och select",
+  "title": {
+    "sv": "Chatt – kanaler och select",
+    "en": "Chat – channels and select",
+    "ja": "チャット – チャネルと select"
+  },
   "track": "go",
-  "summary": "Låt spelare prata med varandra. Varje spelare får en egen utkorg (kanal) så att en långsam klient aldrig kan frysa servern.",
-  "concepts": ["kanaler (chan)", "buffrade kanaler", "select och default", "stänga kanaler", "en skrivare per resurs", "mottryck (backpressure)"]
+  "summary": {
+    "sv": "Låt spelare prata med varandra. Varje spelare får en egen utkorg så att en långsam klient aldrig fryser servern.",
+    "en": "Let players talk to each other. Every player gets an outbox so a slow client can never freeze the server.",
+    "ja": "プレイヤー同士で会話させる。各プレイヤーに送信箱を持たせ、遅いクライアントがサーバーを止めないようにする。"
+  }
 }

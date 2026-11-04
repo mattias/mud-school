@@ -1,25 +1,25 @@
-//! Gör om kartans koder till färgade tecken ("tiles").
+//! Turns the map's codes into coloured characters ("tiles").
 //!
-//! Servern säger *vad* som finns ("forest"), den här modulen bestämmer hur
-//! det ska *se ut*. Byt glyfer och färger hur du vill – det är din klient!
+//! The server says *what* is there ("forest"), this module decides how it
+//! should *look*. Change glyphs and colours as you like – it's your client!
 
 use std::fmt::Write;
 
 use crate::protocol::MapData;
 
-/// En färg med röd, grön och blå komponent (0–255).
+/// A colour with red, green and blue components (0–255).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Rgb(pub u8, pub u8, pub u8);
 
-/// En ruta på skärmen: ett tecken med förgrundsfärg och kanske bakgrundsfärg.
+/// A cell on the screen: a character with a foreground colour and maybe a background colour.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Cell {
     pub glyph: char,
     pub fg: Rgb,
-    pub bg: Option<Rgb>, // None = terminalens vanliga bakgrund
+    pub bg: Option<Rgb>, // None = the terminal's normal background
 }
 
-/// En tom ruta.
+/// An empty cell.
 pub const BLANK: Cell = Cell {
     glyph: ' ',
     fg: Rgb(0, 0, 0),
@@ -34,7 +34,7 @@ const fn cell(glyph: char, fg: Rgb) -> Cell {
     }
 }
 
-/// Hur en sak med en viss betydelse ska se ut.
+/// How a thing with a certain meaning should look.
 pub fn tile(meaning: &str) -> Cell {
     match meaning {
         "town" => cell('#', Rgb(176, 140, 96)),
@@ -59,7 +59,7 @@ pub fn tile(meaning: &str) -> Cell {
     }
 }
 
-/// Gör om hela kartan till ett rutnät av celler.
+/// Turns the whole map into a grid of cells.
 pub fn render_map(map: &MapData) -> Vec<Vec<Cell>> {
     map.rows
         .iter()
@@ -69,7 +69,7 @@ pub fn render_map(map: &MapData) -> Vec<Vec<Cell>> {
                     ' ' => BLANK,
                     _ => match map.meaning(code) {
                         Some(meaning) => tile(meaning),
-                        None => cell(code, Rgb(128, 128, 128)), // okänd kod: visa den som den är
+                        None => cell(code, Rgb(128, 128, 128)), // unknown code: show it as it is
                     },
                 })
                 .collect()
@@ -77,8 +77,8 @@ pub fn render_map(map: &MapData) -> Vec<Vec<Cell>> {
         .collect()
 }
 
-/// Ritar rutnätet som text med ANSI-färgkoder (24-bitars "truecolor").
-/// Raderna skiljs åt med '\n'.
+/// Draws the grid as text with ANSI colour codes (24-bit "truecolor").
+/// Rows are separated by '\n'.
 pub fn to_ansi(grid: &[Vec<Cell>]) -> String {
     let mut out = String::new();
     for (i, row) in grid.iter().enumerate() {

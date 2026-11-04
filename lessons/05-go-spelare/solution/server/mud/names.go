@@ -7,17 +7,17 @@ import (
 	"unicode/utf8"
 )
 
-// Fel som ValidateName kan returnera. Att definiera fel som variabler gör
-// att anroparen kan jämföra med errors.Is(err, ErrNameTooShort).
+// Errors that ValidateName can return. Defining errors as variables lets the
+// caller compare with errors.Is(err, ErrNameTooShort).
 var (
-	ErrNameTooShort = errors.New("namnet måste vara minst 2 tecken")
-	ErrNameTooLong  = errors.New("namnet får vara högst 16 tecken")
-	ErrNameInvalid  = errors.New("namnet får bara innehålla bokstäver")
-	ErrNameTaken    = errors.New("det namnet är redan upptaget")
+	ErrNameTooShort = errors.New(MsgErrNameTooShort)
+	ErrNameTooLong  = errors.New(MsgErrNameTooLong)
+	ErrNameInvalid  = errors.New(MsgErrNameInvalid)
+	ErrNameTaken    = errors.New(MsgErrNameTaken)
 )
 
-// ValidateName kontrollerar att ett namn är 2–16 bokstäver (å, ä och ö räknas
-// som bokstäver, siffror och mellanslag gör det inte).
+// ValidateName checks that a name is 2–16 letters (å, ä, ö and Japanese
+// characters count as letters; digits and spaces do not).
 func ValidateName(name string) error {
 	n := utf8.RuneCountInString(name)
 	switch {
@@ -34,7 +34,7 @@ func ValidateName(name string) error {
 	return nil
 }
 
-// NormalizeName gör första bokstaven stor och resten små: "aNNA" -> "Anna".
+// NormalizeName makes the first letter upper case and the rest lower case: "aNNA" -> "Anna".
 func NormalizeName(name string) string {
 	first, size := utf8.DecodeRuneInString(name)
 	if first == utf8.RuneError {

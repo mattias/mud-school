@@ -39,6 +39,6 @@ defer p.close()      // körs näst sist
 ...
 defer func() {       // körs först
     s.removePlayer(p)
-    s.broadcast(p, p.Name+" har lämnat.")
+    s.broadcast(p, fmt.Sprintf(MsgLeft, p.Name))
 }()
 ```

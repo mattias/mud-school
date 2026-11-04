@@ -14,28 +14,55 @@ import (
 func (c *course) cmdInit() error {
 	ws := c.workspace()
 	if exists(c.progressPath()) {
-		fmt.Println("Du har redan en arbetsyta i", ws)
-		fmt.Println("Kör", cyan("./mudschool show"), "för att se din aktuella lektion.")
+		fmt.Println(L("Du har redan en arbetsyta i", "You already have a workspace in", "作業領域はすでにあります:"), ws)
+		fmt.Println(L("Kör", "Run", "実行:"), cyan("./mudschool show"))
 		return nil
 	}
-	if _, err := copyTree(filepath.Join(c.root, "starter"), ws, false); err != nil {
+	if _, err := overlay(c.root, "starter", ws, false); err != nil {
 		return err
 	}
 	first := c.lessons[0]
 	if _, err := c.enter(ws, first); err != nil {
 		return err
 	}
-	p := &Progress{Current: first.ID, Done: map[string]bool{}, Hints: map[string]int{}}
+	p := &Progress{Lang: lang, Current: first.ID, Done: map[string]bool{}, Hints: map[string]int{}}
 	if err := c.saveProgress(p); err != nil {
 		return err
 	}
-	fmt.Println(green("✔ Arbetsytan är skapad:"), ws)
+	fmt.Println(green(L("✔ Arbetsytan är skapad:", "✔ Workspace created:", "✔ 作業領域を作成しました:")), ws)
 	fmt.Println()
-	fmt.Println("  workspace/server/   din MUD-server i Go")
-	fmt.Println("  workspace/client/   din MUD-klient i Rust")
+	fmt.Println(L("  workspace/server/   din MUD-server i Go", "  workspace/server/   your MUD server in Go", "  workspace/server/   Go で書く MUD サーバー"))
+	fmt.Println(L("  workspace/client/   din MUD-klient i Rust", "  workspace/client/   your MUD client in Rust", "  workspace/client/   Rust で書く MUD クライアント"))
 	fmt.Println()
-	fmt.Println("Nästa steg:", cyan("./mudschool show"))
+	fmt.Println(L("Språk:", "Language:", "言語:"), lang, dim(L("(byt med ./mudschool lang en|sv|ja)", "(change with ./mudschool lang sv|en|ja)", "（./mudschool lang sv|en|ja で変更）")))
+	fmt.Println(L("Nästa steg:", "Next step:", "次のステップ:"), cyan("./mudschool show"))
 	return nil
+}
+
+func (c *course) cmdLang(args []string) error {
+	if len(args) != 1 || !validLang(args[0]) {
+		return errors.New(L("användning: mudschool lang sv|en|ja", "usage: mudschool lang sv|en|ja", "使い方: mudschool lang sv|en|ja"))
+	}
+	p, err := c.loadProgress()
+	if err != nil {
+		return err
+	}
+	lang = args[0]
+	p.Lang = lang
+	// The game texts (messages.go / messages.rs) follow the course language.
+	written, err := copyTree(filepath.Join(c.root, "starter."+lang), c.workspace(), true)
+	if err != nil {
+		return err
+	}
+	for _, f := range written {
+		fmt.Println(dim(L("  skrev workspace/", "  wrote workspace/", "  書き込み: workspace/") + f))
+	}
+	fmt.Println(green("✔"), L("Kursen är nu på svenska.", "The course is now in English.", "コースを日本語に切り替えました。"))
+	fmt.Println(dim(L(
+		"Spelvärlden (world.json) som du redan fått byts inte ut – ändra den själv om du vill.",
+		"World files you already have (world.json) are not replaced – edit them yourself if you like.",
+		"すでにある世界ファイル (world.json) は置き換えません。必要なら自分で編集してください。")))
+	return c.saveProgress(p)
 }
 
 func (c *course) cmdList() error {
@@ -43,7 +70,7 @@ func (c *course) cmdList() error {
 	if err != nil {
 		p = &Progress{Done: map[string]bool{}}
 	}
-	fmt.Println(bold("Lektioner"))
+	fmt.Println(bold(L("Lektioner", "Lessons", "レッスン")))
 	for _, l := range c.lessons {
 		mark := dim("·")
 		switch {
@@ -58,7 +85,7 @@ func (c *course) cmdList() error {
 		}
 		fmt.Printf("  %s %s  %s  %s\n", mark, l.ID, track, l.Title)
 		if l.ID == p.Current {
-			fmt.Printf("           %s\n", dim(l.Summary))
+			fmt.Printf("           %s\n", dim(l.Summary.String()))
 		}
 	}
 	return nil
@@ -78,13 +105,16 @@ func (c *course) cmdShow(args []string) error {
 	if err != nil {
 		return err
 	}
-	data, err := os.ReadFile(filepath.Join(l.Dir, "README.md"))
+	data, err := os.ReadFile(localized(l.Dir, "README"))
 	if err != nil {
 		return err
 	}
 	fmt.Print(renderMarkdown(string(data)))
 	fmt.Println(dim("─────────────────────────────────────────────"))
-	fmt.Println(dim("Kör ") + cyan("./mudschool check") + dim(" när du är klar, eller ") + cyan("./mudschool hint") + dim(" om du kör fast."))
+	fmt.Println(L(
+		dim("Kör ")+cyan("./mudschool check")+dim(" när du är klar, eller ")+cyan("./mudschool hint")+dim(" om du kör fast."),
+		dim("Run ")+cyan("./mudschool check")+dim(" when you are done, or ")+cyan("./mudschool hint")+dim(" if you get stuck."),
+		dim("終わったら ")+cyan("./mudschool check")+dim("、行き詰まったら ")+cyan("./mudschool hint")+dim(" を実行しましょう。")))
 	return nil
 }
 
@@ -97,9 +127,9 @@ func (c *course) cmdHint() error {
 	if err != nil {
 		return err
 	}
-	data, err := os.ReadFile(filepath.Join(l.Dir, "HINTS.md"))
+	data, err := os.ReadFile(localized(l.Dir, "HINTS"))
 	if errors.Is(err, fs.ErrNotExist) {
-		fmt.Println("Den här lektionen har inga ledtrådar.")
+		fmt.Println(L("Den här lektionen har inga ledtrådar.", "This lesson has no hints.", "このレッスンにはヒントがありません。"))
 		return nil
 	} else if err != nil {
 		return err
@@ -107,7 +137,9 @@ func (c *course) cmdHint() error {
 	hints := splitHints(string(data))
 	n := p.Hints[l.ID]
 	if n >= len(hints) {
-		fmt.Println("Du har sett alla ledtrådar. Fortfarande fast? Prova", cyan("./mudschool solution"))
+		fmt.Println(L("Du har sett alla ledtrådar. Fortfarande fast? Prova",
+			"You have seen all the hints. Still stuck? Try",
+			"ヒントはこれで全部です。まだ解けなければ次を試してください:"), cyan("./mudschool solution"))
 		n = len(hints) - 1
 	} else {
 		p.Hints[l.ID] = n + 1
@@ -115,12 +147,12 @@ func (c *course) cmdHint() error {
 			return err
 		}
 	}
-	fmt.Printf(dim("Ledtråd %d av %d\n\n"), n+1, len(hints))
+	fmt.Printf(dim(L("Ledtråd %d av %d\n\n", "Hint %d of %d\n\n", "ヒント %d / %d\n\n")), n+1, len(hints))
 	fmt.Print(renderMarkdown(hints[n]))
 	return nil
 }
 
-// splitHints delar upp HINTS.md vid varje "## "-rubrik.
+// splitHints splits HINTS.md at every "## " heading.
 func splitHints(md string) []string {
 	var hints []string
 	for _, part := range strings.Split("\n"+md, "\n## ") {
@@ -135,7 +167,7 @@ func splitHints(md string) []string {
 
 func (c *course) cmdGoto(args []string) error {
 	if len(args) != 1 {
-		return errors.New("användning: mudschool goto <id>")
+		return errors.New(L("användning: mudschool goto <id>", "usage: mudschool goto <id>", "使い方: mudschool goto <id>"))
 	}
 	p, err := c.loadProgress()
 	if err != nil {
@@ -152,11 +184,11 @@ func (c *course) cmdGoto(args []string) error {
 	if _, err := c.enter(c.workspace(), l); err != nil {
 		return err
 	}
-	fmt.Printf("Aktuell lektion: %s %s\n", l.ID, bold(l.Title))
+	fmt.Printf("%s %s %s\n", L("Aktuell lektion:", "Current lesson:", "現在のレッスン:"), l.ID, bold(l.Title.String()))
 	return nil
 }
 
-// checkCommands returnerar kommandona som testar ett spår.
+// checkCommands returns the commands that test a track.
 func checkCommands(track string, race bool) (dir string, cmds [][]string) {
 	if track == "go" {
 		test := []string{"go", "test", "-count=1"}
@@ -171,7 +203,7 @@ func checkCommands(track string, race bool) (dir string, cmds [][]string) {
 func runIn(dir string, quiet bool, env []string, argv ...string) (string, error) {
 	cmd := exec.Command(argv[0], argv[1:]...)
 	cmd.Dir = dir
-	cmd.Env = append(os.Environ(), env...)
+	cmd.Env = append(append(os.Environ(), "MUDSCHOOL_LANG="+lang), env...)
 	if quiet {
 		out, err := cmd.CombinedOutput()
 		return string(out), err
@@ -196,19 +228,24 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 	if err := c.placeTests(ws, l); err != nil {
 		return false, err
 	}
-	fmt.Printf("%s Lektion %s: %s\n\n", cyan("▶"), l.ID, bold(l.Title))
+	fmt.Printf("%s %s %s: %s\n\n", cyan("▶"), L("Lektion", "Lesson", "レッスン"), l.ID, bold(l.Title.String()))
 	dir, cmds := checkCommands(l.Track, race)
 	for _, argv := range cmds {
 		fmt.Println(dim("$ " + strings.Join(argv, " ")))
 		if _, err := runIn(filepath.Join(ws, dir), false, nil, argv...); err != nil {
 			fmt.Println()
-			fmt.Println(red("✘ Inte riktigt än."), "Läs felmeddelandena ovan – de berättar vad testerna förväntade sig.")
-			fmt.Println("  Instruktioner:", cyan("./mudschool show"), "  Ledtråd:", cyan("./mudschool hint"))
+			fmt.Println(red(L("✘ Inte riktigt än.", "✘ Not quite yet.", "✘ もう少しです。")),
+				L("Läs felmeddelandena ovan – de berättar vad testerna förväntade sig.",
+					"Read the messages above – they tell you what the tests expected.",
+					"上のメッセージを読んでください。テストが何を期待していたかが書かれています。"))
+			fmt.Println(L("  Instruktioner:", "  Instructions:", "  説明:"), cyan("./mudschool show"),
+				L("  Ledtråd:", "  Hint:", "  ヒント:"), cyan("./mudschool hint"))
 			return false, nil
 		}
 	}
 	fmt.Println()
-	fmt.Println(green("✔ Alla tester gick igenom!"), "Lektion", l.ID, "är klar.")
+	fmt.Println(green(L("✔ Alla tester gick igenom!", "✔ All tests passed!", "✔ すべてのテストに合格しました！")),
+		fmt.Sprintf(L("Lektion %s är klar.", "Lesson %s is done.", "レッスン %s 完了です。"), l.ID))
 	if !advance {
 		return true, nil
 	}
@@ -219,14 +256,18 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		if err != nil {
 			return true, err
 		}
-		fmt.Printf("\nNästa lektion: %s %s\n", nxt.ID, bold(nxt.Title))
+		fmt.Printf("\n%s %s %s\n", L("Nästa lektion:", "Next lesson:", "次のレッスン:"), nxt.ID, bold(nxt.Title.String()))
 		for _, f := range created {
-			fmt.Println(dim("  ny fil: workspace/" + f))
+			fmt.Println(dim(L("  ny fil: workspace/", "  new file: workspace/", "  新しいファイル: workspace/") + f))
 		}
-		fmt.Println("Kör", cyan("./mudschool show"), "för att läsa instruktionerna.")
+		fmt.Println(L("Kör", "Run", "次を実行:"), cyan("./mudschool show"))
 	} else {
-		fmt.Println("\n" + bold("🎉 Du har klarat alla lektioner som finns hittills!"))
-		fmt.Println("Läs docs/KURSPLAN.md för nästa fas och idéer att bygga vidare på.")
+		fmt.Println("\n" + bold(L("🎉 Du har klarat alla lektioner som finns hittills!",
+			"🎉 You have finished every lesson that exists so far!",
+			"🎉 現在あるレッスンをすべて終えました！")))
+		fmt.Println(L("Läs docs/sv/CURRICULUM.md för nästa fas och idéer att bygga vidare på.",
+			"Read docs/en/CURRICULUM.md for the next phase and ideas to build on.",
+			"次のフェーズと発展のアイデアは docs/ja/CURRICULUM.md を読んでください。"))
 	}
 	return true, c.saveProgress(p)
 }
@@ -266,8 +307,10 @@ func (c *course) cmdWatch(race bool) error {
 			if _, err := c.cmdCheck(race, true); err != nil {
 				return err
 			}
-			changed() // ignorera filer som testkörningen själv skapade
-			fmt.Println(dim("\n(bevakar workspace/ – spara en fil för att köra igen, Ctrl+C avslutar)"))
+			changed() // ignore files the test run itself created
+			fmt.Println(dim(L("\n(bevakar workspace/ – spara en fil för att köra igen, Ctrl+C avslutar)",
+				"\n(watching workspace/ – save a file to run again, Ctrl+C to quit)",
+				"\n（workspace/ を監視中。保存すると再実行します。Ctrl+C で終了）")))
 		}
 		time.Sleep(700 * time.Millisecond)
 	}
@@ -282,25 +325,29 @@ func (c *course) cmdSolution(apply bool) error {
 	if err != nil {
 		return err
 	}
-	sol := filepath.Join(l.Dir, "solution")
 	if !apply {
-		fmt.Println(yellow("Referenslösningen för lektion " + l.ID + " finns i:"))
-		_ = filepath.WalkDir(sol, func(path string, d fs.DirEntry, err error) error {
-			if err == nil && !d.IsDir() {
-				rel, _ := filepath.Rel(c.root, path)
-				fmt.Println("  " + rel)
-			}
-			return nil
-		})
+		fmt.Println(yellow(fmt.Sprintf(L("Referenslösningen för lektion %s finns i:",
+			"The reference solution for lesson %s is in:",
+			"レッスン %s の模範解答はここにあります:"), l.ID)))
+		for _, tree := range []string{"solution", "solution." + lang} {
+			_ = filepath.WalkDir(filepath.Join(l.Dir, tree), func(path string, d fs.DirEntry, err error) error {
+				if err == nil && !d.IsDir() {
+					fmt.Println("  " + rel(c.root, path))
+				}
+				return nil
+			})
+		}
 		fmt.Println()
-		fmt.Println("Tips: jämför med din egen kod, t.ex.")
-		fmt.Println(dim("  diff -ru " + rel(c.root, sol) + "/server workspace/server"))
-		fmt.Println("Vill du skriva över din kod med lösningen? Kör", cyan("./mudschool solution --apply"))
+		fmt.Println(L("Tips: jämför med din egen kod, t.ex.", "Tip: compare with your own code, e.g.", "ヒント: 自分のコードと比べてみましょう。例:"))
+		fmt.Println(dim("  diff -ru " + rel(c.root, filepath.Join(l.Dir, "solution")) + "/server workspace/server"))
+		fmt.Println(L("Vill du skriva över din kod med lösningen? Kör",
+			"Want to overwrite your code with the solution? Run",
+			"自分のコードを模範解答で上書きするには:"), cyan("./mudschool solution --apply"))
 		return nil
 	}
-	written, err := copyTree(sol, c.workspace(), true)
+	written, err := overlay(l.Dir, "solution", c.workspace(), true)
 	for _, f := range written {
-		fmt.Println(dim("  skrev workspace/" + f))
+		fmt.Println(dim(L("  skrev workspace/", "  wrote workspace/", "  書き込み: workspace/") + f))
 	}
 	return err
 }
@@ -315,7 +362,9 @@ func rel(base, p string) string {
 
 func (c *course) cmdRun(args []string) error {
 	if len(args) == 0 {
-		return errors.New("användning: mudschool run server|client [argument...]")
+		return errors.New(L("användning: mudschool run server|client [argument...]",
+			"usage: mudschool run server|client [arguments...]",
+			"使い方: mudschool run server|client [引数...]"))
 	}
 	ws := c.workspace()
 	switch args[0] {
@@ -326,22 +375,17 @@ func (c *course) cmdRun(args []string) error {
 		_, err := runIn(filepath.Join(ws, "client"), false, nil, append([]string{"cargo", "run", "--quiet", "--"}, args[1:]...)...)
 		return err
 	}
-	return fmt.Errorf("okänt mål %q – välj server eller client", args[0])
+	return fmt.Errorf("%q: server | client", args[0])
 }
 
-// cmdVerify bygger upp referenslösningen lektion för lektion i en temporär
-// katalog och kontrollerar för varje lektion att
-//  1. koden *före* lektionen (förra lösningen + scaffold) INTE klarar testerna, och
-//  2. lektionens lösning klarar testerna.
-func (c *course) cmdVerify(only []string) error {
-	ws, err := os.MkdirTemp("", "mudschool-verify-")
-	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(ws)
-	env := []string{"CARGO_TARGET_DIR=" + filepath.Join(c.root, ".verify-target")}
-	if _, err := copyTree(filepath.Join(c.root, "starter"), ws, true); err != nil {
-		return err
+// cmdVerify builds the reference solution lesson by lesson in a temporary
+// directory, for every language, and checks for each lesson that
+//  1. the code *before* the lesson (previous solution + scaffold) does NOT pass, and
+//  2. the lesson's solution passes.
+func (c *course) cmdVerify(only []string, langFlag string) error {
+	langs := Languages
+	if langFlag != "" {
+		langs = []string{langFlag}
 	}
 	selected := map[string]bool{}
 	for _, id := range only {
@@ -352,9 +396,35 @@ func (c *course) cmdVerify(only []string) error {
 		selected[l.ID] = true
 	}
 	failures := 0
+	for _, l := range langs {
+		lang = l
+		n, err := c.verifyLang(selected)
+		if err != nil {
+			return err
+		}
+		failures += n
+	}
+	if failures > 0 {
+		return fmt.Errorf("%d failure(s)", failures)
+	}
+	fmt.Println(green("All lessons verified."))
+	return nil
+}
+
+func (c *course) verifyLang(selected map[string]bool) (int, error) {
+	ws, err := os.MkdirTemp("", "mudschool-verify-")
+	if err != nil {
+		return 0, err
+	}
+	defer os.RemoveAll(ws)
+	env := []string{"CARGO_TARGET_DIR=" + filepath.Join(c.root, ".verify-target")}
+	if _, err := overlay(c.root, "starter", ws, true); err != nil {
+		return 0, err
+	}
+	failures := 0
 	for _, l := range c.lessons {
 		if _, err := c.enter(ws, l); err != nil {
-			return err
+			return 0, err
 		}
 		run := len(selected) == 0 || selected[l.ID]
 		dir, cmds := checkCommands(l.Track, false)
@@ -374,39 +444,34 @@ func (c *course) cmdVerify(only []string) error {
 		}
 		if run {
 			if _, ok := check(); ok {
-				fmt.Printf("%s %s %s: testerna går igenom redan FÖRE lösningen\n", red("✘"), l.ID, l.Title)
+				fmt.Printf("%s [%s] %s %s: tests pass already BEFORE the solution\n", red("✘"), lang, l.ID, l.Title)
 				failures++
 			}
 		}
-		if _, err := copyTree(filepath.Join(l.Dir, "solution"), ws, true); err != nil {
-			return err
+		if _, err := overlay(l.Dir, "solution", ws, true); err != nil {
+			return 0, err
 		}
 		if !run {
 			continue
 		}
 		if out, ok := check(); ok {
-			fmt.Printf("%s %s %s\n", green("✔"), l.ID, l.Title)
+			fmt.Printf("%s [%s] %s %s\n", green("✔"), lang, l.ID, l.Title)
 		} else {
-			fmt.Printf("%s %s %s: lösningen klarar inte testerna\n%s\n", red("✘"), l.ID, l.Title, out)
+			fmt.Printf("%s [%s] %s %s: the solution fails its tests\n%s\n", red("✘"), lang, l.ID, l.Title, out)
 			failures++
 		}
 	}
-	_ = cleanTests(ws)
-	if failures > 0 {
-		return fmt.Errorf("%d lektion(er) misslyckades", failures)
-	}
-	fmt.Println(green("Alla lektioner verifierade."))
-	return nil
+	return failures, nil
 }
 
-// cmdReference bygger referenslösningen (till och med en viss lektion) i en katalog.
+// cmdReference builds the reference solution (up to a lesson) in a directory.
 func (c *course) cmdReference(args []string) error {
 	if len(args) < 1 {
-		return errors.New("användning: mudschool reference <katalog> [id]")
+		return errors.New("usage: mudschool reference <dir> [id]")
 	}
 	dst := args[0]
 	if exists(dst) {
-		return fmt.Errorf("%s finns redan", dst)
+		return fmt.Errorf("%s already exists", dst)
 	}
 	last := c.lessons[len(c.lessons)-1]
 	if len(args) > 1 {
@@ -415,20 +480,20 @@ func (c *course) cmdReference(args []string) error {
 			return err
 		}
 	}
-	if _, err := copyTree(filepath.Join(c.root, "starter"), dst, true); err != nil {
+	if _, err := overlay(c.root, "starter", dst, true); err != nil {
 		return err
 	}
 	for _, l := range c.lessons {
 		if _, err := c.enter(dst, l); err != nil {
 			return err
 		}
-		if _, err := copyTree(filepath.Join(l.Dir, "solution"), dst, true); err != nil {
+		if _, err := overlay(l.Dir, "solution", dst, true); err != nil {
 			return err
 		}
 		if l == last {
 			break
 		}
 	}
-	fmt.Printf("Referenslösningen till och med lektion %s finns i %s\n", last.ID, dst)
+	fmt.Printf("Reference solution up to lesson %s (%s) is in %s\n", last.ID, lang, dst)
 	return nil
 }

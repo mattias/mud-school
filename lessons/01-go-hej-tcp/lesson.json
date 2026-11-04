@@ -1,6 +1,13 @@
 {
-  "title": "Hej, TCP! – en ekoserver i Go",
+  "title": {
+    "sv": "Hej, TCP! – en ekoserver i Go",
+    "en": "Hello, TCP! – an echo server in Go",
+    "ja": "こんにちは TCP！ – Go で作るエコーサーバー"
+  },
   "track": "go",
-  "summary": "Lyssna på en port, ta emot en anslutning, hälsa och eka tillbaka rader.",
-  "concepts": ["paket och import", "funktioner och metoder", "structs", "felhantering med error", "defer", "net.Listener", "bufio.Scanner"]
+  "summary": {
+    "sv": "Lyssna på en port, ta emot en anslutning, hälsa och eka tillbaka rader.",
+    "en": "Listen on a port, accept a connection, greet it and echo lines back.",
+    "ja": "ポートで待ち受け、接続を受け付け、あいさつして行をそのまま送り返す。"
+  }
 }

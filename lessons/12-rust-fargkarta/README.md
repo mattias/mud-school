@@ -91,7 +91,7 @@ Kör servern och klienten och gå runt: `s`, `s`, `s`, `s`, `e` ...
 
 > Ser du konstiga tecken? Din terminal måste använda UTF-8 och ett typsnitt
 > med tecknen. Ser du inga färger? Terminalen saknar kanske truecolor-stöd
-> (de flesta moderna har det).
+> (de flesta moderna har det). Se `docs/sv/SETUP.md`.
 
 ## Fundera på
 

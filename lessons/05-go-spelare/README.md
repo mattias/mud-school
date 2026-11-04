@@ -31,7 +31,7 @@ Spelare online (2): Anna, Bertil
 ### Fel är värden – även dina egna
 
 ```go
-var ErrNameTooShort = errors.New("namnet måste vara minst 2 tecken")
+var ErrNameTooShort = errors.New(MsgErrNameTooShort) // texten finns i messages.go
 
 func ValidateName(name string) error {
     if len(name) < 2 { return ErrNameTooShort }  // (fast len räknar bytes, se nedan!)
@@ -82,12 +82,17 @@ du det utan lås kan programmet krascha med `fatal error: concurrent map writes`
    - lägg till `mu sync.Mutex` och `players map[string]*Player` i `Server`,
    - skriv `addPlayer(p) error` (ger `ErrNameTaken` om namnet finns),
      `removePlayer(p)` och `PlayerNames() []string` (sorterade),
-   - i `handle`: efter `Welcome`, fråga `Vad heter du?` tills spelaren anger
-     ett giltigt, ledigt namn. Vid fel skriver du `Ogiltigt namn: <felet>.`
-     och frågar igen. Skriv sedan `Välkommen, Anna!`,
+   - i `handle`: efter `Welcome`, fråga `MsgAskName` tills spelaren anger
+     ett giltigt, ledigt namn. Vid fel skriver du `MsgInvalidName` med felet
+     (`p.Sendf(MsgInvalidName, err)`) och frågar igen. Skriv sedan
+     `MsgWelcomeName` med namnet,
    - ta bort spelaren när hen kopplar ner (tips: `defer`).
-3. **`commands.go`**: lägg till `who` som skriver
+3. **`commands.go`**: lägg till `who` som skriver `MsgWho` med antal och
+   namnen, sorterade och åtskilda med `MsgListSep`:
    `Spelare online (2): Anna, Bertil`.
+
+Alla texter (`MsgAskName`, `MsgErrNameTooShort`, ...) finns i `messages.go`.
+Felvariablerna i `names.go` är redan skapade från dem.
 
 ## Testa själv: hitta en data race
 

@@ -95,7 +95,8 @@ Go – men i Rust implementerar man traiten *explicit*.
 
 1. Lägg till `serde` och `serde_json` (se ovan).
 2. **`src/protocol.rs`** (ny fil): fyll i varianterna, structarna,
-   `MapData::meaning`, `Display` för `Status`, och `parse_line`:
+   `MapData::meaning`, `Display` för `Status` (använd `messages::ONLINE` för
+   ordet "online"), och `parse_line`:
    - rader som börjar med `{` och är giltig JSON blir rätt variant,
    - allt annat (vanlig text, trasig JSON) blir `ServerMsg::Text` med hela raden.
 3. Lägg till `pub mod protocol;` i `lib.rs`.

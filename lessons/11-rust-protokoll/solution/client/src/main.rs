@@ -1,8 +1,9 @@
-// Startpunkten för din MUD-klient. Kör med: ./mudschool run client [adress]
+// Entry point of your MUD client. Run it with: ./mudschool run client [address]
 
 use std::io::{self, BufRead};
 use std::thread;
 
+use mud_client::messages;
 use mud_client::net::Connection;
 use mud_client::protocol::{parse_line, ServerMsg, HELLO};
 use mud_client::reader::spawn_reader;
@@ -12,10 +13,10 @@ fn main() -> io::Result<()> {
         .nth(1)
         .unwrap_or_else(|| "127.0.0.1:4000".to_string());
     let conn = Connection::connect(&addr)?;
-    println!("Ansluten till {addr}");
+    println!("{} {addr}", messages::CONNECTED_TO);
 
     let (reader, mut outgoing) = conn.split();
-    outgoing.send_line(HELLO)?; // be om JSON
+    outgoing.send_line(HELLO)?; // ask for JSON
     let lines = spawn_reader(reader);
 
     thread::spawn(move || {
@@ -31,7 +32,7 @@ fn main() -> io::Result<()> {
                 ServerMsg::Hello { .. } | ServerMsg::Unknown => {}
             }
         }
-        println!("Servern stängde anslutningen.");
+        println!("{}", messages::SERVER_CLOSED);
         std::process::exit(0);
     });
 

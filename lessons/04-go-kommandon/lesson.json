@@ -1,6 +1,13 @@
 {
-  "title": "Kommandon – tolka vad spelaren skriver",
+  "title": {
+    "sv": "Kommandon – tolka vad spelaren skriver",
+    "en": "Commands – understanding what the player types",
+    "ja": "コマンド – プレイヤーの入力を解釈する"
+  },
   "track": "go",
-  "summary": "Dela upp rader i verb och argument, stöd förkortningar och bygg ett kommandoregister.",
-  "concepts": ["strings-paketet", "maps", "slices", "funktioner som värden", "switch", "tabelldrivna tester", "sort"]
+  "summary": {
+    "sv": "Dela upp rader i verb och argument, stöd förkortningar och bygg ett kommandoregister.",
+    "en": "Split lines into verbs and arguments, support abbreviations and build a command registry.",
+    "ja": "行を動詞と引数に分け、省略形に対応し、コマンド登録表を作る。"
+  }
 }

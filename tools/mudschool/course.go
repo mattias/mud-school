@@ -12,18 +12,31 @@ import (
 	"strings"
 )
 
-// Lesson beskriver en lektion, inläst från lessons/NN-namn/lesson.json.
-type Lesson struct {
-	ID       string   `json:"-"`
-	Dir      string   `json:"-"`
-	Title    string   `json:"title"`
-	Track    string   `json:"track"` // "go" eller "rust"
-	Summary  string   `json:"summary"`
-	Concepts []string `json:"concepts"`
+// Text is a string in several languages: {"sv": "...", "en": "...", "ja": "..."}.
+type Text map[string]string
+
+// String returns the text in the active language (falling back to en, then sv).
+func (t Text) String() string {
+	for _, l := range []string{lang, "en", "sv"} {
+		if s := t[l]; s != "" {
+			return s
+		}
+	}
+	return ""
 }
 
-// Progress sparas i workspace/.mudschool.json.
+// Lesson describes a lesson, read from lessons/NN-name/lesson.json.
+type Lesson struct {
+	ID      string `json:"-"`
+	Dir     string `json:"-"`
+	Title   Text   `json:"title"`
+	Track   string `json:"track"` // "go" or "rust"
+	Summary Text   `json:"summary"`
+}
+
+// Progress is stored in workspace/.mudschool.json.
 type Progress struct {
+	Lang    string          `json:"lang"`
 	Current string          `json:"current"`
 	Done    map[string]bool `json:"done"`
 	Hints   map[string]int  `json:"hints"`
@@ -36,7 +49,7 @@ type course struct {
 
 var lessonDirRe = regexp.MustCompile(`^(\d\d)-`)
 
-// findRoot letar uppåt efter kursens rotkatalog (den som har lessons/ och starter/).
+// findRoot walks upwards looking for the course root (a directory with lessons/ and starter/).
 func findRoot() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -48,7 +61,10 @@ func findRoot() (string, error) {
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return "", errors.New("hittar inte kursens rotkatalog (en katalog med lessons/ och starter/)")
+			return "", errors.New(L(
+				"hittar inte kursens rotkatalog (en katalog med lessons/ och starter/)",
+				"cannot find the course root (a directory containing lessons/ and starter/)",
+				"コースのルートディレクトリ（lessons/ と starter/ を含むディレクトリ）が見つかりません"))
 		}
 		dir = parent
 	}
@@ -67,21 +83,21 @@ func (c *course) load() error {
 		dir := filepath.Join(c.root, "lessons", e.Name())
 		data, err := os.ReadFile(filepath.Join(dir, "lesson.json"))
 		if err != nil {
-			return fmt.Errorf("lektion %s: %w", e.Name(), err)
+			return fmt.Errorf("%s: %w", e.Name(), err)
 		}
 		l := &Lesson{}
 		if err := json.Unmarshal(data, l); err != nil {
-			return fmt.Errorf("lektion %s: lesson.json: %w", e.Name(), err)
+			return fmt.Errorf("%s: lesson.json: %w", e.Name(), err)
 		}
 		l.ID, l.Dir = m[1], dir
 		if l.Track != "go" && l.Track != "rust" {
-			return fmt.Errorf("lektion %s: track måste vara \"go\" eller \"rust\"", e.Name())
+			return fmt.Errorf("%s: track must be \"go\" or \"rust\"", e.Name())
 		}
 		c.lessons = append(c.lessons, l)
 	}
 	sort.Slice(c.lessons, func(i, j int) bool { return c.lessons[i].ID < c.lessons[j].ID })
 	if len(c.lessons) == 0 {
-		return errors.New("inga lektioner hittades")
+		return errors.New("no lessons found")
 	}
 	return nil
 }
@@ -95,7 +111,9 @@ func (c *course) lesson(id string) (*Lesson, error) {
 			return l, nil
 		}
 	}
-	return nil, fmt.Errorf("ingen lektion med id %q (se `mudschool list`)", id)
+	return nil, fmt.Errorf(L("ingen lektion med id %q (se `mudschool list`)",
+		"no lesson with id %q (see `mudschool list`)",
+		"ID %q のレッスンはありません（`mudschool list` を参照）"), id)
 }
 
 func (c *course) next(l *Lesson) *Lesson {
@@ -112,20 +130,26 @@ func (c *course) progressPath() string { return filepath.Join(c.workspace(), ".m
 func (c *course) loadProgress() (*Progress, error) {
 	data, err := os.ReadFile(c.progressPath())
 	if errors.Is(err, fs.ErrNotExist) {
-		return nil, errors.New("du har ingen arbetsyta än – kör `./mudschool init` först")
+		return nil, errors.New(L(
+			"du har ingen arbetsyta än – kör `./mudschool init` först",
+			"you don't have a workspace yet – run `./mudschool init` first",
+			"作業領域がまだありません。先に `./mudschool init` を実行してください"))
 	}
 	if err != nil {
 		return nil, err
 	}
 	p := &Progress{}
 	if err := json.Unmarshal(data, p); err != nil {
-		return nil, fmt.Errorf("trasig %s: %w", c.progressPath(), err)
+		return nil, fmt.Errorf("%s: %w", c.progressPath(), err)
 	}
 	if p.Done == nil {
 		p.Done = map[string]bool{}
 	}
 	if p.Hints == nil {
 		p.Hints = map[string]int{}
+	}
+	if !validLang(p.Lang) {
+		p.Lang = lang
 	}
 	return p, nil
 }
@@ -140,14 +164,34 @@ func (c *course) saveProgress(p *Progress) error {
 
 func (c *course) current(p *Progress) (*Lesson, error) { return c.lesson(p.Current) }
 
-// enter förbereder arbetsytan för en lektion: nya filer från scaffold/
-// kopieras in, men befintliga filer rörs aldrig.
-func (c *course) enter(ws string, l *Lesson) ([]string, error) {
-	return copyTree(filepath.Join(l.Dir, "scaffold"), ws, false)
+// localized returns the path to name (e.g. "README") in the active language:
+// README.<lang>.md, falling back to README.md (Swedish, the original).
+func localized(dir, name string) string {
+	p := filepath.Join(dir, name+"."+lang+".md")
+	if exists(p) {
+		return p
+	}
+	return filepath.Join(dir, name+".md")
 }
 
-// placeTests tar bort gamla kurstester (filer/kataloger som börjar med
-// "mudschool_") och kopierar in den aktuella lektionens tester.
+// overlay copies tree/ and then tree.<lang>/ from dir into dst.
+func overlay(dir, tree, dst string, overwrite bool) ([]string, error) {
+	a, err := copyTree(filepath.Join(dir, tree), dst, overwrite)
+	if err != nil {
+		return a, err
+	}
+	b, err := copyTree(filepath.Join(dir, tree+"."+lang), dst, overwrite)
+	return append(a, b...), err
+}
+
+// enter prepares the workspace for a lesson: new files from scaffold/ (and
+// scaffold.<lang>/) are copied in, but existing files are never touched.
+func (c *course) enter(ws string, l *Lesson) ([]string, error) {
+	return overlay(l.Dir, "scaffold", ws, false)
+}
+
+// placeTests removes old course tests (files/directories starting with
+// "mudschool_") and copies in the current lesson's tests.
 func (c *course) placeTests(ws string, l *Lesson) error {
 	if err := cleanTests(ws); err != nil {
 		return err
@@ -187,8 +231,8 @@ func cleanTests(ws string) error {
 	return nil
 }
 
-// copyTree kopierar src till dst. Med overwrite=false hoppas befintliga filer över.
-// Returnerar de filer som skrevs (relativt dst).
+// copyTree copies src to dst. With overwrite=false existing files are skipped.
+// Returns the files written (relative to dst).
 func copyTree(src, dst string, overwrite bool) ([]string, error) {
 	if !isDir(src) {
 		return nil, nil

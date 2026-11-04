@@ -1,8 +1,6 @@
 package mud
 
 import (
-	"bytes"
-	_ "embed" // behövs för //go:embed
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,54 +10,45 @@ import (
 	"sort"
 )
 
-// Room är en plats i världen. Taggarna `json:"..."` styr hur fälten heter i
-// JSON-filen.
+// Room is a place in the world. The `json:"..."` tags control what the
+// fields are called in the JSON file.
 type Room struct {
 	ID          string            `json:"id"`
 	Name        string            `json:"name"`
 	Description string            `json:"description"`
-	Terrain     string            `json:"terrain"`         // en av Terrains
-	X           int               `json:"x"`               // öster är +1
-	Y           int               `json:"y"`               // söder är +1
-	Z           int               `json:"z"`               // upp är +1
-	Exits       map[string]string `json:"exits,omitempty"` // riktning -> rummets ID
+	Terrain     string            `json:"terrain"`         // one of Terrains
+	X           int               `json:"x"`               // east is +1
+	Y           int               `json:"y"`               // south is +1
+	Z           int               `json:"z"`               // up is +1
+	Exits       map[string]string `json:"exits,omitempty"` // direction -> room ID
 }
 
-// World är alla rum i spelet.
+// World is all the rooms in the game.
 type World struct {
-	Start string           // ID för rummet där nya spelare hamnar
-	Rooms map[string]*Room // ID -> rum
+	Start string           // ID of the room where new players appear
+	Rooms map[string]*Room // ID -> room
 }
 
-// worldFile är formatet på en världsfil.
+// worldFile is the format of a world file.
 type worldFile struct {
 	Start string  `json:"start"`
 	Rooms []*Room `json:"rooms"`
 }
 
-// Directions är alla riktningar i den ordning de ska visas.
+// Directions are all the directions in the order they are shown.
+// (Their names as shown to players are in messages.go.)
 var Directions = []string{"north", "east", "south", "west", "up", "down"}
 
-// Terrains är de terrängtyper ett rum kan ha.
+// Terrains are the kinds of terrain a room can have.
 var Terrains = []string{"town", "inside", "road", "field", "forest", "water", "mountain", "cave"}
 
-// directionNames är riktningarnas svenska namn, som de visas för spelaren.
-var directionNames = map[string]string{
-	"north": "norr", "east": "öster", "south": "söder", "west": "väster", "up": "upp", "down": "ner",
-}
-
-// directionTravel används när någon går: "Anna går norrut."
-var directionTravel = map[string]string{
-	"north": "norrut", "east": "österut", "south": "söderut", "west": "västerut", "up": "uppåt", "down": "nedåt",
-}
-
-// directionDelta är hur koordinaterna ändras när man går åt ett håll.
+// directionDelta is how the coordinates change when you walk in a direction.
 var directionDelta = map[string][3]int{
 	"north": {0, -1, 0}, "south": {0, 1, 0}, "east": {1, 0, 0}, "west": {-1, 0, 0}, "up": {0, 0, 1}, "down": {0, 0, -1},
 }
 
-// NewWorld skapar en värld av rummen. "..." gör funktionen variadisk:
-// NewWorld("torg", rum1, rum2, rum3) – rooms blir en []*Room.
+// NewWorld creates a world from the rooms. "..." makes the function variadic:
+// NewWorld("square", room1, room2, room3) – rooms becomes a []*Room.
 func NewWorld(start string, rooms ...*Room) *World {
 	w := &World{Start: start, Rooms: make(map[string]*Room, len(rooms))}
 	for _, r := range rooms {
@@ -68,23 +57,23 @@ func NewWorld(start string, rooms ...*Room) *World {
 	return w
 }
 
-// Room returnerar rummet med givet ID, eller nil om det inte finns.
+// Room returns the room with the given ID, or nil if there is none.
 func (w *World) Room(id string) *Room {
 	return w.Rooms[id]
 }
 
-// LoadWorld läser och validerar en värld i JSON-format.
+// LoadWorld reads and validates a world in JSON format.
 func LoadWorld(r io.Reader) (*World, error) {
 	dec := json.NewDecoder(r)
-	dec.DisallowUnknownFields() // stavfel som "nmae" ska ge fel, inte ignoreras
+	dec.DisallowUnknownFields() // typos like "nmae" must be errors, not silently ignored
 	var f worldFile
 	if err := dec.Decode(&f); err != nil {
-		return nil, fmt.Errorf("läser världsfil: %w", err)
+		return nil, fmt.Errorf(MsgErrReadWorld, err)
 	}
 	seen := make(map[string]bool)
 	for _, room := range f.Rooms {
 		if seen[room.ID] {
-			return nil, fmt.Errorf("rum %q finns två gånger", room.ID)
+			return nil, fmt.Errorf(MsgErrDuplicateRoom, room.ID)
 		}
 		seen[room.ID] = true
 	}
@@ -95,7 +84,7 @@ func LoadWorld(r io.Reader) (*World, error) {
 	return w, nil
 }
 
-// LoadWorldFile läser en värld från en fil.
+// LoadWorldFile reads a world from a file.
 func LoadWorldFile(path string) (*World, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -105,32 +94,32 @@ func LoadWorldFile(path string) (*World, error) {
 	return LoadWorld(f)
 }
 
-// Validate letar efter fel i världen och returnerar ALLA den hittar,
-// sammanslagna med errors.Join (eller nil om allt är rätt).
+// Validate looks for mistakes in the world and returns ALL of them, joined
+// with errors.Join (or nil if everything is fine).
 func (w *World) Validate() error {
 	var errs []error
 	if w.Room(w.Start) == nil {
-		errs = append(errs, fmt.Errorf("startrummet %q finns inte", w.Start))
+		errs = append(errs, fmt.Errorf(MsgErrStartMissing, w.Start))
 	}
 
 	ids := make([]string, 0, len(w.Rooms))
 	for id := range w.Rooms {
 		ids = append(ids, id)
 	}
-	sort.Strings(ids) // stabil ordning på felen
+	sort.Strings(ids) // stable order of the errors
 
 	positions := make(map[[3]int]string)
 	for _, id := range ids {
 		r := w.Rooms[id]
 		if r.ID == "" || r.Name == "" {
-			errs = append(errs, fmt.Errorf("rum %q: id och name måste finnas", id))
+			errs = append(errs, fmt.Errorf(MsgErrRoomFields, id))
 		}
 		if !slices.Contains(Terrains, r.Terrain) {
-			errs = append(errs, fmt.Errorf("rum %q: okänd terräng %q", id, r.Terrain))
+			errs = append(errs, fmt.Errorf(MsgErrTerrain, id, r.Terrain))
 		}
 		pos := [3]int{r.X, r.Y, r.Z}
 		if other, taken := positions[pos]; taken {
-			errs = append(errs, fmt.Errorf("rum %q: har samma koordinater %v som %q", id, pos, other))
+			errs = append(errs, fmt.Errorf(MsgErrSamePos, id, pos, other))
 		}
 		positions[pos] = id
 
@@ -141,31 +130,19 @@ func (w *World) Validate() error {
 			}
 			target := w.Room(to)
 			if target == nil {
-				errs = append(errs, fmt.Errorf("rum %q: utgången %s leder till %q som inte finns", id, dir, to))
+				errs = append(errs, fmt.Errorf(MsgErrExitMissing, id, dir, to))
 				continue
 			}
 			d := directionDelta[dir]
 			if target.X != r.X+d[0] || target.Y != r.Y+d[1] || target.Z != r.Z+d[2] {
-				errs = append(errs, fmt.Errorf("rum %q: utgången %s leder till %q, men koordinaterna passar inte ihop", id, dir, to))
+				errs = append(errs, fmt.Errorf(MsgErrExitCoords, id, dir, to))
 			}
 		}
 		for dir := range r.Exits {
 			if _, ok := directionDelta[dir]; !ok {
-				errs = append(errs, fmt.Errorf("rum %q: okänd riktning %q", id, dir))
+				errs = append(errs, fmt.Errorf(MsgErrDirection, id, dir))
 			}
 		}
 	}
 	return errors.Join(errs...)
-}
-
-//go:embed world.json
-var defaultWorldJSON []byte
-
-// DefaultWorld är världen i world.json, som är inbakad i programfilen.
-func DefaultWorld() *World {
-	w, err := LoadWorld(bytes.NewReader(defaultWorldJSON))
-	if err != nil {
-		panic("world.json är trasig: " + err.Error())
-	}
-	return w
 }

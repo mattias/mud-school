@@ -1,34 +1,34 @@
-//! Nätverksdelen av klienten.
+//! The network part of the client.
 
 use std::io::{self, BufRead, BufReader, Write};
 use std::net::TcpStream;
 
-/// En anslutning till MUD-servern.
+/// A connection to the MUD server.
 pub struct Connection {
     reader: BufReader<TcpStream>,
     writer: TcpStream,
 }
 
 impl Connection {
-    /// Ansluter till servern på `addr`, t.ex. "127.0.0.1:4000".
+    /// Connects to the server at `addr`, e.g. "127.0.0.1:4000".
     pub fn connect(addr: &str) -> io::Result<Connection> {
-        // TODO(lektion 3): anslut med TcpStream::connect(addr)?
-        // Du behöver TVÅ handtag till samma ström: ett att läsa från och ett
-        // att skriva till. Tips: stream.try_clone()?
+        // TODO(lesson 3): connect with TcpStream::connect(addr)?
+        // You need TWO handles to the same stream: one to read from and one
+        // to write to. Hint: stream.try_clone()?
         todo!()
     }
 
-    /// Läser nästa rad från servern utan "\r\n" i slutet.
-    /// Returnerar Ok(None) när servern har stängt anslutningen.
+    /// Reads the next line from the server without the trailing "\r\n".
+    /// Returns Ok(None) when the server has closed the connection.
     pub fn read_line(&mut self) -> io::Result<Option<String>> {
-        // TODO(lektion 3): använd self.reader.read_line(&mut buf).
-        // Den returnerar antal lästa bytes – 0 betyder att strömmen är slut.
+        // TODO(lesson 3): use self.reader.read_line(&mut buf).
+        // It returns the number of bytes read – 0 means the stream has ended.
         todo!()
     }
 
-    /// Skickar en rad till servern (lägger till "\r\n").
+    /// Sends a line to the server (appends "\r\n").
     pub fn send_line(&mut self, line: &str) -> io::Result<()> {
-        // TODO(lektion 3): skriv line och "\r\n" till self.writer.
+        // TODO(lesson 3): write line and "\r\n" to self.writer.
         todo!()
     }
 }

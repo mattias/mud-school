@@ -66,13 +66,14 @@ Kanalen `done chan struct{}` är ett idiom för "signal utan data":
 2. **`server.go`**:
    - skriv `broadcast(except *Player, text string)` som skickar till alla
      inloggade utom `except`,
-   - meddela andra när någon ansluter (`Bertil har anslutit.`) och lämnar
-     (`Bertil har lämnat.`) – oavsett om det sker med `quit` eller genom att
+   - meddela andra när någon ansluter (`MsgJoined`: `Bertil har anslutit.`) och lämnar
+     (`MsgLeft`: `Bertil har lämnat.`) – oavsett om det sker med `quit` eller genom att
      koppla ner,
-   - anropa `p.close()` innan anslutningen stängs, annars hinner `Hej då!`
+   - anropa `p.close()` innan anslutningen stängs, annars hinner `MsgGoodbye`
      kanske aldrig skickas.
-3. **`commands.go`**: lägg till `say`. Avsändaren ser `Du säger: hej`, alla
-   andra `Anna säger: hej`. Utan text: `Säg vad?`.
+3. **`commands.go`**: lägg till `say`. Avsändaren ser `MsgYouSay`
+   (`Du säger: hej`), alla andra `MsgSays` (`Anna säger: hej`). Utan text:
+   `MsgSayWhat` (`Säg vad?`).
 
 Testet `TestSlowClientDoesNotBlockOthers` loggar in en spelare som aldrig
 läser och låter en annan prata ~8 MB text. Med den naiva lösningen hänger

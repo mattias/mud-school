@@ -1,4 +1,4 @@
-// Paket mud innehåller all spellogik för din MUD-server.
+// Package mud contains all the game logic of your MUD server.
 package mud
 
 import (
@@ -7,19 +7,16 @@ import (
 	"net"
 )
 
-// Welcome är det första servern säger till en ny spelare.
-const Welcome = "Välkommen till MUD School!"
-
-// Server är din MUD-server. Just nu har den inga fält, men den kommer att
-// växa: spelare, rum, kommandon ...
+// Server is your MUD server. It has no fields yet, but it will grow:
+// players, rooms, commands ...
 type Server struct{}
 
-// NewServer skapar en ny server.
+// NewServer creates a new server.
 func NewServer() *Server {
 	return &Server{}
 }
 
-// Serve tar emot anslutningar från l, en i taget, tills l stängs.
+// Serve accepts connections from l, one at a time, until l is closed.
 func (s *Server) Serve(l net.Listener) error {
 	for {
 		conn, err := l.Accept()
@@ -30,7 +27,7 @@ func (s *Server) Serve(l net.Listener) error {
 	}
 }
 
-// handle pratar med en ansluten klient tills den kopplar ner.
+// handle talks to one connected client until it disconnects.
 func (s *Server) handle(conn net.Conn) {
 	defer conn.Close()
 

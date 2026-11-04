@@ -40,5 +40,5 @@ if !s.login(p) {
     return
 }
 defer s.removePlayer(p)
-p.Sendf("Välkommen, %s!", p.Name)
+p.Sendf(MsgWelcomeName, p.Name)
 ```

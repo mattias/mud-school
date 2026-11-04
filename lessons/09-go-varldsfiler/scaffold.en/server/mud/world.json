@@ -1,0 +1,276 @@
+{
+  "start": "torget",
+  "rooms": [
+    {
+      "id": "torget",
+      "name": "Mudby Square",
+      "description": "A cobbled square with an old well in the middle. From the tavern\nto the north comes laughter and the clink of mugs.",
+      "terrain": "town",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "north": "krogen",
+        "east": "smedjan",
+        "south": "porten",
+        "west": "templet"
+      }
+    },
+    {
+      "id": "krogen",
+      "name": "The Merry Dragon Tavern",
+      "description": "It smells of ale and smoke. A staircase leads up to the guest rooms.",
+      "terrain": "inside",
+      "x": 0,
+      "y": -1,
+      "z": 0,
+      "exits": {
+        "south": "torget",
+        "up": "gastrummet"
+      }
+    },
+    {
+      "id": "gastrummet",
+      "name": "A small guest room",
+      "description": "A narrow bed and a window facing the square.",
+      "terrain": "inside",
+      "x": 0,
+      "y": -1,
+      "z": 1,
+      "exits": {
+        "down": "krogen"
+      }
+    },
+    {
+      "id": "smedjan",
+      "name": "The Smithy",
+      "description": "Heat from the forge hits you. Hammer blows echo off the walls.",
+      "terrain": "inside",
+      "x": 1,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "west": "torget"
+      }
+    },
+    {
+      "id": "templet",
+      "name": "The Temple",
+      "description": "A quiet, cool temple. Candles flicker before an altar.",
+      "terrain": "inside",
+      "x": -1,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "east": "torget"
+      }
+    },
+    {
+      "id": "porten",
+      "name": "The Town Gate",
+      "description": "A heavy wooden gate in the town wall. To the south a road winds towards the forest.",
+      "terrain": "town",
+      "x": 0,
+      "y": 1,
+      "z": 0,
+      "exits": {
+        "north": "torget",
+        "south": "vagen1"
+      }
+    },
+    {
+      "id": "vagen1",
+      "name": "The Country Road",
+      "description": "A muddy road with deep wheel ruts. Mudby's walls are visible to the north.",
+      "terrain": "road",
+      "x": 0,
+      "y": 2,
+      "z": 0,
+      "exits": {
+        "north": "porten",
+        "south": "vagen2"
+      }
+    },
+    {
+      "id": "vagen2",
+      "name": "The Country Road",
+      "description": "The road is lined with low stone walls and wild roses.",
+      "terrain": "road",
+      "x": 0,
+      "y": 3,
+      "z": 0,
+      "exits": {
+        "north": "vagen1",
+        "south": "korsningen"
+      }
+    },
+    {
+      "id": "korsningen",
+      "name": "The Crossroads",
+      "description": "A signpost points in every direction. The writing is too weathered to read.",
+      "terrain": "road",
+      "x": 0,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "north": "vagen2",
+        "east": "skogsbrynet",
+        "south": "stigen",
+        "west": "angen"
+      }
+    },
+    {
+      "id": "angen",
+      "name": "The Meadow",
+      "description": "Tall grass ripples in the wind. Butterflies dance among the flowers.",
+      "terrain": "field",
+      "x": -1,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "korsningen",
+        "west": "stranden"
+      }
+    },
+    {
+      "id": "stranden",
+      "name": "The Lake Shore",
+      "description": "Sand and reeds. To the west a dark lake spreads out.",
+      "terrain": "field",
+      "x": -2,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "angen",
+        "west": "sjon"
+      }
+    },
+    {
+      "id": "sjon",
+      "name": "In the Lake",
+      "description": "You wade waist-deep in icy water. Something moves near your feet.",
+      "terrain": "water",
+      "x": -3,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "stranden"
+      }
+    },
+    {
+      "id": "skogsbrynet",
+      "name": "The Forest Edge",
+      "description": "The great forest begins here. The spruces stand close together.",
+      "terrain": "forest",
+      "x": 1,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "djupskogen",
+        "west": "korsningen"
+      }
+    },
+    {
+      "id": "djupskogen",
+      "name": "Deep in the Forest",
+      "description": "It is almost dark between the trees. Branches creak.",
+      "terrain": "forest",
+      "x": 2,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "north": "glantan",
+        "south": "morkskogen",
+        "west": "skogsbrynet"
+      }
+    },
+    {
+      "id": "glantan",
+      "name": "A Sunny Glade",
+      "description": "Sunlight filters into a small glade. A lone oak stands in the middle.",
+      "terrain": "field",
+      "x": 2,
+      "y": 3,
+      "z": 0,
+      "exits": {
+        "south": "djupskogen"
+      }
+    },
+    {
+      "id": "morkskogen",
+      "name": "The Dark Wood",
+      "description": "Moss muffles your steps. Someone – or something – is watching you.",
+      "terrain": "forest",
+      "x": 2,
+      "y": 5,
+      "z": 0,
+      "exits": {
+        "north": "djupskogen"
+      }
+    },
+    {
+      "id": "stigen",
+      "name": "A Narrow Path",
+      "description": "The path climbs towards the mountains in the south. Stones rattle underfoot.",
+      "terrain": "road",
+      "x": 0,
+      "y": 5,
+      "z": 0,
+      "exits": {
+        "north": "korsningen",
+        "south": "bergsfoten"
+      }
+    },
+    {
+      "id": "bergsfoten",
+      "name": "At the Foot of the Mountain",
+      "description": "Steep cliffs rise towards the sky. To the east a cave mouth gapes.",
+      "terrain": "mountain",
+      "x": 0,
+      "y": 6,
+      "z": 0,
+      "exits": {
+        "north": "stigen",
+        "east": "grottmynningen"
+      }
+    },
+    {
+      "id": "grottmynningen",
+      "name": "The Cave Mouth",
+      "description": "Cold air flows out of the mountain. Water drips from the ceiling.",
+      "terrain": "cave",
+      "x": 1,
+      "y": 6,
+      "z": 0,
+      "exits": {
+        "south": "grottan",
+        "west": "bergsfoten"
+      }
+    },
+    {
+      "id": "grottan",
+      "name": "The Cave",
+      "description": "The walls glitter with damp. A shaft leads straight down into the darkness.",
+      "terrain": "cave",
+      "x": 1,
+      "y": 7,
+      "z": 0,
+      "exits": {
+        "north": "grottmynningen",
+        "down": "djupgrottan"
+      }
+    },
+    {
+      "id": "djupgrottan",
+      "name": "Deep in the Cave",
+      "description": "Total darkness. You hear breathing that is not your own.",
+      "terrain": "cave",
+      "x": 1,
+      "y": 7,
+      "z": -1,
+      "exits": {
+        "up": "grottan"
+      }
+    }
+  ]
+}

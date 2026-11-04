@@ -1,0 +1,276 @@
+{
+  "start": "torget",
+  "rooms": [
+    {
+      "id": "torget",
+      "name": "Torget i Mudby",
+      "description": "Ett kullerstensbelagt torg. En gammal brunn står i mitten och\nfrån krogen i norr hörs skratt och klirr.",
+      "terrain": "town",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "north": "krogen",
+        "east": "smedjan",
+        "south": "porten",
+        "west": "templet"
+      }
+    },
+    {
+      "id": "krogen",
+      "name": "Krogen Den Glada Draken",
+      "description": "Det luktar öl och rök. En trappa leder upp till gästrummen.",
+      "terrain": "inside",
+      "x": 0,
+      "y": -1,
+      "z": 0,
+      "exits": {
+        "south": "torget",
+        "up": "gastrummet"
+      }
+    },
+    {
+      "id": "gastrummet",
+      "name": "Ett litet gästrum",
+      "description": "En smal säng och ett fönster mot torget.",
+      "terrain": "inside",
+      "x": 0,
+      "y": -1,
+      "z": 1,
+      "exits": {
+        "down": "krogen"
+      }
+    },
+    {
+      "id": "smedjan",
+      "name": "Smedjan",
+      "description": "Värmen från ässjan slår emot dig. Hammarslag ekar mellan väggarna.",
+      "terrain": "inside",
+      "x": 1,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "west": "torget"
+      }
+    },
+    {
+      "id": "templet",
+      "name": "Templet",
+      "description": "Ett tyst, svalt tempel. Ljus fladdrar framför ett altare.",
+      "terrain": "inside",
+      "x": -1,
+      "y": 0,
+      "z": 0,
+      "exits": {
+        "east": "torget"
+      }
+    },
+    {
+      "id": "porten",
+      "name": "Stadsporten",
+      "description": "En tung träport i stadsmuren. Söderut slingrar sig en väg mot skogen.",
+      "terrain": "town",
+      "x": 0,
+      "y": 1,
+      "z": 0,
+      "exits": {
+        "north": "torget",
+        "south": "vagen1"
+      }
+    },
+    {
+      "id": "vagen1",
+      "name": "Landsvägen",
+      "description": "En lerig väg med djupa hjulspår. Mudbys murar syns i norr.",
+      "terrain": "road",
+      "x": 0,
+      "y": 2,
+      "z": 0,
+      "exits": {
+        "north": "porten",
+        "south": "vagen2"
+      }
+    },
+    {
+      "id": "vagen2",
+      "name": "Landsvägen",
+      "description": "Vägen kantas av låga stenmurar och vildrosor.",
+      "terrain": "road",
+      "x": 0,
+      "y": 3,
+      "z": 0,
+      "exits": {
+        "north": "vagen1",
+        "south": "korsningen"
+      }
+    },
+    {
+      "id": "korsningen",
+      "name": "Vägkorsningen",
+      "description": "En vägvisare pekar åt alla håll. Texten är för vittrad för att läsa.",
+      "terrain": "road",
+      "x": 0,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "north": "vagen2",
+        "east": "skogsbrynet",
+        "south": "stigen",
+        "west": "angen"
+      }
+    },
+    {
+      "id": "angen",
+      "name": "Ängen",
+      "description": "Högt gräs böljar i vinden. Fjärilar dansar mellan blommorna.",
+      "terrain": "field",
+      "x": -1,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "korsningen",
+        "west": "stranden"
+      }
+    },
+    {
+      "id": "stranden",
+      "name": "Sjöstranden",
+      "description": "Sand och vass. Västerut breder en mörk sjö ut sig.",
+      "terrain": "field",
+      "x": -2,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "angen",
+        "west": "sjon"
+      }
+    },
+    {
+      "id": "sjon",
+      "name": "I sjön",
+      "description": "Du vadar i iskallt vatten upp till midjan. Något rör sig vid dina fötter.",
+      "terrain": "water",
+      "x": -3,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "stranden"
+      }
+    },
+    {
+      "id": "skogsbrynet",
+      "name": "Skogsbrynet",
+      "description": "Här börjar den stora skogen. Granarna står tätt.",
+      "terrain": "forest",
+      "x": 1,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "east": "djupskogen",
+        "west": "korsningen"
+      }
+    },
+    {
+      "id": "djupskogen",
+      "name": "Djupt inne i skogen",
+      "description": "Det är nästan mörkt mellan träden. Det knakar i grenarna.",
+      "terrain": "forest",
+      "x": 2,
+      "y": 4,
+      "z": 0,
+      "exits": {
+        "north": "glantan",
+        "south": "morkskogen",
+        "west": "skogsbrynet"
+      }
+    },
+    {
+      "id": "glantan",
+      "name": "En solig glänta",
+      "description": "Solen silar ner i en liten glänta. Mitt i den står en ensam ek.",
+      "terrain": "field",
+      "x": 2,
+      "y": 3,
+      "z": 0,
+      "exits": {
+        "south": "djupskogen"
+      }
+    },
+    {
+      "id": "morkskogen",
+      "name": "Mörkskogen",
+      "description": "Mossan dämpar dina steg. Någon – eller något – iakttar dig.",
+      "terrain": "forest",
+      "x": 2,
+      "y": 5,
+      "z": 0,
+      "exits": {
+        "north": "djupskogen"
+      }
+    },
+    {
+      "id": "stigen",
+      "name": "En smal stig",
+      "description": "Stigen klättrar mot bergen i söder. Stenar rasslar under fötterna.",
+      "terrain": "road",
+      "x": 0,
+      "y": 5,
+      "z": 0,
+      "exits": {
+        "north": "korsningen",
+        "south": "bergsfoten"
+      }
+    },
+    {
+      "id": "bergsfoten",
+      "name": "Vid bergets fot",
+      "description": "Branta klippor reser sig mot himlen. Österut gapar en grottöppning.",
+      "terrain": "mountain",
+      "x": 0,
+      "y": 6,
+      "z": 0,
+      "exits": {
+        "north": "stigen",
+        "east": "grottmynningen"
+      }
+    },
+    {
+      "id": "grottmynningen",
+      "name": "Grottmynningen",
+      "description": "Kall luft strömmar ut ur berget. Det droppar från taket.",
+      "terrain": "cave",
+      "x": 1,
+      "y": 6,
+      "z": 0,
+      "exits": {
+        "south": "grottan",
+        "west": "bergsfoten"
+      }
+    },
+    {
+      "id": "grottan",
+      "name": "Grottan",
+      "description": "Väggarna glittrar av fukt. En schakt leder rakt ner i mörkret.",
+      "terrain": "cave",
+      "x": 1,
+      "y": 7,
+      "z": 0,
+      "exits": {
+        "north": "grottmynningen",
+        "down": "djupgrottan"
+      }
+    },
+    {
+      "id": "djupgrottan",
+      "name": "Djupt nere i grottan",
+      "description": "Totalt mörker. Du hör andetag som inte är dina egna.",
+      "terrain": "cave",
+      "x": 1,
+      "y": 7,
+      "z": -1,
+      "exits": {
+        "up": "grottan"
+      }
+    }
+  ]
+}

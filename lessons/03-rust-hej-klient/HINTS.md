@@ -31,6 +31,7 @@ en bytesträng skrivs `b"\r\n"`. Avsluta gärna med `self.writer.flush()`.
 
 ```rust
 use std::io::{self, BufRead};
+use mud_client::messages;
 use mud_client::net::Connection;   // ditt bibliotek heter mud_client (från Cargo.toml)
 
 fn main() -> io::Result<()> {

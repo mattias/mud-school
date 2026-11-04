@@ -1,2 +1,4 @@
-//! Biblioteksdelen av MUD-klienten. Allt som testerna behöver nå
-//! ligger här (och i moduler som du lägger till med `pub mod ...;`).
+//! The library part of the MUD client. Everything the tests need to reach
+//! lives here (and in modules you add with `pub mod ...;`).
+
+pub mod messages;

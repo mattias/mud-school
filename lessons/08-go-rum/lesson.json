@@ -1,6 +1,13 @@
 {
-  "title": "Rum – en värld att röra sig i",
+  "title": {
+    "sv": "Rum – en värld att röra sig i",
+    "en": "Rooms – a world to move around in",
+    "ja": "部屋 – 歩き回れる世界"
+  },
   "track": "go",
-  "summary": "Bygg en värld av rum med utgångar. Spelare kan titta, gå mellan rum och prata med dem i samma rum.",
-  "concepts": ["pekare", "struct-literals", "variadiska funktioner", "maps av pekare", "metoder på olika typer", "strings.Builder"]
+  "summary": {
+    "sv": "Bygg en värld av rum med utgångar: titta, gå mellan rum och prata i samma rum.",
+    "en": "Build a world of rooms with exits: look around, walk between rooms and talk to those in the same room.",
+    "ja": "出口でつながった部屋の世界を作る。見回し、移動し、同じ部屋の人と話す。"
+  }
 }

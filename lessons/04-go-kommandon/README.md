@@ -76,10 +76,12 @@ cd workspace/server && go test ./mud -run TestParseCommand -v
    `Welcome`, och läs sedan rader och anropa `s.dispatch(p, line)` tills
    spelaren kopplar ner eller `p.quit` blir sann.
 3. **`commands.go`**: skriv `dispatch`, `cmdHelp` och `cmdQuit`:
-   - `help` skriver `Kommandon: echo, help, quit` (alla registrerade, sorterade),
-   - `quit` skriver `Hej då!` och avslutar,
-   - okänt verb ger `Okänt kommando "flyg". Skriv help för hjälp.`
-     (tips: `%q` i `Sendf` lägger till citattecknen).
+   - `help` skriver `MsgCommands` med alla registrerade verb, sorterade och
+     åtskilda med `", "` – t.ex. `Kommandon: echo, help, quit`,
+   - `quit` skriver `MsgGoodbye` (`Hej då!`) och avslutar,
+   - okänt verb ger `MsgUnknownCommand`:
+     `p.Sendf(MsgUnknownCommand, cmd.Verb)` → `Okänt kommando "flyg". Skriv help för hjälp.`
+     (`%q` i formatsträngen lägger till citattecknen).
 
 ## Testa själv
 

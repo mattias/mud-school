@@ -1,6 +1,13 @@
 {
-  "title": "Protokoll och karta – samma spel, två sorters klienter",
+  "title": {
+    "sv": "Protokoll och karta – samma spel, två sorters klienter",
+    "en": "Protocol and map – one game, two kinds of client",
+    "ja": "プロトコルとマップ – 1 つのゲーム、2 種類のクライアント"
+  },
   "track": "go",
-  "summary": "Inför ett JSON-protokoll för grafiska klienter, rita en karta över rummen och skicka statusrad – utan att telnet slutar fungera.",
-  "concepts": ["gränssnitt och olika kodningar", "json.Marshal och omitempty", "sync/atomic", "byte-slices och 2D-rutnät", "separera betydelse från presentation"]
+  "summary": {
+    "sv": "Inför ett JSON-protokoll, rita en karta och skicka statusrad – utan att telnet slutar fungera.",
+    "en": "Introduce a JSON protocol, draw a map and send a status bar – without breaking telnet.",
+    "ja": "JSON プロトコルを導入し、マップとステータスを送る。telnet はそのまま動く。"
+  }
 }

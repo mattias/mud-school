@@ -69,6 +69,9 @@ Kursverktyget har skapat `workspace/client/src/net.rs` åt dig.
 Testerna (`tests/mudschool_03.rs`) startar en låtsasserver och testar bara
 `Connection`, men gör `main.rs` också – annars har du ingen klient att köra!
 
+> Klientens egna texter (t.ex. "Ansluten till") finns i `src/messages.rs` på
+> kursens språk: `println!("{} {addr}", messages::CONNECTED_TO);`
+
 ## Testa själv
 
 ```

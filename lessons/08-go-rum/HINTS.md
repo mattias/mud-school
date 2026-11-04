@@ -34,7 +34,7 @@ func (s *Server) playersInRoomLocked(r *Room, except *Player) []*Player {
 ```go
 to := s.world.Room(p.Room.Exits[dir])  // saknas utgången blir ID "" -> nil
 if to == nil {
-    p.Send("Du kan inte gå åt det hållet.")
+    p.Send(MsgCantGo)
     return
 }
 ```

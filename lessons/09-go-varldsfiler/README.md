@@ -81,11 +81,14 @@ var defaultWorldJSON []byte   // filens innehåll, inbakat vid kompilering
      startrummet saknas · rum utan id eller namn · okänd terräng (inte i
      `Terrains`, se nedan) · okänd riktning · utgång till ett rum som inte
      finns · två rum med samma koordinater · en utgång vars koordinater inte
-     stämmer (går man `north` måste målet ligga på `y-1`),
+     stämmer (går man `north` måste målet ligga på `y-1`). Felmeddelandena
+     finns färdiga i `messages.go` (`MsgErrStartMissing`, `MsgErrExitMissing`, ...);
+     använd dem med `fmt.Errorf`,
    - `var Terrains = []string{"town", "inside", "road", "field", "forest", "water", "mountain", "cave"}`,
-   - `DefaultWorld()` läser den inbakade `world.json` (och får göra `panic`
-     om den är trasig – det är ett programmeringsfel).
-2. **`main.go`**: lägg till en flagga `-world fil.json` som laddar en annan värld.
+2. **`defaultworld.go`**: skriv om `DefaultWorld()` så att den läser den
+   inbakade `world.json` (och får göra `panic` om den är trasig – det är ett
+   programmeringsfel).
+3. **`main.go`**: lägg till en flagga `-world fil.json` som laddar en annan värld.
 
 ## Testa själv
 

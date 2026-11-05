@@ -42,7 +42,7 @@ Kursen finns på svenska (`sv`), engelska (`en`) och japanska (`ja`).
 | Titel och sammanfattning | objekt i `lesson.json`: `{"sv": ..., "en": ..., "ja": ...}` |
 | Kursverktygets texter | `L(sv, en, ja)` i `tools/mudschool` |
 | Spelets texter | `starter.<språk>/server/mud/messages.go` och `.../client/src/messages.rs` |
-| Spelvärlden | `scaffold.<språk>/` i lektion 08 och 09 |
+| Spelvärlden | `scaffold.<språk>/` i lektion 08 och 09 (rum), 15 (`items.json`) och 16 (`npcs.json`) |
 | Testernas felmeddelanden | `L(sv, en, ja)` (Go) och `l(sv, en, ja)` (Rust) |
 | Dokumentation | `docs/<språk>/` |
 | Kod och kodkommentarer | **engelska** – gemensamt för alla |

@@ -7,8 +7,8 @@
 > tile graphics, scripts and plugins that load without a restart.
 
 This document describes the *whole* journey: why it looks the way it does,
-what you learn in every step and where we are heading. Lessons 01–13 are
-implemented in `lessons/` (with tests and reference solutions). Phases 3–6 are
+what you learn in every step and where we are heading. Lessons 01–22 are
+implemented in `lessons/` (with tests and reference solutions). Phases 4–6 are
 planned and described here so that you can see the big picture – and build on
 your own.
 
@@ -21,7 +21,7 @@ your own.
 3. [Overview](#overview)
 4. [Phase 1 – The basics (lessons 01–05)](#phase-1--the-basics-lessons-0105)
 5. [Phase 2 – A world and a face (lessons 06–13)](#phase-2--a-world-and-a-face-lessons-0613)
-6. [Phase 3 – A living world](#phase-3--a-living-world-planned)
+6. [Phase 3 – A living world (lessons 14–22)](#phase-3--a-living-world-lessons-1422)
 7. [Phase 4 – Tiles and zones](#phase-4--tiles-and-zones-planned)
 8. [Phase 5 – An extensible server](#phase-5--an-extensible-server-planned)
 9. [Phase 6 – Out into the world](#phase-6--out-into-the-world-optional-tracks)
@@ -155,8 +155,8 @@ Phase 1  The basics           01 ─ 05   Go: TCP, goroutines, commands, players
                                         Rust: the first client
 Phase 2  A world and a face   06 ─ 13   Go: chat, rooms, world files, protocol + map
                                         Rust: threads, serde, colour map, TUI with ratatui
-───────────────────────────────────────────────────── implemented above ───
 Phase 3  A living world       14 ─ 22   game loop, items, NPCs, combat, saving
+───────────────────────────────────────────────────── implemented above ───
 Phase 4  Tiles and zones      23 ─ 30   Caves of Qud-style zones, procedural generation,
                                         field of view, A*, graphical client with a tileset
 Phase 5  An extensible server 31 ─ 36   live reloading, Lua scripts, WASM plugins
@@ -201,22 +201,27 @@ show someone, rewrite a part you are not happy with, do some challenges.
 
 ---
 
-## Phase 3 – A living world (planned)
+## Phase 3 – A living world (lessons 14–22)
 
 **Goal:** the world lives even when nobody types anything. Items, creatures,
 combat – and players who remain after a restart.
 
-| # | Track | Lesson | Contents |
-|---|---|---|---|
-| 14 | Go | The game loop | A `time.Ticker` drives the world (e.g. 10 ticks/s). Refactor from mutex to the **actor pattern**: *one* goroutine owns the whole world and receives commands on a channel. `context.Context` for a clean shutdown. Compare the two models. |
-| 15 | Go | Items and inventories | `get`, `drop`, `inventory`, `examine`. Interfaces (`Describer`), struct embedding, generic helpers (`func Find[T Named](items []T, name string) T`). |
-| 16 | Go | Creatures | NPCs that wander, talk and react. State machines, a `Behavior` interface, `math/rand/v2` with a fixed seed for testability. |
-| 17 | Rust | A richer log | The protocol gets text categories (`"kind":"say"`, `"combat"`, `"system"`) – a backwards-compatible extension. A coloured log, command history, scrolling. `HashMap<Kind, Style>`, `VecDeque`. |
-| 18 | Go | Combat | Attributes, dice rolls, combat rounds per tick, death and resurrection. Deterministic tests with injected randomness. |
-| 19 | Rust | Combat in the client | HP meter, target panel, flashing hits. Timed rendering with `event::poll(timeout)` and `Instant`. |
-| 20 | Go | Saving | Players and items are saved in SQLite (`database/sql` + `modernc.org/sqlite`, pure Go). Passwords with bcrypt. Migrations. |
-| 21 | Rust | Settings and login | A login screen, a config file (`serde` + `toml`), command-line arguments with `clap`, your own error types with `thiserror`. |
-| 22 | Both | Testing for real | Fuzzing `ParseCommand` (`go test -fuzz`), property-based tests in Rust (`proptest`), a bot client that plays against the server in CI. |
+| # | Track | Lesson | The game gets | The language teaches you |
+|---|---|---|---|---|
+| 14 | Go | The game loop | a world that ticks, a clean shutdown with Ctrl+C | the actor pattern (one goroutine owns the world), `time.Ticker`, `select`, `context.Context`, `signal.NotifyContext` |
+| 15 | Go | Items | `get`, `drop`, `inventory`, `examine`, items in the world file | generics (`FindMatch[T Matcher]`, `remove[T comparable]`), interfaces as constraints, `go:embed` |
+| 16 | Go | Creatures | NPCs that wander and talk | a `Behavior` interface, a JSON "tagged union", `math/rand/v2` with a fixed seed |
+| 17 | Rust | A richer log | text kinds in colour, command history, scrolling | enums with `#[serde(other)]` and `#[default]`, `Copy`, `std::mem::take` |
+| 18 | Go | Combat | `kill`, `flee`, rounds per tick, dying, creatures that come back | dice with injected randomness, tests that step the clock themselves |
+| 19 | Rust | Combat in the client | a target panel with a health bar, a status bar that flashes red | `Instant`/`Duration`, an injected clock, `Gauge`, `recv_timeout` |
+| 20 | Go | Saving | accounts with passwords; rooms, health and items survive a restart | `database/sql`, SQLite in pure Go, transactions, migrations, bcrypt, modules (`go get`) |
+| 21 | Rust | Settings and login | `--name`, `--help`, `mudclient.toml`, a hidden password field | `clap` derive, `toml` + serde, `thiserror`, `ExitCode` |
+| 22 | Go | Testing for real | `ParseCommand` that copes with every kind of whitespace | fuzzing (`go test -fuzz`), invariants, property-based tests, `go/parser` |
+
+Proptest in Rust and a bot client are challenges in lesson 22.
+
+**After phase 3** the world lives: things happen while you sit still, and it
+remembers you the next day.
 
 ## Phase 4 – Tiles and zones (planned)
 
@@ -336,7 +341,7 @@ Approximate times for someone who can program but is new to Go and Rust:
 |---|---|
 | Phase 1 (01–05) | 8–12 hours |
 | Phase 2 (06–13) | 15–25 hours |
-| Phase 3 | 25–35 hours |
+| Phase 3 (14–22) | 25–35 hours |
 | Phase 4 | 30–45 hours |
 | Phase 5 | 25–40 hours |
 

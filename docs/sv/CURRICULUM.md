@@ -9,8 +9,8 @@
 > 🇸🇪 Svenska · [🇬🇧 English](../en/CURRICULUM.md) · [🇯🇵 日本語](../ja/CURRICULUM.md)
 
 Det här dokumentet beskriver *hela* resan: varför den ser ut som den gör,
-vad du lär dig i varje steg och vart vi är på väg. Lektion 01–13 finns
-implementerade i `lessons/` (med tester och referenslösningar). Faserna 3–6
+vad du lär dig i varje steg och vart vi är på väg. Lektion 01–22 finns
+implementerade i `lessons/` (med tester och referenslösningar). Faserna 4–6
 är planerade och beskrivna här så att du ser helheten – och kan bygga vidare
 på egen hand.
 
@@ -23,7 +23,7 @@ på egen hand.
 3. [Översikt](#översikt)
 4. [Fas 1 – Grunderna (lektion 01–05)](#fas-1--grunderna-lektion-0105)
 5. [Fas 2 – En värld och ett ansikte (lektion 06–13)](#fas-2--en-värld-och-ett-ansikte-lektion-0613)
-6. [Fas 3 – En levande värld](#fas-3--en-levande-värld-planerad)
+6. [Fas 3 – En levande värld (lektion 14–22)](#fas-3--en-levande-värld-lektion-1422)
 7. [Fas 4 – Tiles och zoner](#fas-4--tiles-och-zoner-planerad)
 8. [Fas 5 – En utbyggbar server](#fas-5--en-utbyggbar-server-planerad)
 9. [Fas 6 – Ut i världen](#fas-6--ut-i-världen-valfria-spår)
@@ -155,8 +155,8 @@ Fas 1  Grunderna             01 ─ 05   Go: TCP, goroutines, kommandon, spelare
                                        Rust: första klienten
 Fas 2  En värld och ett      06 ─ 13   Go: chatt, rum, världsfiler, protokoll + karta
        ansikte                         Rust: trådar, serde, färgkarta, TUI med ratatui
-─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 3  En levande värld      14 ─ 22   spelloop, föremål, NPC:er, strid, sparande
+─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 4  Tiles och zoner       23 ─ 30   zoner à la Caves of Qud, procedurgenerering,
                                        synfält, A*, grafisk klient med tileset
 Fas 5  En utbyggbar server   31 ─ 36   omladdning live, Lua-skript, WASM-plugins
@@ -202,22 +202,27 @@ utmaningar.
 
 ---
 
-## Fas 3 – En levande värld (planerad)
+## Fas 3 – En levande värld (lektion 14–22)
 
 **Mål:** världen lever även när ingen skriver något. Föremål, varelser,
 strid – och spelare som finns kvar efter en omstart.
 
-| # | Spår | Lektion | Innehåll |
-|---|---|---|---|
-| 14 | Go | Spelloopen | En `time.Ticker` driver världen (t.ex. 10 tick/s). Refaktorera från mutex till **actor-mönstret**: *en* goroutine äger hela världen och tar emot kommandon på en kanal. `context.Context` för snygg nedstängning. Jämför de två modellerna. |
-| 15 | Go | Föremål och inventarier | `get`, `drop`, `inventory`, `examine`. Gränssnitt (`Describer`), inbäddning av structs, generiska hjälpfunktioner (`func Find[T Named](items []T, name string) T`). |
-| 16 | Go | Varelser | NPC:er som vandrar, pratar och reagerar. Tillståndsmaskiner, ett `Behavior`-gränssnitt, `math/rand/v2` med fast seed för testbarhet. |
-| 17 | Rust | Rikare logg | Protokollet får textkategorier (`"kind":"say"`, `"combat"`, `"system"`) – en bakåtkompatibel utökning. Färgad logg, kommandohistorik, scrollning. `HashMap<Kind, Style>`, `VecDeque`. |
-| 18 | Go | Strid | Egenskaper, tärningsslag, stridsrundor per tick, död och återuppståndelse. Deterministiska tester med injicerad slump. |
-| 19 | Rust | Strid i klienten | HP-mätare, målpanel, blinkande träffar. Tidsstyrd rendering med `event::poll(timeout)` och `Instant`. |
-| 20 | Go | Sparande | Spelare och föremål sparas i SQLite (`database/sql` + `modernc.org/sqlite`, ren Go). Lösenord med bcrypt. Migreringar. |
-| 21 | Rust | Inställningar och inloggning | Inloggningsskärm, konfigfil (`serde` + `toml`), kommandoradsargument med `clap`, egna feltyper med `thiserror`. |
-| 22 | Båda | Tester på riktigt | Fuzzing av `ParseCommand` (`go test -fuzz`), egenskapsbaserade tester i Rust (`proptest`), en bot-klient som spelar mot servern i CI. |
+| # | Spår | Lektion | Spelet får | Språket lär dig |
+|---|---|---|---|---|
+| 14 | Go | Spelloopen | en värld som tickar, en snygg nedstängning med Ctrl+C | actor-mönstret (en goroutine äger världen), `time.Ticker`, `select`, `context.Context`, `signal.NotifyContext` |
+| 15 | Go | Föremål | `get`, `drop`, `inventory`, `examine`, föremål i världsfilen | generics (`FindMatch[T Matcher]`, `remove[T comparable]`), gränssnitt som villkor, `go:embed` |
+| 16 | Go | Varelser | NPC:er som vandrar och pratar | ett `Behavior`-gränssnitt, en JSON-"tagged union", `math/rand/v2` med fast seed |
+| 17 | Rust | Rikare logg | textsorter i färg, kommandohistorik, scrollning | enums med `#[serde(other)]` och `#[default]`, `Copy`, `std::mem::take` |
+| 18 | Go | Strid | `kill`, `flee`, rundor per tick, död, varelser som kommer tillbaka | tärningar med injicerad slump, tester som stegar klockan själva |
+| 19 | Rust | Strid i klienten | en målpanel med hälsomätare, en statusrad som blinkar rött | `Instant`/`Duration`, en injicerad klocka, `Gauge`, `recv_timeout` |
+| 20 | Go | Spara | konton med lösenord; rum, hälsa och föremål överlever en omstart | `database/sql`, SQLite i ren Go, transaktioner, migreringar, bcrypt, moduler (`go get`) |
+| 21 | Rust | Inställningar och inloggning | `--name`, `--help`, `mudclient.toml`, ett dolt lösenordsfält | `clap` derive, `toml` + serde, `thiserror`, `ExitCode` |
+| 22 | Go | Testa på riktigt | `ParseCommand` som klarar alla sorters blanktecken | fuzzing (`go test -fuzz`), invarianter, egenskapsbaserade tester, `go/parser` |
+
+Proptest i Rust och en bot-klient är utmaningar i lektion 22.
+
+**Efter fas 3** lever världen: saker händer medan du sitter still, och den
+minns dig nästa dag.
 
 ## Fas 4 – Tiles och zoner (planerad)
 
@@ -338,7 +343,7 @@ Ungefärliga tider för någon som kan programmera men är ny i Go och Rust:
 |---|---|
 | Fas 1 (01–05) | 8–12 timmar |
 | Fas 2 (06–13) | 15–25 timmar |
-| Fas 3 | 25–35 timmar |
+| Fas 3 (14–22) | 25–35 timmar |
 | Fas 4 | 30–45 timmar |
 | Fas 5 | 25–40 timmar |
 

@@ -13,8 +13,9 @@ terminalklient med färgkarta i Dwarf Fortress-stil, statusrad och logg:
 
 (En riktig skärmbild av referenslösningen efter lektion 13. Telnet fungerar också, då blir kartan ren ASCII.)
 
-Sedan fortsätter kursplanen: strid och NPC:er, zoner med tiles och
-procedurgenerering à la Caves of Qud, en grafisk klient med tileset, och en
+Fas 3 (lektion 14–22) väcker världen till liv: en spelloop, föremål, varelser
+som vandrar, strid och spelare som sparas i SQLite. Sedan fortsätter
+kursplanen: zoner med tiles och procedurgenerering à la Caves of Qud, en grafisk klient med tileset, och en
 server som kan byggas ut **medan den kör** – med omladdning av världen,
 Lua-skript, plugins skrivna i Rust och kompilerade till WebAssembly, och
 den klassiska MUD-tekniken *copyover*.
@@ -103,8 +104,17 @@ Du behöver aldrig köra `init` igen.
 | 11 | Rust | Protokoll i Rust | enums med data, `match`, serde, `Display` |
 | 12 | Rust | Kartan i färg | iteratorer, `Copy`, ANSI truecolor |
 | 13 | Rust | Ett riktigt gränssnitt | ratatui, händelseloop, testa UI |
+| 14 | Go | Spelloopen | actor-mönstret, `time.Ticker`, `context` |
+| 15 | Go | Föremål | generics, gränssnitt som villkor |
+| 16 | Go | Varelser | ett `Behavior`-gränssnitt, slump med fast seed |
+| 17 | Rust | Rikare logg | serde-enums, historik, scrollning |
+| 18 | Go | Strid | tärningar med injicerad slump, tester som stegar klockan själva |
+| 19 | Rust | Strid i klienten | `Instant`, injicerad klocka, `Gauge` |
+| 20 | Go | Spara | `database/sql`, SQLite, transaktioner, migreringar, bcrypt |
+| 21 | Rust | Inställningar och inloggning | `clap`, `toml`, `thiserror` |
+| 22 | Go | Testa på riktigt | fuzzing, egenskapsbaserade tester |
 
-Fas 3–6 (lektion 14–36 och valfria spår) beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
+Fas 4–6 (lektion 23–36 och valfria spår) beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
 
 ## Dokumentation
 

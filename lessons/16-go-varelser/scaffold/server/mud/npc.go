@@ -1,0 +1,127 @@
+package mud
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"sort"
+	"strings"
+)
+
+// NPC is a creature in the world: it has no connection, but it can wander,
+// talk and (from lesson 18) fight.
+type NPC struct {
+	ID          string         `json:"id"`
+	Name        string         `json:"name"` // e.g. "a black cat"
+	Description string         `json:"description"`
+	Keywords    []string       `json:"keywords"`
+	Room        string         `json:"room"`      // where it starts
+	Behaviors   []BehaviorSpec `json:"behaviors"` // what it does every tick
+
+	// For combat in lesson 18 (unused until then).
+	HP         int    `json:"hp,omitempty"`
+	Damage     [2]int `json:"damage,omitempty"` // min, max
+	Attackable bool   `json:"attackable,omitempty"`
+
+	// Owned by the game loop.
+	Location  *Room      `json:"-"`
+	behaviors []Behavior // built from Behaviors
+}
+
+// Matches reports whether the player's word refers to the creature.
+func (n *NPC) Matches(word string) bool {
+	// TODO(lesson 16): like Item.Matches
+	return false
+}
+
+// AddBehavior gives the creature one more behaviour.
+func (n *NPC) AddBehavior(b Behavior) {
+	n.behaviors = append(n.behaviors, b)
+}
+
+// Behavior is something a creature does. Act runs once per tick, in the
+// game loop.
+type Behavior interface {
+	Act(s *Server, n *NPC)
+}
+
+// BehaviorSpec is how a behaviour is written in npcs.json:
+//
+//	{"type": "wander", "chance": 0.1}
+//	{"type": "talk", "chance": 0.05, "lines": ["Meow."]}
+type BehaviorSpec struct {
+	Type   string   `json:"type"`
+	Chance float64  `json:"chance"`          // probability per tick, 0–1
+	Lines  []string `json:"lines,omitempty"` // for "talk"
+}
+
+func newBehavior(spec BehaviorSpec) (Behavior, bool) {
+	switch spec.Type {
+	case "wander":
+		return Wanderer{Chance: spec.Chance}, true
+	case "talk":
+		return Talker{Chance: spec.Chance, Lines: spec.Lines}, true
+	}
+	return nil, false
+}
+
+// Wanderer walks through a random exit now and then.
+type Wanderer struct{ Chance float64 }
+
+func (b Wanderer) Act(s *Server, n *NPC) {
+	// TODO(lesson 16): with probability b.Chance (s.rng.Float64() < b.Chance),
+	// pick a random exit – go through Directions in order so that the same
+	// seed always gives the same walk – and call s.moveNPC.
+}
+
+// Talker says one of its lines now and then.
+type Talker struct {
+	Chance float64
+	Lines  []string
+}
+
+func (b Talker) Act(s *Server, n *NPC) {
+	// TODO(lesson 16): with probability b.Chance, say a random line
+	// (MsgSays with n.Name) to everyone in n.Location.
+}
+
+// moveNPC moves a creature and tells both rooms. Runs in the game loop.
+func (s *Server) moveNPC(n *NPC, to *Room, dir string) {
+	// TODO(lesson 16): MsgLeaves to the old room, move n (both rooms' NPCs
+	// slices and n.Location), MsgArrives to the new room – kind KindMove.
+}
+
+// npcsFile is the format of npcs.json (and of "npcs" in a world file).
+type npcsFile struct {
+	NPCs []*NPC `json:"npcs"`
+}
+
+// LoadNPCs reads creatures in JSON format and puts them in their rooms.
+func (w *World) LoadNPCs(r io.Reader) error {
+	dec := json.NewDecoder(r)
+	dec.DisallowUnknownFields()
+	var f npcsFile
+	if err := dec.Decode(&f); err != nil {
+		return fmt.Errorf(MsgErrReadWorld, err)
+	}
+	return w.AddNPCs(f.NPCs...)
+}
+
+// AddNPCs validates creatures, builds their behaviours and puts them in
+// their rooms. It reports all problems at once.
+func (w *World) AddNPCs(npcs ...*NPC) error {
+	// TODO(lesson 16): like AddItems, plus: build every BehaviorSpec with
+	// newBehavior (unknown type: MsgErrBehavior), and set n.Location.
+	return nil
+}
+
+// npcsByID returns the world's creatures in a fixed order, so that a seeded
+// random generator gives the same result every time.
+func (w *World) npcsByID() []*NPC {
+	list := make([]*NPC, 0, len(w.NPCs))
+	for _, n := range w.NPCs {
+		list = append(list, n)
+	}
+	sort.Slice(list, func(i, j int) bool { return list[i].ID < list[j].ID })
+	return list
+}

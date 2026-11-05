@@ -11,3 +11,5 @@ pub const TITLE_MAP: &str = " Karta ";
 pub const TITLE_INPUT: &str = " Kommando ";
 pub const ONLINE: &str = "online";
 pub const STARTER: &str = "Hej från MUD-klienten! Den här filen fyller du på i lektion 3.";
+pub const TITLE_PASSWORD: &str = " Lösenord (dolt) ";
+pub const CONFIG_ERROR: &str = "Fel i inställningarna";

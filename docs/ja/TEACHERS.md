@@ -42,7 +42,7 @@ docs/<言語>/                 カリキュラム、プロトコル、環境構�
 | タイトルと要約 | `lesson.json` のオブジェクト: `{"sv": ..., "en": ..., "ja": ...}` |
 | コースツールのテキスト | `tools/mudschool` の `L(sv, en, ja)` |
 | ゲーム内のテキスト | `starter.<言語>/server/mud/messages.go` と `.../client/src/messages.rs` |
-| ゲームの世界 | レッスン 08 と 09 の `scaffold.<言語>/` |
+| ゲームの世界 | レッスン 08 と 09（部屋）、15（`items.json`）、16（`npcs.json`）の `scaffold.<言語>/` |
 | テストの失敗メッセージ | `L(sv, en, ja)`（Go）と `l(sv, en, ja)`（Rust） |
 | ドキュメント | `docs/<言語>/` |
 | コードとコメント | **英語** – 全員共通 |

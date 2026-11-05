@@ -45,6 +45,11 @@ Varje frame är ett JSON-objekt med fältet `type`.
 | Fält | Typ | Beskrivning |
 |---|---|---|
 | `text` | sträng | Text att visa. Kan innehålla `\n`. Utelämnas om texten är tom. |
+| `kind` | sträng | Vilken sorts text det är, så att en klient kan färga den (servern skickar den från lektion 15; klienten använder den från lektion 17): `info`, `room`, `say`, `move`, `error`, `combat`. Saknas = `info`. **En okänd sort ska visas som `info`** – nya sorter kan komma. |
+
+```json
+{"type":"text","text":"Bertil säger: hej!","kind":"say"}
+```
 
 Texten är på serverns språk (se `messages.go`).
 
@@ -93,7 +98,7 @@ Betydelser i version 1:
 
 ### `status`
 
-Skickas efter varje `look`.
+Skickas efter varje `look` och efter varje stridsrunda.
 
 ```json
 {"type":"status","status":{"name":"Anna","room":"Torget i Mudby","terrain":"town","hp":10,"max_hp":10,"online":2}}
@@ -104,8 +109,24 @@ Skickas efter varje `look`.
 | `name` | sträng | Spelarens namn |
 | `room` | sträng | Rummets namn |
 | `terrain` | sträng | Rummets terräng (en av betydelserna ovan) |
-| `hp`, `max_hp` | heltal | Hälsa (alltid 10/10 tills strid finns, fas 3) |
+| `hp`, `max_hp` | heltal | Hälsa |
 | `online` | heltal | Antal inloggade spelare |
+| `target` | objekt | Vem du slåss mot (från lektion 18): `{"name":"en råtta","hp":3,"max_hp":5}`. Saknas = ingen. |
+
+### `prompt`
+
+Servern väntar på något speciellt (från lektion 20). Själva frågan kommer som
+en vanlig `text`-frame strax före.
+
+```json
+{"type":"prompt","prompt":"password"}
+```
+
+| Fält | Typ | Beskrivning |
+|---|---|---|
+| `prompt` | sträng | `password` (ett befintligt konto) eller `new_password` (välj ett). Klienten ska **dölja** det som skrivs och inte spara det i historiken. Andra värden kan komma; behandla dem som vanlig inmatning. |
+
+Telnet ser aldrig `prompt`-frames.
 
 ## Kompatibilitet
 
@@ -121,8 +142,6 @@ Protokollet ska kunna växa utan att gamla klienter går sönder:
 
 | Version | Frame / fält | Fas |
 |---|---|---|
-| 1 | `text.kind` (`say`, `combat`, `system`, ...) för färgad logg | 3 |
-| 1 | `status.target` (vem du slåss mot) | 3 |
 | 1 | `hello.lang` – spelarens språk, så att servern kan välja texter per spelare | 6 |
 | 2 | `zone` – en hel zon med tiles | 4 |
 | 2 | `delta` – ändringar sedan förra ticket (entiteter som rör sig, tiles som syns) | 4 |

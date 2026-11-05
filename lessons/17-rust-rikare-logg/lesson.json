@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "En rikare logg – färger, historik och scrollning",
+    "en": "A richer log – colours, history and scrolling",
+    "ja": "豊かなログ – 色、履歴、スクロール"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Läs serverns textkategorier, färglägg loggen, bläddra i kommandohistoriken med piltangenterna och scrolla med PageUp/PageDown.",
+    "en": "Read the server's text kinds, colour the log, browse the command history with the arrow keys and scroll with PageUp/PageDown.",
+    "ja": "サーバーのテキスト種別を読み取ってログを色分けし、矢印キーでコマンド履歴をたどり、PageUp/PageDown でスクロールする。"
+  }
+}

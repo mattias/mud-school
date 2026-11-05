@@ -45,6 +45,11 @@ Every frame is a JSON object with the field `type`.
 | Field | Type | Description |
 |---|---|---|
 | `text` | string | Text to show. May contain `\n`. Left out if the text is empty. |
+| `kind` | string | What kind of text it is, so a client can colour it (the server sends it from lesson 15; the client uses it from lesson 17): `info`, `room`, `say`, `move`, `error`, `combat`. Missing = `info`. **An unknown kind must be shown like `info`** – new kinds may come. |
+
+```json
+{"type":"text","text":"Bertil says: hi!","kind":"say"}
+```
 
 The text is in the server's language (see `messages.go`).
 
@@ -93,7 +98,7 @@ Meanings in version 1:
 
 ### `status`
 
-Sent after every `look`.
+Sent after every `look` and after every combat round.
 
 ```json
 {"type":"status","status":{"name":"Anna","room":"Mudby Square","terrain":"town","hp":10,"max_hp":10,"online":2}}
@@ -104,8 +109,24 @@ Sent after every `look`.
 | `name` | string | The player's name |
 | `room` | string | The room's name |
 | `terrain` | string | The room's terrain (one of the meanings above) |
-| `hp`, `max_hp` | integer | Health (always 10/10 until combat exists, phase 3) |
+| `hp`, `max_hp` | integer | Health |
 | `online` | integer | Number of players logged in |
+| `target` | object | Who you are fighting (from lesson 18): `{"name":"a rat","hp":3,"max_hp":5}`. Missing = nobody. |
+
+### `prompt`
+
+The server is waiting for something special (from lesson 20). The question
+itself comes as an ordinary `text` frame just before.
+
+```json
+{"type":"prompt","prompt":"password"}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `prompt` | string | `password` (an existing account) or `new_password` (choose one). The client should **hide** what is typed and not save it in its history. Other values may come; treat them as ordinary input. |
+
+Telnet never sees `prompt` frames.
 
 ## Compatibility
 
@@ -121,8 +142,6 @@ The protocol must be able to grow without breaking old clients:
 
 | Version | Frame / field | Phase |
 |---|---|---|
-| 1 | `text.kind` (`say`, `combat`, `system`, ...) for a coloured log | 3 |
-| 1 | `status.target` (who you are fighting) | 3 |
 | 1 | `hello.lang` – the player's language, so the server can choose texts per player | 6 |
 | 2 | `zone` – a whole zone with tiles | 4 |
 | 2 | `delta` – changes since the last tick (entities moving, tiles becoming visible) | 4 |

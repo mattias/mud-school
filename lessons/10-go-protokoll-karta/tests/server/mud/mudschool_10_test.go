@@ -1,7 +1,6 @@
 package mud
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
@@ -77,35 +76,6 @@ func showRows(rows []string) string {
 		return "  (" + L("tom", "empty", "空") + ")"
 	}
 	return "  ┌" + strings.Repeat("─", len(rows[0])) + "┐\n  │" + strings.Join(rows, "│\n  │") + "│\n  └" + strings.Repeat("─", len(rows[0])) + "┘"
-}
-
-// readFrame reads a line and decodes it as JSON.
-func (c *testClient) readFrame() map[string]any {
-	c.t.Helper()
-	line, ok := c.readLine(testTimeout)
-	if !ok {
-		c.t.Fatalf(L("%s: väntade en JSON-rad men servern stängde anslutningen", "%s: expected a JSON line but the server closed the connection", "%s: JSON の行を期待しましたが、サーバーが接続を閉じました"), c.name)
-	}
-	var f map[string]any
-	if err := json.Unmarshal([]byte(line), &f); err != nil {
-		c.t.Fatalf(L("%s: raden %q är inte giltig JSON: %v", "%s: the line %q is not valid JSON: %v", "%s: 行 %q は正しい JSON ではありません: %v"), c.name, line, err)
-	}
-	if _, ok := f["type"].(string); !ok {
-		c.t.Fatalf(L("%s: frame utan \"type\": %q", "%s: frame without \"type\": %q", "%s: \"type\" のないフレーム: %q"), c.name, line)
-	}
-	return f
-}
-
-// expectFrame reads frames until one of type typ arrives.
-func (c *testClient) expectFrame(typ string) map[string]any {
-	c.t.Helper()
-	for i := 0; i < 20; i++ {
-		if f := c.readFrame(); f["type"] == typ {
-			return f
-		}
-	}
-	c.t.Fatalf(L("%s: fick ingen frame av typen %q", "%s: got no frame of type %q", "%s: 種類 %q のフレームが届きませんでした"), c.name, typ)
-	return nil
 }
 
 // expectText reads text frames until one with exactly want arrives.

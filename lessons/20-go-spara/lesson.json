@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Spara – SQLite, migreringar och lösenord",
+    "en": "Saving – SQLite, migrations and passwords",
+    "ja": "保存 – SQLite、マイグレーション、パスワード"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Spelare, rum och ryggsäckar överlever en omstart. database/sql med SQLite i ren Go, transaktioner, migreringar och lösenord med bcrypt.",
+    "en": "Players, rooms and inventories survive a restart. database/sql with pure-Go SQLite, transactions, migrations and bcrypt passwords.",
+    "ja": "プレイヤー、部屋、持ち物が再起動後も残る。純 Go の SQLite と database/sql、トランザクション、マイグレーション、bcrypt によるパスワード。"
+  }
+}

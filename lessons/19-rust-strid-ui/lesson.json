@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Strid i klienten – målpanel, HP-mätare och tid",
+    "en": "Combat in the client – target panel, HP gauge and time",
+    "ja": "クライアントの戦闘 – ターゲットパネル、HP ゲージ、時間"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Visa vem du slåss mot med en HP-mätare, låt statusraden blinka rött när du tar skada och testa tidsberoende UI med en klocka du styr själv.",
+    "en": "Show who you are fighting with an HP gauge, flash the status bar red when you take damage and test time-dependent UI with a clock you control.",
+    "ja": "戦っている相手を HP ゲージで表示し、ダメージを受けたらステータスバーを赤く点滅させ、自分で操作できる時計で時間に依存する UI をテストする。"
+  }
+}

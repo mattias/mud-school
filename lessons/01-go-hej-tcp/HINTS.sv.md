@@ -14,6 +14,12 @@ for {
 }
 ```
 
+## Använd lyssnaren du får
+
+`Serve` får en lyssnare `l` som redan lyssnar. Anropa inte `net.Listen` i
+`Serve`, och skriv inte `l, err := ...` i loopen – det skapar ett nytt `l` som
+döljer det du fick. Skriv `conn, err := l.Accept()`.
+
 ## Skriva till anslutningen
 
 `net.Conn` uppfyller gränssnittet `io.Writer`, så du kan använda

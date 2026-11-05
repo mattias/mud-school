@@ -67,10 +67,24 @@ Recommended fonts for the map (e.g. in Windows Terminal) are listed in
 | `./mudschool run server` / `run client` | start your server or client |
 | `./mudschool solution [--apply]` | show (or copy in) the reference solution |
 | `./mudschool goto <id>` | jump to a lesson |
+| `./mudschool update` | bring course fixes into your workspace after `git pull` (your own code is never touched) |
 | `./mudschool lang en\|sv\|ja` | switch language |
 
 All your code lives in `workspace/` – `server/` (Go) and `client/` (Rust).
 You can also run `go test ./...` and `cargo test` directly there.
+
+### When the course is updated
+
+```
+git pull
+./mudschool update
+```
+
+`update` replaces only files you haven't changed. If you have changed a file
+that the course has also changed, the course's version is put next to it as
+`<file>.new` (for `messages.go`/`messages.rs` your version is kept as `.bak`).
+`check` applies the safe updates automatically, and `doctor` tells you when
+something is waiting. You never need to run `init` again.
 
 ## The lessons
 

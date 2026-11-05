@@ -40,7 +40,17 @@ func TestServeReturnsErrorWhenListenerCloses(t *testing.T) {
 		t.Fatal(err)
 	}
 	done := make(chan error, 1)
-	go func() { done <- NewServer().Serve(l) }()
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf(L("Serve kraschade (panic): %v – använd lyssnaren l som Serve får, anropa inte net.Listen själv",
+					"Serve crashed (panic): %v – use the listener l that Serve is given, don't call net.Listen yourself",
+					"Serve がクラッシュしました（panic）: %v – 自分で net.Listen を呼ばず、受け取ったリスナー l を使ってください"), r)
+				done <- nil
+			}
+		}()
+		done <- NewServer().Serve(l)
+	}()
 
 	time.Sleep(50 * time.Millisecond)
 	select {

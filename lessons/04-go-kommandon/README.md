@@ -87,7 +87,7 @@ cd workspace/server && go test ./mud -run TestParseCommand -v
 ## Try it yourself
 
 ```
-telnet localhost 4000
+telnet 127.0.0.1 4000
 help
 echo   hello  there
 L

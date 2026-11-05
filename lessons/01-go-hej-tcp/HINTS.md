@@ -14,6 +14,13 @@ for {
 }
 ```
 
+## Use the listener you are given
+
+`Serve` gets a listener `l` that is already listening. Don't call
+`net.Listen` in `Serve`, and don't write `l, err := ...` in the loop – that
+creates a new `l` that hides the one you were given. Use `=` or a new name
+for `conn`, e.g. `conn, err := l.Accept()`.
+
 ## Writing to the connection
 
 `net.Conn` satisfies the `io.Writer` interface, so you can use

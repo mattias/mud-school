@@ -83,6 +83,18 @@ up and old tests start failing. Go: `mudschool_NN_test.go` in package `mud`.
 Rust: `tests/mudschool_NN.rs` (integration tests against the library
 `mud_client`), starting with `mod mudschool_common;` to get `l(...)`.
 
+## Updating students' workspaces
+
+The tool records a checksum for every file it copies in from `starter/` and
+`scaffold/` (`files` in `.mudschool.json`). `./mudschool update` compares:
+unchanged files are replaced with the course's current version, missing ones
+are added, a file changed by both the student and the course gets the
+course's version as `<file>.new`, and an edited `messages.go`/`messages.rs` is
+backed up as `.bak` and replaced (new lessons need its new constants).
+Workspaces created before the records existed are matched against every
+version of the file in git history. `check` applies the safe updates by itself.
+So: fixing a scaffold or starter file is fine – students get it with `git pull`.
+
 ## Verification
 
 ```

@@ -10,7 +10,9 @@ import (
 	"io"
 	"net"
 	"os"
+	"runtime/debug"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -30,14 +32,30 @@ func L(sv, en, ja string) string {
 }
 
 // startServer starts your server on a random free port and returns its address.
+// If Serve panics, the panic is reported as a normal test failure with a hint.
 func startServer(t *testing.T, srv *Server) string {
 	t.Helper()
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	t.Cleanup(func() { l.Close() })
-	go srv.Serve(l)
+	var crashed atomic.Value
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				crashed.Store(fmt.Sprintf("%v\n%s", r, debug.Stack()))
+			}
+		}()
+		srv.Serve(l)
+	}()
+	t.Cleanup(func() {
+		l.Close()
+		if msg, ok := crashed.Load().(string); ok {
+			t.Errorf(L("Serve kraschade (panic): %s\nTips: anropar du net.Listen själv i Serve? Använd lyssnaren l som Serve får.",
+				"Serve crashed (panic): %s\nHint: do you call net.Listen yourself in Serve? Use the listener l that Serve is given.",
+				"Serve がクラッシュしました（panic）: %s\nヒント: Serve の中で自分で net.Listen を呼んでいませんか？ Serve が受け取ったリスナー l を使ってください。"), msg)
+		}
+	})
 	return l.Addr().String()
 }
 
@@ -75,9 +93,15 @@ func (c *testClient) readLine(timeout time.Duration) (line string, ok bool) {
 	if err != nil {
 		var ne net.Error
 		if errors.As(err, &ne) && ne.Timeout() {
-			c.t.Fatalf(L("%s: väntade på en rad från servern men fick inget inom %v.\nRader hittills: %q",
-				"%s: waited for a line from the server but got nothing within %v.\nLines so far: %q",
-				"%s: サーバーからの行を待ちましたが %v 以内に何も届きませんでした。\nこれまでの行: %q"), c.name, timeout, c.seen)
+			hint := ""
+			if len(c.seen) == 0 {
+				hint = L("\nTips: servern har inte skickat något alls. Tar Serve emot anslutningar från lyssnaren l den får (och inte från en egen net.Listen)?",
+					"\nHint: the server has not sent anything at all. Does Serve accept connections from the listener l it is given (and not from its own net.Listen)?",
+					"\nヒント: サーバーからまだ何も届いていません。Serve は（自分で作った net.Listen ではなく）受け取ったリスナー l から接続を受け付けていますか？")
+			}
+			c.t.Fatalf(L("%s: väntade på en rad från servern men fick inget inom %v.\nRader hittills: %q%s",
+				"%s: waited for a line from the server but got nothing within %v.\nLines so far: %q%s",
+				"%s: サーバーからの行を待ちましたが %v 以内に何も届きませんでした。\nこれまでの行: %q%s"), c.name, timeout, c.seen, hint)
 		}
 		if s == "" {
 			return "", false

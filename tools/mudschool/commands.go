@@ -18,14 +18,16 @@ func (c *course) cmdInit() error {
 		fmt.Println(L("Kör", "Run", "実行:"), cyan("./mudschool show"))
 		return nil
 	}
-	if _, err := overlay(c.root, "starter", ws, false); err != nil {
+	written, err := overlay(c.root, "starter", ws, false)
+	if err != nil {
 		return err
 	}
 	first := c.lessons[0]
-	if _, err := c.enter(ws, first); err != nil {
+	p := &Progress{Lang: lang, Current: first.ID, Done: map[string]bool{}, Hints: map[string]int{}}
+	c.record(p, written, "starter", "")
+	if _, err := c.enterWorkspace(p, first); err != nil {
 		return err
 	}
-	p := &Progress{Lang: lang, Current: first.ID, Done: map[string]bool{}, Hints: map[string]int{}}
 	if err := c.saveProgress(p); err != nil {
 		return err
 	}
@@ -82,6 +84,7 @@ func (c *course) cmdLang(args []string) error {
 			return err
 		}
 		fmt.Println(dim(L("  skrev workspace/", "  wrote workspace/", "  書き込み: workspace/") + shown))
+		c.record(p, []string{relPath}, "starter", "")
 		return nil
 	})
 	if err != nil {
@@ -230,10 +233,10 @@ func (c *course) cmdGoto(args []string) error {
 		return err
 	}
 	p.Current = l.ID
-	if err := c.saveProgress(p); err != nil {
+	if _, err := c.enterWorkspace(p, l); err != nil {
 		return err
 	}
-	if _, err := c.enter(c.workspace(), l); err != nil {
+	if err := c.saveProgress(p); err != nil {
 		return err
 	}
 	fmt.Printf("%s %s %s\n", L("Aktuell lektion:", "Current lesson:", "現在のレッスン:"), l.ID, bold(l.Title.String()))
@@ -274,7 +277,19 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		return false, err
 	}
 	ws := c.workspace()
-	if _, err := c.enter(ws, l); err != nil {
+	if _, err := c.enterWorkspace(p, l); err != nil {
+		return false, err
+	}
+	// Bring in course fixes the student hasn't touched (git pull + check just works).
+	if pending, err := c.applyUpdate(p, c.planUpdate(p), true); err != nil {
+		return false, err
+	} else if pending > 0 {
+		fmt.Println(yellow(fmt.Sprintf(L(
+			"! %d fil(er) i arbetsytan har nyare versioner i kursen – kör ./mudschool update",
+			"! %d file(s) in your workspace have newer versions in the course – run ./mudschool update",
+			"! 作業領域の %d 個のファイルにコースの新しい版があります。./mudschool update を実行してください"), pending)))
+	}
+	if err := c.saveProgress(p); err != nil {
 		return false, err
 	}
 	if err := c.placeTests(ws, l); err != nil {
@@ -304,7 +319,7 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 	p.Done[l.ID] = true
 	if nxt := c.next(l); nxt != nil {
 		p.Current = nxt.ID
-		created, err := c.enter(ws, nxt)
+		created, err := c.enterWorkspace(p, nxt)
 		if err != nil {
 			return true, err
 		}

@@ -126,6 +126,12 @@ Servern:
   (`encodeText` returnerar `""` för okända typer).
 - En sparad spelare kommer tillbaka i samma rum, med samma HP och samma saker
   – som då inte längre ligger kvar i rummet.
+- Även efter att ha loggat ut och in igen *på samma server*: sakerna gick
+  tillbaka till sina startrum vid utloggningen (lektion 15), och `restore`
+  tar dem därifrån.
+- Vid utloggning: först ögonblicksbilden, sedan `SavePlayer`, och först
+  **därefter** `removePlayer` – så att en snabb återanslutning inte kan läsa
+  in den gamla sparningen.
 - `main.go`: en `-db`-flagga (standard `mud.db`; tom = ingen sparning).
 
 ## Uppgift

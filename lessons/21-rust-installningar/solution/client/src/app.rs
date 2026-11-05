@@ -289,7 +289,7 @@ fn draw_status(frame: &mut Frame, app: &App, area: Rect, flashing: bool) {
         Some(s) => {
             let hearts = 10;
             let full = if s.max_hp > 0 {
-                (s.hp.max(0) * hearts / s.max_hp) as usize
+                (s.hp.max(0) * hearts / s.max_hp).min(hearts) as usize
             } else {
                 0
             };

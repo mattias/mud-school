@@ -18,7 +18,10 @@ import (
 func FuzzParseCommand(f *testing.F) {
 	for _, seed := range []string{
 		"", "look", "n", "Get Sword from chest", "'hello there", "  say   hi  ",
-		"look\tsword", "ÅÄÖ", "say  hi",
+		"ÅÄÖ",
+		// Added after the fuzzer found them – like the files it saves in
+		// testdata/fuzz/FuzzParseCommand/, they make sure the bug stays fixed.
+		"look\tsword", "say\u00a0hi",
 	} {
 		f.Add(seed)
 	}

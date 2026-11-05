@@ -41,7 +41,9 @@ func main() {
 	// Ctrl+C: shut down cleanly instead of just dying.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
+	shutdownDone := make(chan struct{})
 	go func() {
+		defer close(shutdownDone)
 		<-ctx.Done()
 		log.Print("shutting down ...")
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -54,8 +56,8 @@ func main() {
 	if err := srv.Serve(l); !errors.Is(err, mud.ErrServerClosed) {
 		log.Fatal(err)
 	}
-	// Serve returns as soon as the listener is closed; wait for Shutdown to finish.
-	<-ctx.Done()
-	time.Sleep(100 * time.Millisecond)
+	// Serve returns as soon as the listener is closed; wait for Shutdown to
+	// finish, so that every player has been said goodbye to (and saved).
+	<-shutdownDone
 	log.Print("bye")
 }

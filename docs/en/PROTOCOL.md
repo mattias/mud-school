@@ -45,7 +45,7 @@ Every frame is a JSON object with the field `type`.
 | Field | Type | Description |
 |---|---|---|
 | `text` | string | Text to show. May contain `\n`. Left out if the text is empty. |
-| `kind` | string | What kind of text it is, so a client can colour it (from lesson 17): `info`, `room`, `say`, `move`, `error`, `combat`. Missing = `info`. **An unknown kind must be shown like `info`** – new kinds may come. |
+| `kind` | string | What kind of text it is, so a client can colour it (the server sends it from lesson 15; the client uses it from lesson 17): `info`, `room`, `say`, `move`, `error`, `combat`. Missing = `info`. **An unknown kind must be shown like `info`** – new kinds may come. |
 
 ```json
 {"type":"text","text":"Bertil says: hi!","kind":"say"}

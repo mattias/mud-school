@@ -108,7 +108,7 @@ automatically, and `doctor` tells you when something is waiting. You never need 
 | 15 | Go | Items | generics, interfaces as constraints |
 | 16 | Go | Creatures | a `Behavior` interface, seeded randomness |
 | 17 | Rust | A richer log | serde enums, history, scrolling |
-| 18 | Go | Combat | dice, deterministic tests with an injected clock |
+| 18 | Go | Combat | dice with injected randomness, tests that step the clock themselves |
 | 19 | Rust | Combat in the client | `Instant`, an injected clock, `Gauge` |
 | 20 | Go | Saving | `database/sql`, SQLite, transactions, migrations, bcrypt |
 | 21 | Rust | Settings and login | `clap`, `toml`, `thiserror` |

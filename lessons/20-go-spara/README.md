@@ -126,6 +126,11 @@ The server:
   (`encodeText` returns `""` for unknown types).
 - A saved player comes back in the same room, with the same HP and the same
   items – which are then no longer lying in the room.
+- Also after logging out and in again *on the same server*: the items went
+  back to their start rooms on logout (lesson 15), and `restore` takes them
+  from there.
+- On logout: first the snapshot, then `SavePlayer`, and only **then**
+  `removePlayer` – so that a quick reconnect can't load the old save.
 - `main.go`: a `-db` flag (default `mud.db`; empty = no saving).
 
 ## Task

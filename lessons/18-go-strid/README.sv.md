@@ -53,7 +53,7 @@ den som en debugger.
   4. om din hälsa är ≤ 0: `MsgDies` till rummet, du vaknar i startrummet med
      full hälsa (`MsgYouDie` med rummets namn) och får en `look`.
 - En varelse som någon slåss mot vandrar inte.
-- Alla stridsmeddelanden har kind `combat`.
+- Alla stridsmeddelanden har kind `combat`; en varelse som kommer tillbaka (`MsgAppears`) är `move`, precis som alla andra som anländer.
 - `Status` får `HP`/`MaxHP` från spelaren och
   `Target *Target{Name, HP, MaxHP}` (json `target,omitempty`) under en strid.
   En strukturerad klient får en status efter varje runda.

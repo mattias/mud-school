@@ -235,6 +235,16 @@ fn page_up_and_down_scroll_the_log() {
         kind: Kind::Info,
     });
     assert!(!screen(&app).contains("new line"));
+    assert_eq!(
+        app.scroll,
+        PAGE + 1,
+        "{}",
+        l(
+            "när loggen är uppskrollad ska en ny rad öka scroll med 1, så att vyn står still",
+            "while the log is scrolled up, a new line should increase scroll by 1, so that the view stays still",
+            "ログを上にスクロールしている間は、新しい行で scroll を 1 増やし、表示を動かさないようにするべきです"
+        )
+    );
     assert!(screen(&app).contains(&format!("line {}", 99 - PAGE)));
 
     app.on_key(key(KeyCode::PageDown));

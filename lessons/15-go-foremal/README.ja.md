@@ -71,6 +71,8 @@ func remove[T comparable](list []T, x T) []T {
 - 世界ファイルにも `"items"` を書ける。`LoadWorld` がそれを追加する。
 - `DefaultWorld` は新しい `items.json` も読み込む（`world.json` と同じように埋め込む）。
 - `look` は出口の後（`MsgHere` の前）に `MsgItemsHere` を表示する。
+- プレイヤーが去るとき、持っていた物はすべて、それぞれのアイテムが最初にあった部屋
+  （`Item.Room`）に戻る。世界から何も消えない。
 - コマンド: `get`/`take`、`drop`、`inventory`/`i`、`examine`/`x`。`messages.go` の
   `MsgGetWhat`、`MsgNoSuchItem`、`MsgYouGet`、`MsgGets`、`MsgDropWhat`、`MsgNotCarrying`、
   `MsgYouDrop`、`MsgDrops`、`MsgInventory`、`MsgInventoryEmpty`、`MsgExamineWhat` を参照。

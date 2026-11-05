@@ -70,8 +70,8 @@ func TestParseCommandAnyWhitespace(t *testing.T) {
 		{"look\tsword", "look", []string{"sword"}},
 		{"\tn", "north", nil},
 		{"kill\t\trat ", "kill", []string{"rat"}},
-		{"say hi", "say", []string{"hi"}},     // a no-break space
-		{"get　sword", "get", []string{"sword"}}, // a Japanese (ideographic) space
+		{"say\u00a0hi", "say", []string{"hi"}},       // a no-break space
+		{"get\u3000sword", "get", []string{"sword"}}, // a Japanese (ideographic) space
 	}
 	for _, tt := range tests {
 		got := ParseCommand(tt.line)
@@ -86,7 +86,7 @@ func TestParseCommandAnyWhitespace(t *testing.T) {
 // TestParseCommandProperties is a small property-based test: thousands of
 // random lines made of nasty pieces, and rules that must hold for all of them.
 func TestParseCommandProperties(t *testing.T) {
-	pieces := []string{"a", "Look", "N", "say", "'", " ", "  ", "\t", " ", "　", "\r", "é", "Å", "語", "\xff", "x\ty"}
+	pieces := []string{"a", "Look", "N", "say", "'", " ", "  ", "\t", "\u00a0", "\u3000", "\r", "é", "Å", "語", "\xff", "x\ty"}
 	rng := rand.New(rand.NewPCG(22, 22))
 	for i := 0; i < 5000; i++ {
 		var b strings.Builder

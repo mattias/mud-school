@@ -73,6 +73,8 @@ för att skriva över originalet – en klassisk fälla med slices.
 - En världsfil får också innehålla `"items"`: `LoadWorld` lägger till dem.
 - `DefaultWorld` läser också den nya `items.json` (baka in den som `world.json`).
 - `look` visar `MsgItemsHere` efter utgångarna (och före `MsgHere`).
+- När en spelare lämnar spelet går allt den bar tillbaka till rummet där varje
+  föremål började (`Item.Room`) – ingenting försvinner ur världen.
 - Kommandon: `get`/`take`, `drop`, `inventory`/`i`, `examine`/`x` – se
   meddelandena `MsgGetWhat`, `MsgNoSuchItem`, `MsgYouGet`, `MsgGets`, `MsgDropWhat`,
   `MsgNotCarrying`, `MsgYouDrop`, `MsgDrops`, `MsgInventory`,

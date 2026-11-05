@@ -100,7 +100,7 @@ och kommandot `time`, som skickar `MsgTime`.
      går. Använd `call` (inte `do`) så att kommandon för en spelare körs i
      ordning och `p.quit` är satt innan du tittar på den,
    - `Serve` startar loopen, kommer ihåg sin lyssnare (Shutdown måste stänga
-     den) och returnerar `ErrServerClosed` efter Shutdown.
+     den) och returnerar `ErrServerClosed` efter Shutdown. Shutdown får anropas mer än en gång; senare anrop returnerar nil.
 4. **`rooms.go`/`commands.go`**: ta bort låsen. Hjälpfunktionerna `…Locked`
    betyder nu helt enkelt "körs i spelloopen" – döp om dem (`look`,
    `describeRoom`, `playersInRoom`, `broadcastRoom`, …). `who` använder den

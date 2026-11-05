@@ -102,7 +102,7 @@ and the command `time`, which sends `MsgTime`.
      player leaves. Use `call` (not `do`) so that commands for one player
      run in order and `p.quit` is set before you look at it,
    - `Serve` starts the loop, remembers its listener (Shutdown must close
-     it) and returns `ErrServerClosed` after Shutdown.
+     it) and returns `ErrServerClosed` after Shutdown. Shutdown may be called more than once; later calls return nil.
 4. **`rooms.go`/`commands.go`**: remove the locks. The `…Locked` helpers
    are now simply "runs in the game loop" – rename them (`look`,
    `describeRoom`, `playersInRoom`, `broadcastRoom`, …). `who` uses the

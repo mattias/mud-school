@@ -104,7 +104,16 @@ func (s *Server) Serve(l net.Listener) error {
 			}
 			return err
 		}
+		// Check closing and Add under lmu – Shutdown sets closing under the
+		// same lock, so no connection can slip in after it starts waiting.
+		s.lmu.Lock()
+		if s.closing.Load() {
+			s.lmu.Unlock()
+			conn.Close()
+			return ErrServerClosed
+		}
 		s.handlers.Add(1)
+		s.lmu.Unlock()
 		go func() {
 			defer s.handlers.Done()
 			s.handle(conn)
@@ -121,7 +130,15 @@ func (s *Server) handle(conn net.Conn) {
 	p := newPlayer(conn)
 	defer p.close() // runs before conn.Close, so everything gets sent
 
-	if !s.call(func() { s.conns[p] = true }) {
+	// Refuse the connection if Shutdown has already said goodbye to everyone.
+	registered := false
+	s.call(func() {
+		if !s.closing.Load() {
+			s.conns[p] = true
+			registered = true
+		}
+	})
+	if !registered {
 		return
 	}
 	defer s.call(func() { delete(s.conns, p) })

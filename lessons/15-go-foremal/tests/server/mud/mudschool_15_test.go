@@ -207,3 +207,27 @@ func jsonLoginKinds(t *testing.T, addr, name string) *testClient {
 }
 
 func (c *testClient) drainFrames() { c.drain() }
+
+func TestQuitReturnsItems(t *testing.T) {
+	addr := startServer(t, NewServerWithWorld(itemWorld(t)))
+	anna := login(t, addr, "Anna")
+	bertil := login(t, addr, "Bertil")
+	anna.drain()
+	bertil.drain()
+
+	anna.send("get sword")
+	anna.expect(fmt.Sprintf(MsgYouGet, "a rusty sword"))
+	anna.send("n")
+	anna.drain()
+	bertil.drain()
+	anna.send("quit")
+	bertil.expectContains(fmt.Sprintf(MsgLeft, "Anna"))
+
+	bertil.send("look")
+	line := bertil.expectContains(strings.SplitN(MsgItemsHere, "%s", 2)[0])
+	if !strings.Contains(line, "a rusty sword") {
+		t.Errorf(L("när Anna loggar ut ska svärdet hon bar tillbaka till rummet där det började (Item.Room), men torget visar: %q",
+			"when Anna logs out, the sword she carried should go back to the room it started in (Item.Room), but the square shows: %q",
+			"アンナがログアウトしたら、持っていた剣は最初にあった部屋（Item.Room）に戻るべきですが、広場の表示は %q です"), line)
+	}
+}

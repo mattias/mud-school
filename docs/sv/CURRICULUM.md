@@ -155,8 +155,8 @@ Fas 1  Grunderna             01 ─ 05   Go: TCP, goroutines, kommandon, spelare
                                        Rust: första klienten
 Fas 2  En värld och ett      06 ─ 13   Go: chatt, rum, världsfiler, protokoll + karta
        ansikte                         Rust: trådar, serde, färgkarta, TUI med ratatui
-─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 3  En levande värld      14 ─ 22   spelloop, föremål, NPC:er, strid, sparande
+─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 4  Tiles och zoner       23 ─ 30   zoner à la Caves of Qud, procedurgenerering,
                                        synfält, A*, grafisk klient med tileset
 Fas 5  En utbyggbar server   31 ─ 36   omladdning live, Lua-skript, WASM-plugins

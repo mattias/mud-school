@@ -72,10 +72,14 @@ func (s *Server) register(p *Player) (ok, retry bool) {
 			log.Printf("bcrypt: %v", err)
 			return false, false
 		}
-		if err := s.store.CreateAccount(p.Name, hash); err != nil {
+		if err := s.store.CreateAccount(p.Name, hash); errors.Is(err, ErrNameTaken) {
 			// Someone else registered the name a moment ago.
 			p.Sendf(MsgInvalidName, err)
 			return true, true
+		} else if err != nil {
+			log.Printf("cannot create the account %s: %v", p.Name, err)
+			p.SendKind(KindError, MsgStoreError)
+			return false, false
 		}
 		return true, false
 	}

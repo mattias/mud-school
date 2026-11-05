@@ -53,7 +53,7 @@ like a debugger.
   4. if your health is ≤ 0: `MsgDies` to the room, you wake up in the start
      room with full health (`MsgYouDie` with the room's name) and get a `look`.
 - A creature that someone is fighting doesn't wander.
-- All combat messages have kind `combat`.
+- All combat messages have kind `combat`; a creature that comes back (`MsgAppears`) is `move`, like anyone else arriving.
 - `Status` gets `HP`/`MaxHP` from the player and
   `Target *Target{Name, HP, MaxHP}` (json `target,omitempty`) during a fight.
   A structured client gets a status after every round.

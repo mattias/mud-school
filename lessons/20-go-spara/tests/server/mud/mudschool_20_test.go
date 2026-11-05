@@ -268,3 +268,25 @@ func TestNoStoreNoPassword(t *testing.T) {
 	srv := NewServerWithOptions(Options{World: w, Tick: time.Hour})
 	login(t, startServer(t, srv), "Anna") // straight in, as before
 }
+
+func TestReloginKeepsItems(t *testing.T) {
+	st := openTestStore(t, filepath.Join(t.TempDir(), "mud.db"))
+	_, addr := newSaveServer(t, st)
+	c := loginWithPassword(t, addr, "Anna", "hemligt", true)
+	c.drain()
+	c.send("get lamp")
+	c.expectContains(fmt.Sprintf(MsgYouGet, "a lamp"))
+	c.send("quit")
+	c.expectClosed()
+
+	// The same server, no restart: the lamp must come back with Anna.
+	c = loginWithPassword(t, addr, "Anna", "hemligt", false)
+	c.drain()
+	c.send("inventory")
+	line := c.expectContains(strings.SplitN(MsgInventory, "%s", 2)[0])
+	if !strings.Contains(line, "a lamp") {
+		t.Fatalf(L("Anna loggade ut med lampan och in igen på samma server, men inventory visar: %q\nTips: när en spelare loggar ut läggs sakerna tillbaka i sina startrum (lektion 15) – och restore tar dem därifrån.",
+			"Anna logged out with the lamp and back in on the same server, but inventory shows: %q\nHint: when a player logs out their things go back to their start rooms (lesson 15) – and restore takes them from there.",
+			"アンナはランプを持ってログアウトし、同じサーバーにもう一度ログインしましたが、inventory の表示は %q です\nヒント: ログアウトすると持ち物は最初の部屋に戻り（レッスン 15）、restore がそこから取り出します。"), line)
+	}
+}

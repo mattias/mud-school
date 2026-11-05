@@ -155,8 +155,8 @@ Phase 1  The basics           01 ─ 05   Go: TCP, goroutines, commands, players
                                         Rust: the first client
 Phase 2  A world and a face   06 ─ 13   Go: chat, rooms, world files, protocol + map
                                         Rust: threads, serde, colour map, TUI with ratatui
-───────────────────────────────────────────────────── implemented above ───
 Phase 3  A living world       14 ─ 22   game loop, items, NPCs, combat, saving
+───────────────────────────────────────────────────── implemented above ───
 Phase 4  Tiles and zones      23 ─ 30   Caves of Qud-style zones, procedural generation,
                                         field of view, A*, graphical client with a tileset
 Phase 5  An extensible server 31 ─ 36   live reloading, Lua scripts, WASM plugins

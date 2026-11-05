@@ -73,8 +73,8 @@ func (s *Server) Ticks() int64 {
 // message and is disconnected, and the game loop stops. If ctx ends first,
 // Shutdown stops waiting and returns ctx.Err().
 func (s *Server) Shutdown(ctx context.Context) error {
-	s.closing.Store(true)
 	s.lmu.Lock()
+	s.closing.Store(true)
 	for _, l := range s.listeners {
 		l.Close()
 	}

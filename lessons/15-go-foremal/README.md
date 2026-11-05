@@ -73,6 +73,8 @@ overwriting the original – a classic slice gotcha.
 - A world file may contain `"items"` too: `LoadWorld` adds them.
 - `DefaultWorld` also loads the new `items.json` (embed it like `world.json`).
 - `look` shows `MsgItemsHere` after the exits (and before `MsgHere`).
+- When a player leaves, everything they carried goes back to the room each
+  item started in (`Item.Room`) – nothing disappears from the world.
 - Commands: `get`/`take`, `drop`, `inventory`/`i`, `examine`/`x` – see the
   messages `MsgGetWhat`, `MsgNoSuchItem`, `MsgYouGet`, `MsgGets`, `MsgDropWhat`,
   `MsgNotCarrying`, `MsgYouDrop`, `MsgDrops`, `MsgInventory`,

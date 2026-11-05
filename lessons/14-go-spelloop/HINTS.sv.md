@@ -45,8 +45,10 @@ Defer körs i omvänd ordning: spelaren tas bort ur `s.players` och `s.conns`
 ## Shutdown
 
 ```go
+s.lmu.Lock()                 // den lilla mutexen som skyddar s.listeners
 s.closing.Store(true)        // atomic.Bool – Serve kollar den när Accept misslyckas
-// stäng alla lyssnare (spara dem i en slice skyddad av en liten mutex)
+for _, l := range s.listeners { l.Close() }
+s.lmu.Unlock()
 s.call(func() {
     for p := range s.conns {
         p.Send(MsgShutdown)
@@ -59,6 +61,16 @@ s.call(func() {
 
 `s.start()` innan du stoppar gör att `loopDone` stängs även om `Serve` aldrig
 anropats.
+
+En anslutning som accepterades precis innan lyssnaren stängdes är ett lömskt
+race. Två regler täpper till det:
+
+- i `Serve`, kolla `closing` och anropa `s.handlers.Add(1)` **under `lmu`** –
+  då kan inget `Add` ske efter att Shutdown har börjat vänta;
+- i `handle`, registrera anslutningen bara `if !s.closing.Load()` (inne i
+  `s.call`) – annars missar den avskedet och Shutdown väntar på den för evigt.
+
+Shutdown får anropas mer än en gång; senare anrop returnerar nil.
 
 ## GameTime
 

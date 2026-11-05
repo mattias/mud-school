@@ -108,7 +108,7 @@ Du behöver aldrig köra `init` igen.
 | 15 | Go | Föremål | generics, gränssnitt som villkor |
 | 16 | Go | Varelser | ett `Behavior`-gränssnitt, slump med fast seed |
 | 17 | Rust | Rikare logg | serde-enums, historik, scrollning |
-| 18 | Go | Strid | tärningar, deterministiska tester med injicerad klocka |
+| 18 | Go | Strid | tärningar med injicerad slump, tester som stegar klockan själva |
 | 19 | Rust | Strid i klienten | `Instant`, injicerad klocka, `Gauge` |
 | 20 | Go | Spara | `database/sql`, SQLite, transaktioner, migreringar, bcrypt |
 | 21 | Rust | Inställningar och inloggning | `clap`, `toml`, `thiserror` |

@@ -63,16 +63,16 @@ After the name: if `s.store != nil`, call `s.authenticate(p)`. `retry` means
 ```go
 defer func() {
 	var snap SavedPlayer
-	s.call(func() {
-		snap = p.snapshot()
-		s.removePlayer(p)
-		// ... MsgLeft ...
-	})
+	s.call(func() { snap = p.snapshot() })
 	if s.store != nil && snap.Name != "" {
 		if err := s.store.SavePlayer(snap); err != nil {
 			log.Printf("cannot save %s: %v", p.Name, err)
 		}
 	}
+	s.call(func() {
+		s.removePlayer(p)
+		// ... MsgLeft ...
+	})
 }()
 ```
 

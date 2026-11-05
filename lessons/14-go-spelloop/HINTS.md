@@ -45,8 +45,10 @@ Defers run in reverse order: the player is removed from `s.players` and
 ## Shutdown
 
 ```go
+s.lmu.Lock()                 // the small mutex that protects s.listeners
 s.closing.Store(true)        // atomic.Bool – Serve checks it after Accept fails
-// close every listener (keep them in a slice protected by a small mutex)
+for _, l := range s.listeners { l.Close() }
+s.lmu.Unlock()
 s.call(func() {
     for p := range s.conns {
         p.Send(MsgShutdown)
@@ -59,6 +61,17 @@ s.call(func() {
 
 `s.start()` before stopping makes sure `loopDone` gets closed even if `Serve`
 was never called.
+
+A connection accepted just before the listener closed is a sneaky race. Two
+rules close it:
+
+- in `Serve`, check `closing` and call `s.handlers.Add(1)` **under `lmu`** –
+  then no `Add` can happen after Shutdown has started waiting;
+- in `handle`, register the connection only `if !s.closing.Load()` (inside
+  `s.call`) – otherwise it would miss the goodbye and Shutdown would wait for
+  it forever.
+
+Shutdown may be called more than once; later calls return nil.
 
 ## GameTime
 

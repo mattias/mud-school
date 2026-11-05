@@ -45,8 +45,10 @@ defer は逆順に実行されます。プレイヤーは `p.close()` の *前�
 ## Shutdown
 
 ```go
+s.lmu.Lock()                 // s.listeners を守る小さなミューテックス
 s.closing.Store(true)        // atomic.Bool – Accept が失敗したとき Serve が確認する
-// すべてのリスナーを閉じる（小さなミューテックスで守ったスライスに保存しておく）
+for _, l := range s.listeners { l.Close() }
+s.lmu.Unlock()
 s.call(func() {
     for p := range s.conns {
         p.Send(MsgShutdown)
@@ -59,6 +61,15 @@ s.call(func() {
 
 停止する前に `s.start()` を呼ぶと、`Serve` が一度も呼ばれていなくても `loopDone` が
 必ず閉じられます。
+
+リスナーが閉じられる直前に受け付けた接続は、たちの悪い競合を生みます。2 つのルールで防ぎます:
+
+- `Serve` では、`closing` の確認と `s.handlers.Add(1)` を **`lmu` の下で** 行う。
+  そうすれば Shutdown が待ち始めた後に `Add` が起きることはない。
+- `handle` では、`if !s.closing.Load()` のときだけ（`s.call` の中で）接続を登録する。
+  そうしないと別れのあいさつを受け取れず、Shutdown がそれを永遠に待ってしまう。
+
+Shutdown は何度呼んでもかまいません。2 回目以降は nil を返します。
 
 ## GameTime
 

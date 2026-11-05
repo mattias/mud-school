@@ -123,7 +123,16 @@ func (s *Server) Serve(l net.Listener) error {
 			}
 			return err
 		}
+		// Check closing and Add under lmu – Shutdown sets closing under the
+		// same lock, so no connection can slip in after it starts waiting.
+		s.lmu.Lock()
+		if s.closing.Load() {
+			s.lmu.Unlock()
+			conn.Close()
+			return ErrServerClosed
+		}
 		s.handlers.Add(1)
+		s.lmu.Unlock()
 		go func() {
 			defer s.handlers.Done()
 			s.handle(conn)
@@ -140,7 +149,15 @@ func (s *Server) handle(conn net.Conn) {
 	p := newPlayer(conn)
 	defer p.close() // runs before conn.Close, so everything gets sent
 
-	if !s.call(func() { s.conns[p] = true }) {
+	// Refuse the connection if Shutdown has already said goodbye to everyone.
+	registered := false
+	s.call(func() {
+		if !s.closing.Load() {
+			s.conns[p] = true
+			registered = true
+		}
+	})
+	if !registered {
 		return
 	}
 	defer s.call(func() { delete(s.conns, p) })
@@ -160,18 +177,20 @@ func (s *Server) handle(conn net.Conn) {
 		s.look(p)
 	})
 	defer func() {
+		// 1. A snapshot in the game loop, 2. write it to the database outside
+		// the loop (disk is slow), 3. only then free the name – so that a quick
+		// reconnect can't load the old save before the new one is written.
 		var snap SavedPlayer
-		s.call(func() {
-			snap = p.snapshot()
-			s.removePlayer(p)
-			s.broadcast(p, KindMove, fmt.Sprintf(MsgLeft, p.Name))
-		})
-		// Write to the database outside the game loop: disk is slow.
+		s.call(func() { snap = p.snapshot() })
 		if s.store != nil && snap.Name != "" {
 			if err := s.store.SavePlayer(snap); err != nil {
 				log.Printf("cannot save %s: %v", p.Name, err)
 			}
 		}
+		s.call(func() {
+			s.removePlayer(p)
+			s.broadcast(p, KindMove, fmt.Sprintf(MsgLeft, p.Name))
+		})
 	}()
 
 	for !p.quit {
@@ -251,6 +270,14 @@ func (s *Server) removePlayer(p *Player) {
 	if s.players[p.Name] == p {
 		delete(s.players, p.Name)
 	}
+	// What the player carried goes back to where it started, so that it
+	// isn't lost from the world (lesson 20 gives it back on the next login).
+	for _, it := range p.Inventory {
+		if r := s.world.Room(it.Room); r != nil {
+			r.Items = append(r.Items, it)
+		}
+	}
+	p.Inventory = nil
 }
 
 // broadcast sends text of a kind to every logged-in player except except (which may be nil).

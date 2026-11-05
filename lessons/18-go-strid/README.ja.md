@@ -52,7 +52,7 @@ srv.call(func() { srv.ticks++; srv.onTick() })   // ちょうど 1 ティック
   4. 自分の体力が 0 以下なら: 部屋に `MsgDies`。体力満タンで開始部屋で目を覚まし
      （部屋の名前付きの `MsgYouDie`）、`look` を受け取る。
 - 誰かと戦っている生き物は歩き回らない。
-- 戦闘メッセージの kind はすべて `combat`。
+- 戦闘メッセージの kind はすべて `combat`。戻ってきた生き物（`MsgAppears`）は、他の到着と同じく `move`。
 - `Status` はプレイヤーの `HP`/`MaxHP` と、戦闘中は `Target *Target{Name, HP, MaxHP}`
   （json `target,omitempty`）を持つ。構造化クライアントにはラウンドごとに status を送る。
 

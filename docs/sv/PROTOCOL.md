@@ -45,7 +45,7 @@ Varje frame är ett JSON-objekt med fältet `type`.
 | Fält | Typ | Beskrivning |
 |---|---|---|
 | `text` | sträng | Text att visa. Kan innehålla `\n`. Utelämnas om texten är tom. |
-| `kind` | sträng | Vilken sorts text det är, så att en klient kan färga den (från lektion 17): `info`, `room`, `say`, `move`, `error`, `combat`. Saknas = `info`. **En okänd sort ska visas som `info`** – nya sorter kan komma. |
+| `kind` | sträng | Vilken sorts text det är, så att en klient kan färga den (servern skickar den från lektion 15; klienten använder den från lektion 17): `info`, `room`, `say`, `move`, `error`, `combat`. Saknas = `info`. **En okänd sort ska visas som `info`** – nya sorter kan komma. |
 
 ```json
 {"type":"text","text":"Bertil säger: hej!","kind":"say"}

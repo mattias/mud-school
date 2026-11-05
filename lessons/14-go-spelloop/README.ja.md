@@ -100,7 +100,7 @@ func GameTime(ticks int64) (day, hour, minute int) // 1 ティック = ゲーム
      プレイヤーが去るときの後片付け。1 人のプレイヤーのコマンドが順番に実行され、
      `p.quit` を見る前に設定済みになるよう、`do` ではなく `call` を使う、
    - `Serve` はループを開始し、リスナーを覚えておき（Shutdown で閉じるため）、
-     Shutdown の後は `ErrServerClosed` を返す。
+     Shutdown の後は `ErrServerClosed` を返す。Shutdown は何度呼んでもよく、2 回目以降は nil を返す。
 4. **`rooms.go`/`commands.go`**: ロックを取り除く。`…Locked` の補助関数は
    「ゲームループの中で動く」という意味になったので名前を変える（`look`、
    `describeRoom`、`playersInRoom`、`broadcastRoom` など）。`who` はループ内専用の

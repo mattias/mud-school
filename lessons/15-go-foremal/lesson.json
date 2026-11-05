@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Föremål – inventarier, gränssnitt och generics",
+    "en": "Items – inventories, interfaces and generics",
+    "ja": "アイテム – 持ち物、インターフェース、ジェネリクス"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Föremål i rummen, get/drop/inventory/examine, en generisk sökfunktion – och textkategorier i protokollet så att klienten kan färga loggen.",
+    "en": "Items in the rooms, get/drop/inventory/examine, a generic lookup function – and text kinds in the protocol so the client can colour its log.",
+    "ja": "部屋に置かれたアイテム、get/drop/inventory/examine、ジェネリックな検索関数、そしてクライアントがログを色分けできるプロトコルのテキスト種別。"
+  }
+}

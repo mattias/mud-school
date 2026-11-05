@@ -11,3 +11,5 @@ pub const TITLE_MAP: &str = " Map ";
 pub const TITLE_INPUT: &str = " Command ";
 pub const ONLINE: &str = "online";
 pub const STARTER: &str = "Hello from the MUD client! You will fill in this file in lesson 3.";
+pub const TITLE_PASSWORD: &str = " Password (hidden) ";
+pub const CONFIG_ERROR: &str = "Error in the settings";

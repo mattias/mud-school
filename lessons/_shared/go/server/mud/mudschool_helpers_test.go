@@ -5,6 +5,7 @@ package mud
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -178,10 +179,12 @@ func (c *testClient) expectSilence(d time.Duration) {
 	c.t.Fatalf(L("%s: väntade tystnad men fick %q (fel: %v)", "%s: expected silence but got %q (error: %v)", "%s: 何も届かないはずが %q を受信しました（エラー: %v）"), c.name, s, err)
 }
 
-// drain reads away everything the server has sent so far.
+// drain reads away everything the server has sent so far (until it has been
+// quiet for a moment, or at most testTimeout if it never is).
 func (c *testClient) drain() {
 	c.t.Helper()
-	for {
+	stop := time.Now().Add(testTimeout)
+	for time.Now().Before(stop) {
 		c.conn.SetReadDeadline(time.Now().Add(150 * time.Millisecond))
 		if _, err := c.r.ReadString('\n'); err != nil {
 			return
@@ -198,4 +201,33 @@ func login(t *testing.T, addr, name string) *testClient {
 	c.send(name)
 	c.expectContains(fmt.Sprintf(MsgWelcomeName, name))
 	return c
+}
+
+// readFrame reads a line and decodes it as JSON.
+func (c *testClient) readFrame() map[string]any {
+	c.t.Helper()
+	line, ok := c.readLine(testTimeout)
+	if !ok {
+		c.t.Fatalf(L("%s: väntade en JSON-rad men servern stängde anslutningen", "%s: expected a JSON line but the server closed the connection", "%s: JSON の行を期待しましたが、サーバーが接続を閉じました"), c.name)
+	}
+	var f map[string]any
+	if err := json.Unmarshal([]byte(line), &f); err != nil {
+		c.t.Fatalf(L("%s: raden %q är inte giltig JSON: %v", "%s: the line %q is not valid JSON: %v", "%s: 行 %q は正しい JSON ではありません: %v"), c.name, line, err)
+	}
+	if _, ok := f["type"].(string); !ok {
+		c.t.Fatalf(L("%s: frame utan \"type\": %q", "%s: frame without \"type\": %q", "%s: \"type\" のないフレーム: %q"), c.name, line)
+	}
+	return f
+}
+
+// expectFrame reads frames until one of type typ arrives.
+func (c *testClient) expectFrame(typ string) map[string]any {
+	c.t.Helper()
+	for i := 0; i < 20; i++ {
+		if f := c.readFrame(); f["type"] == typ {
+			return f
+		}
+	}
+	c.t.Fatalf(L("%s: fick ingen frame av typen %q", "%s: got no frame of type %q", "%s: 種類 %q のフレームが届きませんでした"), c.name, typ)
+	return nil
 }

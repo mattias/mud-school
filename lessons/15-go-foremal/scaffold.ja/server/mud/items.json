@@ -1,0 +1,74 @@
+{
+  "items": [
+    {
+      "id": "sword",
+      "name": "錆びた剣",
+      "description": "錆に覆われた古い剣。まだ十分に切れそうだ。",
+      "keywords": [
+        "剣",
+        "sword"
+      ],
+      "room": "smedjan"
+    },
+    {
+      "id": "bread",
+      "name": "パンひとかたまり",
+      "description": "焼きたてでまだ温かい。いい香りがする。",
+      "keywords": [
+        "パン",
+        "bread"
+      ],
+      "room": "krogen"
+    },
+    {
+      "id": "lantern",
+      "name": "真鍮のランタン",
+      "description": "真鍮の小さなランタン。まだ少し油が残っている。",
+      "keywords": [
+        "ランタン",
+        "lantern"
+      ],
+      "room": "gastrummet"
+    },
+    {
+      "id": "key",
+      "name": "鉄の鍵",
+      "description": "重い鉄の鍵。どの扉を開けるのだろう？",
+      "keywords": [
+        "鍵",
+        "key"
+      ],
+      "room": "templet"
+    },
+    {
+      "id": "shell",
+      "name": "きらめく貝殻",
+      "description": "虹色にきらめいている。耳に当てると湖の音が聞こえる。",
+      "keywords": [
+        "貝殻",
+        "shell"
+      ],
+      "room": "stranden"
+    },
+    {
+      "id": "mushroom",
+      "name": "赤いキノコ",
+      "description": "赤地に白い斑点。食べないほうがよさそうだ。",
+      "keywords": [
+        "キノコ",
+        "mushroom"
+      ],
+      "room": "morkskogen"
+    },
+    {
+      "id": "bone",
+      "name": "古い骨",
+      "description": "長くてかじられた骨。大きな歯の何かがここにいたらしい。",
+      "keywords": [
+        "骨",
+        "bone"
+      ],
+      "room": "grottan"
+    }
+  ]
+}

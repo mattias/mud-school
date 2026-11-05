@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Varelser – beteenden och slump som går att testa",
+    "en": "Creatures – behaviours and randomness you can test",
+    "ja": "生き物 – 振る舞いとテストできる乱数"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Katter, kråkor och krögare som vandrar och pratar i spelloopen. Ett Behavior-gränssnitt och en slumpgenerator som testerna kan styra.",
+    "en": "Cats, crows and innkeepers that wander and talk in the game loop. A Behavior interface and a random generator the tests can control.",
+    "ja": "ゲームループの中で歩き回り、話す猫やカラスや酒場の主人。Behavior インターフェースと、テストから制御できる乱数生成器。"
+  }
+}

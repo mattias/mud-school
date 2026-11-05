@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Strid – ronder, tärningar och deterministiska tester",
+    "en": "Combat – rounds, dice and deterministic tests",
+    "ja": "戦闘 – ラウンド、ダイス、決定的なテスト"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Anfall varelser, slåss runda för runda i spelloopen, dö och vakna igen – med tester som stegar fram tiden själva.",
+    "en": "Attack creatures, fight round by round in the game loop, die and wake up again – with tests that step time forward themselves.",
+    "ja": "生き物を攻撃し、ゲームループの中でラウンドごとに戦い、倒れては目覚める。時間を自分で進めるテストとともに。"
+  }
+}

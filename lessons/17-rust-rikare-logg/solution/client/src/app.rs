@@ -1,0 +1,286 @@
+//! The client's state and how it is drawn.
+//!
+//! The architecture is "The Elm Architecture" in miniature:
+//!   event (key / server message) -> update App -> draw App.
+//! All logic lives in App and can be tested without a terminal or a network.
+
+use ratatui::crossterm::event::{KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
+use ratatui::layout::{Constraint, Layout, Rect};
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::text::{Line, Span};
+use ratatui::widgets::{Block, Borders, Paragraph};
+use ratatui::Frame;
+
+use crate::messages;
+use crate::protocol::{Kind, MapData, ServerMsg, Status};
+use crate::render::{render_map, Rgb};
+
+/// The maximum number of lines kept in the log.
+pub const MAX_LOG: usize = 1000;
+
+/// The maximum number of commands kept in the history.
+pub const MAX_HISTORY: usize = 100;
+
+/// How many lines PageUp/PageDown scroll.
+pub const PAGE: usize = 10;
+
+impl From<Rgb> for Color {
+    fn from(Rgb(r, g, b): Rgb) -> Color {
+        Color::Rgb(r, g, b)
+    }
+}
+
+/// One line in the log.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LogLine {
+    pub kind: Kind,
+    pub text: String,
+}
+
+/// How a kind of text is drawn in the log.
+pub fn style_for(kind: Kind) -> Style {
+    match kind {
+        Kind::Room => Style::default().fg(Color::Rgb(230, 230, 240)),
+        Kind::Say => Style::default().fg(Color::Rgb(120, 200, 255)),
+        Kind::Move => Style::default().fg(Color::Rgb(150, 150, 160)),
+        Kind::Error => Style::default().fg(Color::Rgb(255, 110, 90)),
+        Kind::Combat => Style::default()
+            .fg(Color::Rgb(255, 190, 60))
+            .add_modifier(Modifier::BOLD),
+        Kind::Info | Kind::Other => Style::default().fg(Color::Rgb(200, 200, 200)),
+    }
+}
+
+/// Everything the client knows right now.
+#[derive(Debug, Default)]
+pub struct App {
+    pub log: Vec<LogLine>,
+    pub map: Option<MapData>,
+    pub status: Option<Status>,
+    pub input: String,
+    pub quit: bool,
+    /// Commands sent earlier, oldest first.
+    pub history: Vec<String>,
+    /// Where Up/Down is in the history (None = editing a new line).
+    pub history_pos: Option<usize>,
+    /// What was typed before Up was pressed, so Down can bring it back.
+    pub draft: String,
+    /// How many lines the log is scrolled up from the bottom (0 = newest).
+    pub scroll: usize,
+}
+
+impl App {
+    pub fn new() -> App {
+        App::default()
+    }
+
+    /// Adds text to the log (one entry per line of the text).
+    pub fn push_log(&mut self, kind: Kind, text: &str) {
+        let before = self.log.len();
+        self.log.extend(text.lines().map(|l| LogLine {
+            kind,
+            text: l.to_string(),
+        }));
+        // Keep the view still when the player has scrolled up.
+        if self.scroll > 0 {
+            self.scroll += self.log.len() - before;
+        }
+        if self.log.len() > MAX_LOG {
+            let extra = self.log.len() - MAX_LOG;
+            self.log.drain(..extra);
+        }
+        self.scroll = self.scroll.min(self.log.len());
+    }
+
+    /// Handles a message from the server.
+    pub fn on_server(&mut self, msg: ServerMsg) {
+        match msg {
+            ServerMsg::Text { text, kind } => self.push_log(kind, &text),
+            ServerMsg::Map { map } => self.map = Some(map),
+            ServerMsg::Status { status } => self.status = Some(status),
+            ServerMsg::Hello { .. } | ServerMsg::Unknown => {}
+        }
+    }
+
+    /// The server disconnected.
+    pub fn on_disconnect(&mut self) {
+        self.push_log(Kind::Error, messages::DISCONNECTED);
+    }
+
+    /// Handles a key press. Returns a line to send to the server when the
+    /// player presses Enter.
+    pub fn on_key(&mut self, key: KeyEvent) -> Option<String> {
+        if key.kind != KeyEventKind::Press {
+            return None;
+        }
+        match key.code {
+            KeyCode::Esc => self.quit = true,
+            KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => self.quit = true,
+            KeyCode::Char(c) => self.input.push(c),
+            KeyCode::Backspace => {
+                self.input.pop();
+            }
+            KeyCode::Up => self.history_up(),
+            KeyCode::Down => self.history_down(),
+            KeyCode::PageUp => self.scroll = (self.scroll + PAGE).min(self.log.len()),
+            KeyCode::PageDown => self.scroll = self.scroll.saturating_sub(PAGE),
+            KeyCode::End => self.scroll = 0,
+            KeyCode::Enter => {
+                let line = std::mem::take(&mut self.input);
+                if !line.is_empty() && self.history.last() != Some(&line) {
+                    self.history.push(line.clone());
+                    if self.history.len() > MAX_HISTORY {
+                        self.history.remove(0);
+                    }
+                }
+                self.history_pos = None;
+                self.scroll = 0;
+                self.push_log(Kind::Info, &format!("> {line}"));
+                return Some(line);
+            }
+            _ => {}
+        }
+        None
+    }
+
+    fn history_up(&mut self) {
+        let pos = match self.history_pos {
+            None if self.history.is_empty() => return,
+            None => {
+                self.draft = std::mem::take(&mut self.input);
+                self.history.len() - 1
+            }
+            Some(0) => 0,
+            Some(p) => p - 1,
+        };
+        self.history_pos = Some(pos);
+        self.input = self.history[pos].clone();
+    }
+
+    fn history_down(&mut self) {
+        match self.history_pos {
+            None => {}
+            Some(p) if p + 1 < self.history.len() => {
+                self.history_pos = Some(p + 1);
+                self.input = self.history[p + 1].clone();
+            }
+            Some(_) => {
+                self.history_pos = None;
+                self.input = std::mem::take(&mut self.draft);
+            }
+        }
+    }
+}
+
+/// Draws the whole user interface:
+///
+/// ```text
+/// ┌ status bar ──────────────────────────────┐
+/// │ log                        │   map       │
+/// │                            │             │
+/// ├────────────────────────────┴─────────────┤
+/// │ > input                                  │
+/// └──────────────────────────────────────────┘
+/// ```
+pub fn draw(frame: &mut Frame, app: &App) {
+    let [status_area, main_area, input_area] = Layout::vertical([
+        Constraint::Length(1),
+        Constraint::Min(3),
+        Constraint::Length(3),
+    ])
+    .areas(frame.area());
+
+    let map_width = app.map.as_ref().map_or(0, |m| m.width as u16 + 2).max(15);
+    let [log_area, map_area] =
+        Layout::horizontal([Constraint::Min(10), Constraint::Length(map_width)]).areas(main_area);
+
+    draw_status(frame, app, status_area);
+    draw_log(frame, app, log_area);
+    draw_map(frame, app, map_area);
+
+    let input = Paragraph::new(format!("> {}", app.input)).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(messages::TITLE_INPUT),
+    );
+    frame.render_widget(input, input_area);
+    frame.set_cursor_position((
+        input_area.x + 3 + app.input.chars().count() as u16,
+        input_area.y + 1,
+    ));
+}
+
+fn draw_status(frame: &mut Frame, app: &App, area: Rect) {
+    let bar = Style::default().bg(Color::Rgb(40, 40, 60)).fg(Color::White);
+    let line = match &app.status {
+        None => Line::from(messages::NOT_LOGGED_IN),
+        Some(s) => {
+            let hearts = 10;
+            let full = if s.max_hp > 0 {
+                (s.hp.max(0) * hearts / s.max_hp) as usize
+            } else {
+                0
+            };
+            Line::from(vec![
+                Span::styled(format!(" {} ", s.name), bar.add_modifier(Modifier::BOLD)),
+                Span::raw(format!("· {} · ", s.room)),
+                Span::styled(
+                    "♥".repeat(full),
+                    Style::default().fg(Color::Rgb(230, 50, 60)),
+                ),
+                Span::styled(
+                    "♥".repeat(hearts as usize - full),
+                    Style::default().fg(Color::Rgb(80, 80, 90)),
+                ),
+                Span::raw(format!(
+                    " HP {}/{} · {} {}",
+                    s.hp,
+                    s.max_hp,
+                    s.online,
+                    messages::ONLINE
+                )),
+            ])
+        }
+    };
+    frame.render_widget(Paragraph::new(line).style(bar), area);
+}
+
+fn draw_log(frame: &mut Frame, app: &App, area: Rect) {
+    let visible = area.height.saturating_sub(2) as usize; // minus the border
+    let end = app.log.len().saturating_sub(app.scroll);
+    let start = end.saturating_sub(visible);
+    let lines: Vec<Line> = app.log[start..end]
+        .iter()
+        .map(|l| Line::styled(l.text.as_str(), style_for(l.kind)))
+        .collect();
+    let mut title = messages::TITLE_LOG.to_string();
+    if app.scroll > 0 {
+        title = format!("{title}↑{} ", app.scroll);
+    }
+    let log = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title(title));
+    frame.render_widget(log, area);
+}
+
+fn draw_map(frame: &mut Frame, app: &App, area: Rect) {
+    let lines: Vec<Line> = match &app.map {
+        None => vec![Line::from(messages::NO_MAP)],
+        Some(map) => render_map(map)
+            .into_iter()
+            .map(|row| {
+                row.into_iter()
+                    .map(|c| {
+                        let mut style = Style::default().fg(c.fg.into());
+                        if let Some(bg) = c.bg {
+                            style = style.bg(bg.into());
+                        }
+                        Span::styled(c.glyph.to_string(), style)
+                    })
+                    .collect::<Line>()
+            })
+            .collect(),
+    };
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title(messages::TITLE_MAP);
+    frame.render_widget(Paragraph::new(lines).block(block), area);
+}

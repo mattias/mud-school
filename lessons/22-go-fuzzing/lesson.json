@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Testa på riktigt – fuzzing och egenskapstester",
+    "en": "Testing for real – fuzzing and property tests",
+    "ja": "本気のテスト – ファジングとプロパティテスト"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Skriv ditt första fuzz-test, låt Go hitta en bugg i ParseCommand som ingen av de tidigare testerna såg, och laga den.",
+    "en": "Write your first fuzz test, let Go find a bug in ParseCommand that none of the earlier tests saw, and fix it.",
+    "ja": "初めてのファズテストを書き、これまでのどのテストも気づかなかった ParseCommand のバグを Go に見つけさせて、直す。"
+  }
+}

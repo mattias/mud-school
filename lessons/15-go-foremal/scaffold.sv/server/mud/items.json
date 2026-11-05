@@ -1,0 +1,78 @@
+{
+  "items": [
+    {
+      "id": "sword",
+      "name": "ett rostigt svärd",
+      "description": "Ett gammalt svärd täckt av rost. Det är fortfarande vasst nog att vara till nytta.",
+      "keywords": [
+        "svärd",
+        "svärdet",
+        "rostigt"
+      ],
+      "room": "smedjan"
+    },
+    {
+      "id": "bread",
+      "name": "en brödlimpa",
+      "description": "Nybakad och fortfarande varm. Den doftar underbart.",
+      "keywords": [
+        "bröd",
+        "brödet",
+        "limpa"
+      ],
+      "room": "krogen"
+    },
+    {
+      "id": "lantern",
+      "name": "en mässingslykta",
+      "description": "En liten lykta av mässing. Det finns fortfarande lite olja i den.",
+      "keywords": [
+        "lykta",
+        "lyktan",
+        "lampa"
+      ],
+      "room": "gastrummet"
+    },
+    {
+      "id": "key",
+      "name": "en järnnyckel",
+      "description": "En tung järnnyckel. Vilken dörr kan den öppna?",
+      "keywords": [
+        "nyckel",
+        "nyckeln",
+        "järnnyckel"
+      ],
+      "room": "templet"
+    },
+    {
+      "id": "shell",
+      "name": "en skimrande snäcka",
+      "description": "Den skimrar i alla färger. Håller du den mot örat hör du sjön.",
+      "keywords": [
+        "snäcka",
+        "snäckan"
+      ],
+      "room": "stranden"
+    },
+    {
+      "id": "mushroom",
+      "name": "en röd svamp",
+      "description": "Röd med vita prickar. Kanske bäst att inte äta den.",
+      "keywords": [
+        "svamp",
+        "svampen"
+      ],
+      "room": "morkskogen"
+    },
+    {
+      "id": "bone",
+      "name": "ett gammalt ben",
+      "description": "Ett långt, gnagt ben. Något med stora tänder har varit här.",
+      "keywords": [
+        "ben",
+        "benet"
+      ],
+      "room": "grottan"
+    }
+  ]
+}

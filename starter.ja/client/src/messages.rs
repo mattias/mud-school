@@ -11,3 +11,5 @@ pub const TITLE_MAP: &str = " マップ ";
 pub const TITLE_INPUT: &str = " コマンド ";
 pub const ONLINE: &str = "人がオンライン";
 pub const STARTER: &str = "MUD クライアントからこんにちは！このファイルはレッスン 3 で書きます。";
+pub const TITLE_PASSWORD: &str = " パスワード（非表示） ";
+pub const CONFIG_ERROR: &str = "設定にエラーがあります";

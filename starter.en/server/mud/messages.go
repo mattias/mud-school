@@ -67,6 +67,80 @@ const (
 	MsgErrExitMissing   = "room %q: exit %s leads to %q, which does not exist"
 	MsgErrExitCoords    = "room %q: exit %s leads to %q, but the coordinates do not match"
 	MsgErrDirection     = "room %q: unknown direction %q"
+	// time: day, hour, minute (lesson 14)
+	MsgTime = "It is day %d, %02d:%02d."
+	// to everyone when the server stops
+	MsgShutdown = "The server is shutting down. See you soon!"
+	// look: items in the room (lesson 15)
+	MsgItemsHere = "You see: %s."
+	// get without an argument
+	MsgGetWhat = "Get what?"
+	// drop without an argument
+	MsgDropWhat = "Drop what?"
+	// examine without an argument
+	MsgExamineWhat = "Examine what?"
+	// nothing matches the word here
+	MsgNoSuchItem = "You don't see %q here."
+	// drop: not in the inventory
+	MsgNotCarrying = "You aren't carrying %q."
+	// get: item name
+	MsgYouGet = "You pick up %s."
+	// get, to the others: player, item
+	MsgGets = "%s picks up %s."
+	// drop: item name
+	MsgYouDrop = "You drop %s."
+	// drop, to the others: player, item
+	MsgDrops = "%s drops %s."
+	// inventory: list of items
+	MsgInventory = "You are carrying: %s."
+	// inventory: nothing
+	MsgInventoryEmpty = "You aren't carrying anything."
+	// world file: items (lesson 15)
+	MsgErrItemFields    = "item %q: id and name are required"
+	MsgErrDuplicateItem = "item %q appears twice"
+	MsgErrItemRoom      = "item %q: room %q does not exist"
+	// world file: creatures (lesson 16)
+	MsgErrDuplicateNPC = "creature %q appears twice"
+	MsgErrNPCRoom      = "creature %q: room %q does not exist"
+	MsgErrNPCFields    = "creature %q: id and name are required"
+	MsgErrBehavior     = "creature %q: unknown behaviour %q"
+	// kill without an argument (lesson 18)
+	MsgAttackWhat = "Attack what?"
+	// no creature matches
+	MsgNoSuchTarget = "There is no %q here to fight."
+	// the creature is peaceful
+	MsgCantAttack = "You can't attack %s."
+	// you start a fight: creature
+	MsgYouAttack = "You attack %s!"
+	// to the others: player, creature
+	MsgAttacks = "%s attacks %s!"
+	// your hit: creature, damage
+	MsgYouHit = "You hit %s (%d damage)."
+	// the creature hits you: creature, damage
+	MsgHitsYou = "%s hits you (%d damage)."
+	// you won: creature
+	MsgYouKill = "You have defeated %s!"
+	// to the others: player, creature
+	MsgKills = "%s has defeated %s!"
+	// you died: the room you wake up in
+	MsgYouDie = "You collapse ... and wake up again in %s."
+	// to the others: player
+	MsgDies = "%s collapses and vanishes."
+	// a creature comes back: creature
+	MsgAppears = "%s appears."
+	// flee when not in a fight
+	MsgNotFighting = "You aren't fighting anyone."
+	// flee with no exits
+	MsgFleeNowhere = "There is nowhere to flee!"
+	// you fled: direction
+	MsgYouFlee = "You flee %s!"
+	// login with saving (lesson 20)
+	MsgAskPassword = "Password:"
+	// new player: name
+	MsgChoosePassword   = "Choose a password for %s:"
+	MsgPasswordTooShort = "The password must be at least 4 characters."
+	MsgWrongPassword    = "Wrong password."
+	MsgStoreError       = "Something went wrong with saving – please try again later."
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

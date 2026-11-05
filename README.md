@@ -13,8 +13,9 @@ client with a Dwarf Fortress-style colour map, a status bar and a log:
 
 (A real screenshot of the reference solution after lesson 13. Telnet works too; then the map is plain ASCII.)
 
-Then the curriculum continues: combat and NPCs, zones with tiles and
-procedural generation à la Caves of Qud, a graphical client with a tileset,
+Phase 3 (lessons 14–22) brings the world to life: a game loop, items,
+creatures that wander, combat, and players who are saved in SQLite. Then the
+curriculum continues: zones with tiles and procedural generation à la Caves of Qud, a graphical client with a tileset,
 and a server that can be extended **while it is running** – with live world
 reloading, Lua scripts, plugins written in Rust and compiled to WebAssembly,
 and the classic MUD technique *copyover*.
@@ -103,8 +104,17 @@ automatically, and `doctor` tells you when something is waiting. You never need 
 | 11 | Rust | The protocol in Rust | enums with data, `match`, serde, `Display` |
 | 12 | Rust | The map in colour | iterators, `Copy`, ANSI truecolor |
 | 13 | Rust | A real user interface | ratatui, an event loop, testing a UI |
+| 14 | Go | The game loop | the actor pattern, `time.Ticker`, `context` |
+| 15 | Go | Items | generics, interfaces as constraints |
+| 16 | Go | Creatures | a `Behavior` interface, seeded randomness |
+| 17 | Rust | A richer log | serde enums, history, scrolling |
+| 18 | Go | Combat | dice, deterministic tests with an injected clock |
+| 19 | Rust | Combat in the client | `Instant`, an injected clock, `Gauge` |
+| 20 | Go | Saving | `database/sql`, SQLite, transactions, migrations, bcrypt |
+| 21 | Rust | Settings and login | `clap`, `toml`, `thiserror` |
+| 22 | Go | Testing for real | fuzzing, property-based tests |
 
-Phases 3–6 (lessons 14–36 and optional tracks) are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
+Phases 4–6 (lessons 23–36 and optional tracks) are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
 
 ## Documentation
 

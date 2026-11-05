@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Inställningar och inloggning – clap, toml och egna feltyper",
+    "en": "Settings and login – clap, toml and your own error types",
+    "ja": "設定とログイン – clap、toml、独自のエラー型"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Kommandoradsflaggor med clap, en inställningsfil i TOML, feltyper med thiserror, automatisk inloggning och ett dolt lösenordsfält.",
+    "en": "Command-line flags with clap, a settings file in TOML, error types with thiserror, automatic login and a hidden password field.",
+    "ja": "clap によるコマンドラインフラグ、TOML の設定ファイル、thiserror によるエラー型、自動ログイン、隠されたパスワード入力欄。"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Spelloopen – en goroutine äger världen",
+    "en": "The game loop – one goroutine owns the world",
+    "ja": "ゲームループ – 世界を所有するのは 1 つのゴルーチン"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Låt en enda goroutine äga hela spelvärlden (actor-mönstret), driv världen med ticks och stäng av servern snyggt.",
+    "en": "Let a single goroutine own the whole game world (the actor pattern), drive the world with ticks and shut the server down cleanly.",
+    "ja": "1 つのゴルーチンにゲーム世界全体を持たせ（アクターパターン）、ティックで世界を動かし、サーバーをきれいに停止する。"
+  }
+}

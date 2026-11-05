@@ -1,0 +1,73 @@
+{
+  "items": [
+    {
+      "id": "sword",
+      "name": "a rusty sword",
+      "description": "An old sword covered in rust. It is still sharp enough to be useful.",
+      "keywords": [
+        "sword",
+        "rusty"
+      ],
+      "room": "smedjan"
+    },
+    {
+      "id": "bread",
+      "name": "a loaf of bread",
+      "description": "Freshly baked and still warm. It smells wonderful.",
+      "keywords": [
+        "bread",
+        "loaf"
+      ],
+      "room": "krogen"
+    },
+    {
+      "id": "lantern",
+      "name": "a brass lantern",
+      "description": "A small lantern of brass. There is still some oil in it.",
+      "keywords": [
+        "lantern",
+        "lamp"
+      ],
+      "room": "gastrummet"
+    },
+    {
+      "id": "key",
+      "name": "an iron key",
+      "description": "A heavy iron key. Which door could it open?",
+      "keywords": [
+        "key",
+        "iron"
+      ],
+      "room": "templet"
+    },
+    {
+      "id": "shell",
+      "name": "a shiny shell",
+      "description": "It shimmers in every colour. If you hold it to your ear, you hear the lake.",
+      "keywords": [
+        "shell",
+        "seashell"
+      ],
+      "room": "stranden"
+    },
+    {
+      "id": "mushroom",
+      "name": "a red mushroom",
+      "description": "Red with white spots. Probably better not to eat it.",
+      "keywords": [
+        "mushroom",
+        "toadstool"
+      ],
+      "room": "morkskogen"
+    },
+    {
+      "id": "bone",
+      "name": "an old bone",
+      "description": "A long, gnawed bone. Something with big teeth has been here.",
+      "keywords": [
+        "bone"
+      ],
+      "room": "grottan"
+    }
+  ]
+}

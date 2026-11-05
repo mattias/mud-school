@@ -53,8 +53,18 @@ func (s *Server) handle(conn net.Conn) {
 
 ## Networking in Go
 
+Opening the port is `main.go`'s job. It creates the *listener* and hands it
+to your server:
+
 ```go
-l, err := net.Listen("tcp", ":4000") // listen (already done in main.go)
+// main.go – already written, you don't need to change it
+l, err := net.Listen("tcp", "127.0.0.1:4000")
+srv.Serve(l)
+```
+
+`Serve` only *uses* the listener it gets:
+
+```go
 conn, err := l.Accept()              // wait for the next client – blocks!
 fmt.Fprint(conn, "hi\r\n")           // conn is an io.Writer ...
 scanner := bufio.NewScanner(conn)    // ... and an io.Reader
@@ -62,6 +72,11 @@ for scanner.Scan() {                 // read line by line
     line := scanner.Text()           // the line without its line break
 }
 ```
+
+> **Don't call `net.Listen` inside `Serve`.** The tests give `Serve` a
+> listener on a random free port and connect to *that* one. If `Serve` opens
+> its own port, the tests never reach your server – and a second listener on
+> the same port fails, often with a confusing `nil pointer dereference`.
 
 > **Why `\r\n`?** The telnet protocol (RFC 854) says a line break is CR LF.
 > Many clients cope with `\n`, but we do it right from the start.
@@ -89,11 +104,19 @@ Run `./mudschool check` to test.
 
 ```
 ./mudschool run server            # in one terminal
-telnet localhost 4000             # in another (or: nc localhost 4000)
+telnet 127.0.0.1 4000             # in another (or: nc 127.0.0.1 4000)
 ```
 
 Type a few lines. Then open a *second* telnet at the same time. What happens?
 Why? (We fix that in the next lesson.)
+
+## Think about
+
+- What happens if you write `l, err := ...` *inside* the `for` loop? (`:=`
+  declares a **new** variable that hides the parameter `l` – this is called
+  *shadowing*. `go vet` does not warn about it by default.)
+- Why does `Serve` take the listener as a parameter instead of opening the
+  port itself? (Hint: think about the tests – and about the next lessons.)
 
 ## Challenges (optional)
 

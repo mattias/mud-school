@@ -15,8 +15,10 @@ func NewServer() *Server {
 }
 
 // Serve accepts connections from l, one at a time, until l is closed.
+// l is already listening: main.go (and the tests) create it with net.Listen.
 func (s *Server) Serve(l net.Listener) error {
 	// TODO(lesson 1): accept connections in a loop with l.Accept().
+	// Use the l you were given – don't call net.Listen here.
 	// If Accept returns an error, Serve must return that error.
 	// Each new connection is handled by s.handle(conn).
 	return nil

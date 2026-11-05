@@ -73,14 +73,14 @@ Nya filer: `frame.go` (typerna är klara – de *är* protokollet) och `mapview.
 ## Testa själv
 
 ```
-telnet localhost 4000
+telnet 127.0.0.1 4000
 map
 ```
 
 och för att se vad Rust-klienten kommer att få:
 
 ```
-nc localhost 4000
+nc 127.0.0.1 4000
 @hello mudschool 1
 Anna
 ```

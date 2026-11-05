@@ -1,5 +1,5 @@
 // Entry point of your MUD server. Run it with: ./mudschool run server
-// (or `go run .` in this directory). Connect with: telnet localhost 4000
+// (or `go run .` in this directory). Connect with: telnet 127.0.0.1 4000
 package main
 
 import (
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	addr := flag.String("addr", ":4000", "address to listen on")
+	addr := flag.String("addr", "127.0.0.1:4000", "address to listen on (use :4000 to let other computers connect)")
 	worldPath := flag.String("world", "", "world file (JSON); empty = the built-in world")
 	flag.Parse()
 

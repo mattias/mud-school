@@ -66,10 +66,24 @@ git clone https://github.com/mattias/mud-school.git; cd mud-school
 | `./mudschool run server` / `run client` | 自分のサーバーまたはクライアントを起動 |
 | `./mudschool solution [--apply]` | 模範解答を表示（またはコピー） |
 | `./mudschool goto <id>` | レッスンへ移動 |
+| `./mudschool update` | `git pull` の後、コースの修正を作業領域に取り込む（あなたのコードには触れない） |
 | `./mudschool lang en\|sv\|ja` | 言語を切り替える |
 
 あなたのコードはすべて `workspace/` にあります。`server/`（Go）と `client/`（Rust）です。
 そこで直接 `go test ./...` や `cargo test` を実行することもできます。
+
+### コースが更新されたら
+
+```
+git pull
+./mudschool update
+```
+
+`update` が置き換えるのは、あなたが変更していないファイルだけです。あなたもコースも
+変更したファイルは、コースの版が `<ファイル>.new` として隣に置かれます
+（`messages.go`/`messages.rs` の場合は、あなたの版が `.bak` として保存されます）。
+削除や改名をしたファイルはそのままです。`check` は安全な更新を自動で行い、`doctor` は待っている更新を知らせます。
+`init` をやり直す必要はありません。
 
 ## レッスン
 

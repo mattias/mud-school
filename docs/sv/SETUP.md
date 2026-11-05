@@ -102,9 +102,11 @@ cd mud-school
 ```
 
 `mudschool.cmd` bygger kursverktyget automatiskt första gången. Första gången
-en Rust-lektion körs laddar Cargo ner bibliotek, och det tar en stund. När
-servern startar kan Windows Defender-brandväggen fråga om nätverksåtkomst –
-tillåt för privata nätverk.
+en Rust-lektion körs laddar Cargo ner bibliotek, och det tar en stund. Servern
+lyssnar bara på `127.0.0.1` (din egen dator), så brandväggen behöver inte
+fråga. Vill du att andra i ditt nätverk ska kunna ansluta startar du den med
+`.\mudschool.cmd run server -addr :4000`; då frågar Windows Defender-brandväggen
+en gång – tillåt för privata nätverk.
 
 ---
 
@@ -250,7 +252,7 @@ hanterar klienten rätt.
 | Windows: `link.exe not found` när Rust bygger | Installera C++-byggverktygen (Windows, steg 2). |
 | `cargo` kan inte ladda ner crates bakom en proxy | Sätt `HTTPS_PROXY` (och vid behov `CARGO_HTTP_CAINFO`). |
 | Terminalen beter sig konstigt efter att klienten kraschat | Skriv `reset` (Windows: stäng fliken) – klienten lämnade terminalen i "raw mode". |
-| `address already in use` | Något kör redan på port 4000. Stoppa det, eller kör `./mudschool run server -addr :4001` och `./mudschool run client 127.0.0.1:4001`. |
+| `address already in use` | Något kör redan på port 4000. Stoppa det, eller kör `./mudschool run server -addr 127.0.0.1:4001` och `./mudschool run client 127.0.0.1:4001`. |
 | Rutor eller konstiga tecken på kartan | Typsnittet saknar tecknen eller terminalen är inte UTF-8 – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
 | Kartans kolumner hamnar fel (japanska) | Tecken med tvetydig bredd ritas dubbelt så breda – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
 | Inga eller fel färger | Terminalen saknar 24-bitars färg (t.ex. macOS Terminal.app, den gamla Windows-konsolen). |

@@ -74,14 +74,14 @@ New files: `frame.go` (the types are finished – they *are* the protocol) and `
 ## Try it yourself
 
 ```
-telnet localhost 4000
+telnet 127.0.0.1 4000
 map
 ```
 
 and to see what the Rust client is going to get:
 
 ```
-nc localhost 4000
+nc 127.0.0.1 4000
 @hello mudschool 1
 Anna
 ```

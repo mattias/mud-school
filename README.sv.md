@@ -67,10 +67,24 @@ Rekommenderade typsnitt för kartan (t.ex. i Windows Terminal) finns i
 | `./mudschool run server` / `run client` | starta din server eller klient |
 | `./mudschool solution [--apply]` | visa (eller kopiera in) referenslösningen |
 | `./mudschool goto <id>` | hoppa till en lektion |
+| `./mudschool update` | hämta kursens rättelser till din arbetsyta efter `git pull` (din egen kod rörs aldrig) |
 | `./mudschool lang en\|sv\|ja` | byt språk |
 
 All din kod ligger i `workspace/` – `server/` (Go) och `client/` (Rust).
 Du kan också köra `go test ./...` och `cargo test` direkt där.
+
+### När kursen uppdateras
+
+```
+git pull
+./mudschool update
+```
+
+`update` byter bara ut filer du inte har ändrat. Har du ändrat en fil som
+kursen också har ändrat läggs kursens version bredvid som `<fil>.new` (för
+`messages.go`/`messages.rs` sparas din version som `.bak`). Filer du tagit bort eller döpt om får vara ifred. `check` gör de
+säkra uppdateringarna automatiskt, och `doctor` säger till när något väntar.
+Du behöver aldrig köra `init` igen.
 
 ## Lektionerna
 

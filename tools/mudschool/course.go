@@ -36,10 +36,12 @@ type Lesson struct {
 
 // Progress is stored in workspace/.mudschool.json.
 type Progress struct {
-	Lang    string          `json:"lang"`
-	Current string          `json:"current"`
-	Done    map[string]bool `json:"done"`
-	Hints   map[string]int  `json:"hints"`
+	Lang    string                `json:"lang"`
+	Current string                `json:"current"`
+	Done    map[string]bool       `json:"done"`
+	Hints   map[string]int        `json:"hints"`
+	Files   map[string]FileRecord `json:"files,omitempty"` // what the course copied in, see update.go
+	Own     map[string]string     `json:"own,omitempty"`   // hashes of files known to be the student's own work
 }
 
 type course struct {

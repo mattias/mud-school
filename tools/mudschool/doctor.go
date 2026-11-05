@@ -116,6 +116,20 @@ func (c *course) cmdDoctor() error {
 		}
 	}
 
+	// Workspace
+	if p, err := c.loadProgress(); err == nil {
+		if n, names, err := c.describePending(p); err != nil {
+			warn("workspace", err.Error(), L("Kör ./mudschool goto <id> eller ./mudschool init", "Run ./mudschool goto <id> or ./mudschool init", "./mudschool goto <id> か ./mudschool init を実行してください"))
+		} else if n > 0 {
+			warn("workspace", fmt.Sprintf(L("%d fil(er) kan uppdateras", "%d file(s) can be updated", "%d 個のファイルを更新できます"), n), L(
+				"Kör ./mudschool update ("+names+")",
+				"Run ./mudschool update ("+names+")",
+				"./mudschool update を実行してください（"+names+"）"))
+		} else {
+			ok("workspace", L("uppdaterad", "up to date", "最新"))
+		}
+	}
+
 	fmt.Println()
 	if problems > 0 {
 		return fmt.Errorf(L("%d problem – se docs/sv/SETUP.md", "%d problem(s) – see docs/en/SETUP.md", "%d 件の問題があります。docs/ja/SETUP.md を参照してください"), problems)

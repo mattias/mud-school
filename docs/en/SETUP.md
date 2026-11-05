@@ -104,8 +104,10 @@ cd mud-school
 
 `mudschool.cmd` builds the course tool automatically the first time. The
 first time a Rust lesson runs, Cargo downloads libraries, which takes a while.
-When the server starts, Windows Defender Firewall may ask about network
-access – allow it for private networks.
+The server only listens on `127.0.0.1` (your own computer), so the firewall
+doesn't need to ask. To let others on your network connect, start it with
+`.\mudschool.cmd run server -addr :4000`; then Windows Defender Firewall asks
+once – allow it for private networks.
 
 ---
 
@@ -249,7 +251,7 @@ client handles correctly.
 | Windows: `link.exe not found` when building Rust | Install the C++ build tools (Windows, step 2). |
 | `cargo` cannot download crates behind a proxy | Set `HTTPS_PROXY` (and `CARGO_HTTP_CAINFO` if needed). |
 | The terminal behaves strangely after the client crashed | Type `reset` (Windows: close the tab) – the client left the terminal in "raw mode". |
-| `address already in use` | Something is already on port 4000. Stop it, or run `./mudschool run server -addr :4001` and `./mudschool run client 127.0.0.1:4001`. |
+| `address already in use` | Something is already on port 4000. Stop it, or run `./mudschool run server -addr 127.0.0.1:4001` and `./mudschool run client 127.0.0.1:4001`. |
 | Boxes or odd characters on the map | The font lacks the characters or the terminal isn't UTF-8 – see [Fonts and terminals](#fonts-and-terminals). |
 | The map's columns don't line up (Japanese) | Ambiguous-width characters are drawn double-width – see [Fonts and terminals](#fonts-and-terminals). |
 | No colours or wrong colours | The terminal lacks 24-bit colour (e.g. macOS Terminal.app, the old Windows console). |

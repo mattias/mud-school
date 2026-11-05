@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -11,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -39,7 +41,9 @@ func (c *course) record(p *Progress, rels []string, source, lesson string) {
 		if err != nil {
 			continue
 		}
-		p.Files[filepath.ToSlash(rel)] = FileRecord{Hash: hashOf(data), Source: source, Lesson: lesson, Lang: lang}
+		key := filepath.ToSlash(rel)
+		p.Files[key] = FileRecord{Hash: hashOf(data), Source: source, Lesson: lesson, Lang: lang}
+		delete(p.Own, key)
 	}
 }
 
@@ -77,8 +81,8 @@ func (c *course) courseVersion(source, lessonID, language, rel string) ([]byte, 
 type updateKind int
 
 const (
-	updAdd     updateKind = iota // the file is missing in the workspace
-	updReplace                   // unchanged by the student: safe to replace
+	updReplace updateKind = iota // unchanged by the student: safe to replace
+	updAdd                       // missing and never recorded: added by `update` only
 	updBackup                    // messages file changed by the student: back up, then replace
 	updNew                       // changed by the student: write <file>.new next to it
 )
@@ -90,23 +94,38 @@ type updateAction struct {
 	record FileRecord
 }
 
-func (a updateAction) safe() bool { return a.kind == updAdd || a.kind == updReplace }
+// safe actions are applied automatically by `check`.
+func (a updateAction) safe() bool { return a.kind == updReplace }
 
 func isMessagesFile(rel string) bool {
 	base := filepath.Base(rel)
 	return base == "messages.go" || base == "messages.rs"
 }
 
-// planUpdate compares the workspace with the course. It also records
-// ("bootstraps") files that are identical to the course's current version
-// but were copied in before the course started keeping records.
-func (c *course) planUpdate(p *Progress) []updateAction {
+// planUpdate compares the workspace with the course. It also updates the
+// records ("bootstraps") for files that already match the course.
+//
+// The rules, per file the course provides (starter, and the scaffolds of all
+// lessons up to the current one):
+//   - missing, recorded:     the student deleted or renamed it – leave it alone
+//   - missing, not recorded: offer to add it if it is a starter file or from
+//     the current lesson (only `update` does that)
+//   - equal to the course:   up to date (record it)
+//   - recorded, unchanged by the student, course changed: replace
+//   - recorded, changed by both: messages.go/.rs are backed up and replaced,
+//     everything else gets <file>.new
+//   - not recorded: replace if it equals an older course version from git
+//     history, otherwise it is the student's own work – leave it alone
+func (c *course) planUpdate(p *Progress) ([]updateAction, error) {
 	cur, err := c.current(p)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	if p.Files == nil {
 		p.Files = map[string]FileRecord{}
+	}
+	if p.Own == nil {
+		p.Own = map[string]string{}
 	}
 	type candidate struct{ source, lesson string }
 	cands := map[string]candidate{}
@@ -135,6 +154,7 @@ func (c *course) planUpdate(p *Progress) []updateAction {
 	}
 	sort.Strings(rels)
 
+	hist := &gitHistory{c: c}
 	var plan []updateAction
 	for _, rel := range rels {
 		cand := cands[rel]
@@ -150,23 +170,35 @@ func (c *course) planUpdate(p *Progress) []updateAction {
 		}
 		newRec := FileRecord{Hash: hashOf(want), Source: cand.source, Lesson: cand.lesson, Lang: language}
 		disk, err := os.ReadFile(filepath.Join(c.workspace(), filepath.FromSlash(rel)))
-		switch {
-		case errors.Is(err, fs.ErrNotExist):
-			plan = append(plan, updateAction{updAdd, rel, want, newRec})
-		case err != nil:
-			continue
-		case !hasRec:
-			switch {
-			case hashOf(disk) == newRec.Hash:
-				p.Files[rel] = newRec // bootstrap: identical to the course's version
-			case c.wasCourseVersion(cand.source, cand.lesson, language, rel, hashOf(disk)):
-				// an older, untouched course version from before records existed
-				plan = append(plan, updateAction{updReplace, rel, want, newRec})
+		if errors.Is(err, fs.ErrNotExist) {
+			// Only add files that were never there. A recorded file the
+			// student deleted or renamed stays deleted, and so does a missing
+			// file from an earlier lesson (we can't tell if it was renamed).
+			if !hasRec && (cand.source == "starter" || cand.lesson == cur.ID) {
+				plan = append(plan, updateAction{updAdd, rel, want, newRec})
 			}
-			// otherwise it is the student's own work: leave it alone
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		diskHash := hashOf(disk)
+		switch {
+		case diskHash == newRec.Hash:
+			p.Files[rel] = newRec // already the course's current version
+			delete(p.Own, rel)
+		case !hasRec:
+			if p.Own[rel] == diskHash {
+				continue // known to be the student's own work
+			}
+			if hist.contains(cand.source, cand.lesson, language, rel, disk) {
+				plan = append(plan, updateAction{updReplace, rel, want, newRec})
+			} else {
+				p.Own[rel] = diskHash // remember, so that git is not asked again
+			}
 		case rec.Hash == newRec.Hash:
-			// up to date
-		case hashOf(disk) == rec.Hash:
+			// the student changed it, the course didn't: nothing to do
+		case diskHash == rec.Hash:
 			plan = append(plan, updateAction{updReplace, rel, want, newRec})
 		case isMessagesFile(rel):
 			plan = append(plan, updateAction{updBackup, rel, want, newRec})
@@ -174,12 +206,13 @@ func (c *course) planUpdate(p *Progress) []updateAction {
 			plan = append(plan, updateAction{updNew, rel, want, newRec})
 		}
 	}
-	return plan
+	return plan, nil
 }
 
 // applyUpdate carries out the actions (only the safe ones if safeOnly) and
-// prints what it did. It returns how many actions were left for `update`.
-func (c *course) applyUpdate(p *Progress, plan []updateAction, safeOnly bool) (pending int, err error) {
+// prints what it did. It returns how many actions were left for `update` and
+// how many files were backed up.
+func (c *course) applyUpdate(p *Progress, plan []updateAction, safeOnly bool) (pending, backups int, err error) {
 	for _, a := range plan {
 		if safeOnly && !a.safe() {
 			pending++
@@ -187,48 +220,48 @@ func (c *course) applyUpdate(p *Progress, plan []updateAction, safeOnly bool) (p
 		}
 		target := filepath.Join(c.workspace(), filepath.FromSlash(a.rel))
 		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
-			return pending, err
+			return pending, backups, err
 		}
 		switch a.kind {
 		case updAdd, updReplace:
 			if err := os.WriteFile(target, a.data, 0o644); err != nil {
-				return pending, err
+				return pending, backups, err
 			}
 			if a.kind == updAdd {
 				fmt.Println(green("  +"), L("lade till", "added", "追加:"), "workspace/"+a.rel)
 			} else {
 				fmt.Println(green("  ✔"), L("uppdaterade", "updated", "更新:"), "workspace/"+a.rel)
 			}
-			p.Files[a.rel] = a.record
 		case updBackup:
 			old, _ := os.ReadFile(target)
 			backup := freeBackupName(target)
 			if err := os.WriteFile(backup, old, 0o644); err != nil {
-				return pending, err
+				return pending, backups, err
 			}
 			if err := os.WriteFile(target, a.data, 0o644); err != nil {
-				return pending, err
+				return pending, backups, err
 			}
+			backups++
 			shown := filepath.ToSlash(filepath.Join(filepath.Dir(a.rel), filepath.Base(backup)))
 			fmt.Println(yellow("  !"), fmt.Sprintf(L(
 				"uppdaterade workspace/%s – dina ändringar finns i workspace/%s; för över dem igen om du vill",
 				"updated workspace/%s – your edits are in workspace/%s; copy them back if you want them",
 				"workspace/%s を更新しました。あなたの変更は workspace/%s にあります。必要なら書き戻してください"), a.rel, shown))
-			p.Files[a.rel] = a.record
 		case updNew:
 			if err := os.WriteFile(target+".new", a.data, 0o644); err != nil {
-				return pending, err
+				return pending, backups, err
 			}
 			fmt.Println(yellow("  !"), fmt.Sprintf(L(
-				"workspace/%s har ändrats av dig och av kursen – kursens nya version finns i workspace/%s.new",
-				"workspace/%s was changed by you and by the course – the course's new version is in workspace/%s.new",
-				"workspace/%s はあなたとコースの両方で変更されています。コースの新しい版は workspace/%s.new にあります"), a.rel, a.rel))
-			// Remember the new course version so that the same .new is not
-			// written again on the next update.
-			p.Files[a.rel] = a.record
+				"workspace/%s har ändrats av dig och av kursen – kursens version finns i workspace/%s.new.\n    Jämför dem (t.ex. med git diff --no-index) och för över det du vill ha. Din fil är orörd.",
+				"workspace/%s was changed by you and by the course – the course's version is in workspace/%s.new.\n    Compare them (e.g. with git diff --no-index) and copy over what you want. Your file is untouched.",
+				"workspace/%s はあなたとコースの両方で変更されています。コースの版は workspace/%s.new にあります。\n    （git diff --no-index などで）比べて、必要な部分を取り込んでください。あなたのファイルはそのままです。"), a.rel, a.rel))
 		}
+		// Remember the new course version (for .new too, so that the same
+		// .new is not written again next time).
+		p.Files[a.rel] = a.record
+		delete(p.Own, a.rel)
 	}
-	return pending, nil
+	return pending, backups, nil
 }
 
 func (c *course) cmdUpdate() error {
@@ -236,53 +269,106 @@ func (c *course) cmdUpdate() error {
 	if err != nil {
 		return err
 	}
-	plan := c.planUpdate(p)
+	plan, err := c.planUpdate(p)
+	if err != nil {
+		return err
+	}
 	if len(plan) == 0 {
 		fmt.Println(green("✔"), L("Arbetsytan är redan uppdaterad.", "Your workspace is already up to date.", "作業領域はすでに最新です。"))
 		return c.saveProgress(p)
 	}
 	fmt.Println(bold(L("Uppdaterar arbetsytan", "Updating your workspace", "作業領域を更新しています")))
-	if _, err := c.applyUpdate(p, plan, false); err != nil {
+	_, backups, err := c.applyUpdate(p, plan, false)
+	if saveErr := c.saveProgress(p); err == nil {
+		err = saveErr
+	}
+	if err != nil {
 		return err
 	}
-	fmt.Println(dim(L(
-		"Din egen kod rörs aldrig: bara filer du inte har ändrat byts ut.",
-		"Your own code is never touched: only files you haven't changed are replaced.",
-		"あなたのコードには触れません。置き換えるのは、あなたが変更していないファイルだけです。")))
-	return c.saveProgress(p)
+	if backups == 0 {
+		fmt.Println(dim(L(
+			"Bara filer du inte har ändrat byttes ut – din egen kod är orörd.",
+			"Only files you hadn't changed were replaced – your own code is untouched.",
+			"置き換えたのは、あなたが変更していないファイルだけです。あなたのコードはそのままです。")))
+	}
+	return nil
 }
 
 // describePending is used by doctor.
-func (c *course) describePending(p *Progress) (int, string) {
-	plan := c.planUpdate(p)
+func (c *course) describePending(p *Progress) (int, string, error) {
+	plan, err := c.planUpdate(p)
+	if err != nil {
+		return 0, "", err
+	}
 	var names []string
 	for _, a := range plan {
 		names = append(names, a.rel)
 	}
-	return len(plan), strings.Join(names, ", ")
+	return len(plan), strings.Join(names, ", "), nil
 }
 
-// wasCourseVersion reports whether hash matches any version of rel that the
-// course has ever had in git (for workspaces created before records existed).
-// Without git it reports false, which only means "leave the file alone".
-func (c *course) wasCourseVersion(source, lessonID, language, rel, hash string) bool {
-	for _, dir := range c.sourceDirs(source, lessonID, language) {
-		path, err := filepath.Rel(c.root, filepath.Join(dir, filepath.FromSlash(rel)))
+// gitHistory answers "was this ever the course's version of the file?" for
+// workspaces created before the course kept records. It asks git once per
+// planUpdate and compares git blob ids. Without git (or outside a git
+// checkout) it knows nothing, which only means "leave the file alone".
+type gitHistory struct {
+	c      *course
+	loaded bool
+	blobs  map[string]map[string]bool // course path -> blob ids it has had
+}
+
+func (h *gitHistory) load() {
+	h.loaded = true
+	h.blobs = map[string]map[string]bool{}
+	cmd := exec.Command("git", "log", "--format=", "--raw", "--no-abbrev", "--no-renames", "--",
+		"starter", "starter.en", "starter.sv", "starter.ja", "lessons")
+	cmd.Dir = h.c.root
+	out, err := cmd.Output()
+	if err != nil {
+		return
+	}
+	// Lines look like ":100644 100644 <old> <new> M\t<path>" with the path
+	// relative to the repository root, which may be above the course directory.
+	prefix := ""
+	if top, err := exec.Command("git", "-C", h.c.root, "rev-parse", "--show-prefix").Output(); err == nil {
+		prefix = strings.TrimSpace(string(top))
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		meta, path, ok := strings.Cut(line, "\t")
+		fields := strings.Fields(meta)
+		if !ok || len(fields) < 4 {
+			continue
+		}
+		path = strings.TrimPrefix(path, prefix)
+		if h.blobs[path] == nil {
+			h.blobs[path] = map[string]bool{}
+		}
+		h.blobs[path][fields[3]] = true
+	}
+}
+
+// gitBlobID is what git calls a file's content: sha1("blob <size>\0" + data).
+func gitBlobID(data []byte) string {
+	sum := sha1.Sum(append([]byte("blob "+strconv.Itoa(len(data))+"\x00"), data...))
+	return hex.EncodeToString(sum[:])
+}
+
+func (h *gitHistory) contains(source, lessonID, language, rel string, disk []byte) bool {
+	if !h.loaded {
+		h.load()
+	}
+	ids := []string{gitBlobID(disk)}
+	if bytes.Contains(disk, []byte("\r\n")) {
+		// Git may have converted line endings on checkout (Windows).
+		ids = append(ids, gitBlobID(bytes.ReplaceAll(disk, []byte("\r\n"), []byte("\n"))))
+	}
+	for _, dir := range h.c.sourceDirs(source, lessonID, language) {
+		path, err := filepath.Rel(h.c.root, filepath.Join(dir, filepath.FromSlash(rel)))
 		if err != nil {
 			continue
 		}
-		path = filepath.ToSlash(path)
-		out, err := exec.Command("git", "-C", c.root, "log", "--format=%H", "--", path).Output()
-		if err != nil {
-			continue
-		}
-		for _, rev := range strings.Fields(string(out)) {
-			data, err := exec.Command("git", "-C", c.root, "show", rev+":"+path).Output()
-			if err == nil && hashOf(data) == hash {
-				return true
-			}
-			// Git may have converted line endings on checkout (Windows).
-			if err == nil && hashOf(bytes.ReplaceAll(data, []byte("\n"), []byte("\r\n"))) == hash {
+		for _, id := range ids {
+			if h.blobs[filepath.ToSlash(path)][id] {
 				return true
 			}
 		}

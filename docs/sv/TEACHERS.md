@@ -87,11 +87,13 @@ som börjar med `mod mudschool_common;` för att få `l(...)`.
 
 Verktyget sparar en checksumma för varje fil det kopierar in från `starter/` och
 `scaffold/` (`files` i `.mudschool.json`). `./mudschool update` jämför: oförändrade
-filer byts mot kursens nuvarande version, saknade läggs till, en fil som både
+filer byts mot kursens nuvarande version, filer som aldrig funnits i arbetsytan
+läggs till (en fil som studenten tagit bort eller döpt om lämnas ifred), en fil som både
 studenten och kursen har ändrat får kursens version som `<fil>.new`, och en ändrad
 `messages.go`/`messages.rs` säkerhetskopieras som `.bak` och byts ut (nya lektioner
 behöver dess nya konstanter). Arbetsytor från innan registret fanns jämförs med
-alla versioner av filen i git-historiken. `check` gör de säkra uppdateringarna
+alla versioner av filen i git-historiken; en fil som inte matchar någon är
+studentens egen kod och lämnas ifred. `check` gör de säkra uppdateringarna
 själv. Alltså: att rätta en scaffold- eller startfil går bra – studenterna får
 rättelsen med `git pull`.
 

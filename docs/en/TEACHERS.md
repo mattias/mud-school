@@ -87,12 +87,14 @@ Rust: `tests/mudschool_NN.rs` (integration tests against the library
 
 The tool records a checksum for every file it copies in from `starter/` and
 `scaffold/` (`files` in `.mudschool.json`). `./mudschool update` compares:
-unchanged files are replaced with the course's current version, missing ones
-are added, a file changed by both the student and the course gets the
+unchanged files are replaced with the course's current version, files that
+were never in the workspace are added (a file the student deleted or renamed
+is left alone), a file changed by both the student and the course gets the
 course's version as `<file>.new`, and an edited `messages.go`/`messages.rs` is
 backed up as `.bak` and replaced (new lessons need its new constants).
 Workspaces created before the records existed are matched against every
-version of the file in git history. `check` applies the safe updates by itself.
+version of the file in git history; a file that matches none is the
+student's own work and is left alone. `check` applies the safe updates by itself.
 So: fixing a scaffold or starter file is fine – students get it with `git pull`.
 
 ## Verification

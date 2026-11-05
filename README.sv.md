@@ -82,7 +82,7 @@ git pull
 
 `update` byter bara ut filer du inte har ändrat. Har du ändrat en fil som
 kursen också har ändrat läggs kursens version bredvid som `<fil>.new` (för
-`messages.go`/`messages.rs` sparas din version som `.bak`). `check` gör de
+`messages.go`/`messages.rs` sparas din version som `.bak`). Filer du tagit bort eller döpt om får vara ifred. `check` gör de
 säkra uppdateringarna automatiskt, och `doctor` säger till när något väntar.
 Du behöver aldrig köra `init` igen.
 

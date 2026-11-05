@@ -281,7 +281,11 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		return false, err
 	}
 	// Bring in course fixes the student hasn't touched (git pull + check just works).
-	if pending, err := c.applyUpdate(p, c.planUpdate(p), true); err != nil {
+	plan, err := c.planUpdate(p)
+	if err != nil {
+		return false, err
+	}
+	if pending, _, err := c.applyUpdate(p, plan, true); err != nil {
 		return false, err
 	} else if pending > 0 {
 		fmt.Println(yellow(fmt.Sprintf(L(

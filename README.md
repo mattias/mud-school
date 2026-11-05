@@ -83,8 +83,8 @@ git pull
 `update` replaces only files you haven't changed. If you have changed a file
 that the course has also changed, the course's version is put next to it as
 `<file>.new` (for `messages.go`/`messages.rs` your version is kept as `.bak`).
-`check` applies the safe updates automatically, and `doctor` tells you when
-something is waiting. You never need to run `init` again.
+Files you deleted or renamed stay that way. `check` applies the safe updates
+automatically, and `doctor` tells you when something is waiting. You never need to run `init` again.
 
 ## The lessons
 

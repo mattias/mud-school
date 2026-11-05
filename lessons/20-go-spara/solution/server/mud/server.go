@@ -181,7 +181,10 @@ func (s *Server) handle(conn net.Conn) {
 		// the loop (disk is slow), 3. only then free the name – so that a quick
 		// reconnect can't load the old save before the new one is written.
 		var snap SavedPlayer
-		s.call(func() { snap = p.snapshot() })
+		s.call(func() {
+			p.target = nil // stop fighting, so nothing changes after the snapshot
+			snap = p.snapshot()
+		})
 		if s.store != nil && snap.Name != "" {
 			if err := s.store.SavePlayer(snap); err != nil {
 				log.Printf("cannot save %s: %v", p.Name, err)

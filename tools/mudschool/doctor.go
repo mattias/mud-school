@@ -58,29 +58,16 @@ func (c *course) cmdDoctor() error {
 		}
 	}
 
-	// A way to connect by hand. On Windows ncat first: the Windows telnet
-	// client can't show UTF-8.
-	tools := []string{"telnet", "nc", "ncat"}
-	if runtime.GOOS == "windows" {
-		tools = []string{"ncat", "nc", "telnet"}
-	}
-	var client string
-	for _, t := range tools {
+	// A way to connect by hand: built in (./mudschool connect). telnet/nc
+	// are only mentioned if they happen to be there.
+	connectDetail := L("inbyggd: ./mudschool connect", "built in: ./mudschool connect", "内蔵: ./mudschool connect")
+	for _, t := range []string{"telnet", "nc", "ncat"} {
 		if _, err := exec.LookPath(t); err == nil {
-			client = t
+			connectDetail += L(" (finns också: ", " (also found: ", "（ほかに: ") + t + L(")", ")", "）")
 			break
 		}
 	}
-	if client == "telnet" && runtime.GOOS == "windows" {
-		warn("telnet/nc", "telnet", L(
-			"Windows telnet visar å, ä, ö och japanska fel. Installera ncat i stället: `winget install Insecure.Nmap`, öppna en ny terminal, sedan `ncat 127.0.0.1 4000`.",
-			"Windows telnet shows non-English characters wrong. Install ncat instead: `winget install Insecure.Nmap`, open a new terminal, then `ncat 127.0.0.1 4000`.",
-			"Windows の telnet では日本語が文字化けします。代わりに ncat を入れてください: `winget install Insecure.Nmap`、新しい端末を開いてから `ncat 127.0.0.1 4000`。"))
-	} else if client != "" {
-		ok("telnet/nc", client)
-	} else {
-		warn("telnet/nc", L("hittades inte (frivilligt)", "not found (optional)", "見つかりません（任意）"), telnetHint())
-	}
+	ok("connect", connectDetail)
 
 	// C compiler for -race
 	if _, err := exec.LookPath("gcc"); err == nil {
@@ -124,15 +111,6 @@ func (c *course) cmdDoctor() error {
 				"The map uses 24-bit colour. Most modern terminals support it even if COLORTERM is not set.",
 				"マップは 24 ビットカラーを使います。COLORTERM が未設定でも、最近の端末ならたいてい対応しています。"))
 		}
-	}
-
-	// The Windows console's code page: telnet/ncat print the server's UTF-8
-	// bytes as they are, so the console must expect UTF-8.
-	if cp, found := consoleCodePage(); found && cp != 65001 {
-		warn(L("kodsida", "code page", "コードページ"), fmt.Sprintf(L("konsolen använder kodsida %d, inte UTF-8 (65001)", "the console uses code page %d, not UTF-8 (65001)", "コンソールのコードページが %d で、UTF-8（65001）ではありません"), cp), L(
-			"ncat/telnet visar då å, ä, ö och japanska fel. Gör UTF-8 permanent i PowerShell – se docs/sv/SETUP.md, \"UTF-8 i varje ny terminal\".",
-			"ncat/telnet will then show non-English characters wrong. Make UTF-8 permanent in PowerShell – see docs/en/SETUP.md, \"UTF-8 in every new terminal\".",
-			"そのままでは ncat/telnet で日本語が文字化けします。PowerShell で UTF-8 を常に使うように設定してください。docs/ja/SETUP.md の「新しい端末でも毎回 UTF-8 に」を参照。"))
 	}
 
 	// Workspace
@@ -210,20 +188,6 @@ func firstNonEmpty(vals ...string) string {
 		}
 	}
 	return ""
-}
-
-func telnetHint() string {
-	switch runtime.GOOS {
-	case "windows":
-		return L(
-			"Bra för att prova servern för hand: `winget install Insecure.Nmap` ger ncat (öppna en ny terminal, sedan `ncat 127.0.0.1 4000`). Windows egna telnet visar å, ä, ö fel.",
-			"Handy for trying the server by hand: `winget install Insecure.Nmap` gives you ncat (open a new terminal, then `ncat 127.0.0.1 4000`). Windows' own telnet shows non-English characters wrong.",
-			"サーバーを手で試すのに便利です: `winget install Insecure.Nmap` で ncat が入ります（新しい端末を開いてから `ncat 127.0.0.1 4000`）。Windows 標準の telnet は日本語が文字化けします。")
-	case "darwin":
-		return L("Bra för att prova servern för hand: `brew install telnet`", "Handy for trying the server by hand: `brew install telnet`", "サーバーを手で試すのに便利です: `brew install telnet`")
-	default:
-		return L("Bra för att prova servern för hand: t.ex. `sudo apt install telnet`", "Handy for trying the server by hand: e.g. `sudo apt install telnet`", "サーバーを手で試すのに便利です: 例 `sudo apt install telnet`")
-	}
 }
 
 func gccHint() string {

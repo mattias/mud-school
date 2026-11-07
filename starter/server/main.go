@@ -1,5 +1,5 @@
 // Entry point of your MUD server. Run it with: ./mudschool run server
-// (or `go run .` in this directory). Connect with: telnet 127.0.0.1 4000
+// (or `go run .` in this directory). Connect with: ./mudschool connect
 package main
 
 import (

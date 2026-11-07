@@ -95,7 +95,7 @@ let c: Color = rgb.into();   // you get Into for free!
 ./mudschool run client
 ```
 
-Open another client (or telnet) and talk to yourself. Walk around and watch
+Open another client (or `./mudschool connect`) and talk to yourself. Walk around and watch
 the map and the status bar update.
 
 ## Think about

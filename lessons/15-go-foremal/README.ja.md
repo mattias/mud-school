@@ -95,7 +95,7 @@ func remove[T comparable](list []T, x T) []T {
 ## 自分で試す
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 e
 get 剣
 i

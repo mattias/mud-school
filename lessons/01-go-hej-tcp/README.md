@@ -104,10 +104,10 @@ Run `./mudschool check` to test.
 
 ```
 ./mudschool run server            # in one terminal
-telnet 127.0.0.1 4000             # in another (or: nc / ncat 127.0.0.1 4000)
+./mudschool connect               # in another (or: telnet / nc 127.0.0.1 4000)
 ```
 
-Type a few lines. Then open a *second* telnet at the same time. What happens?
+Type a few lines. Then connect a *second* time, from a third terminal, at the same time. What happens?
 Why? (We fix that in the next lesson.)
 
 ## Think about

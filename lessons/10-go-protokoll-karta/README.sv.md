@@ -73,14 +73,14 @@ Nya filer: `frame.go` (typerna är klara – de *är* protokollet) och `mapview.
 ## Testa själv
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 map
 ```
 
 och för att se vad Rust-klienten kommer att få:
 
 ```
-nc 127.0.0.1 4000
+./mudschool connect
 @hello mudschool 1
 Anna
 ```

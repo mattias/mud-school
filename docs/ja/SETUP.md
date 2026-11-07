@@ -3,7 +3,7 @@
 > [🇬🇧 English](../en/SETUP.md) · [🇸🇪 Svenska](../sv/SETUP.md) · 🇯🇵 日本語
 
 必要なのは **Go 1.22 以降**、**Rust**（stable）、**Git**、UTF-8 と 24 ビットカラーに対応した
-**端末**、そしてできれば **telnet** か **nc** です。自分のシステムの節を選び、上から順に
+**端末** です。（telnet や nc は任意です。コースツールに内蔵クライアント `./mudschool connect` があります。）自分のシステムの節を選び、上から順に
 進めてください。どの節もそれだけで完結しています。
 
 | システム | 節 | 所要時間 |
@@ -60,51 +60,61 @@ rustc --version
 cargo --version
 ```
 
-### 3. ncat（任意だがおすすめ）
+> **Microsoft Defender が `cargo.exe` を検疫した？** ときどき起こります。rustup が
+> `%USERPROFILE%\.cargo\bin` に置く小さな「プロキシ」プログラム（`cargo.exe`、`rustc.exe`
+> などはすべて `rustup.exe` のコピー）を、Defender のヒューリスティックが検出することが
+> あるのです。すぐに *許可* を押さず、まず確認しましょう:
+>
+> 1. Defender を更新する（*Windows セキュリティ → ウイルスと脅威の防止 → 保護の更新 →
+>    更新プログラムのチェック*）。
+> 2. 公式の入手元から Rust を入れ直す: `winget uninstall Rustlang.Rustup` の後に
+>    `winget install Rustlang.Rustup`（または <https://rustup.rs> の `rustup-init.exe`）。
+> 3. 新しいファイルもまた検疫されたら、rustup が本物か確かめます。`cargo.exe` は消えて
+>    いますが、これは `rustup.exe` へのハードリンクで、`rustup.exe` は公式の
+>    `rustup-init.exe` のコピーです。`rustup self update` を実行してから、
+>    `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash` を
+>    <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> の最初の語と比べます（大文字・小文字は無視。ARM 版では
+>    アドレスの部分を `aarch64-pc-windows-msvc` にします）。
+> 4. 一致すれば誤検出です: <https://www.microsoft.com/wdsi/filesubmission> から
+>    Microsoft に報告し、*保護の履歴* でその項目 → *操作* → *デバイスで許可* を選びます。
+>    単なる *復元* では、Microsoft が定義を更新するまで再び検疫されることがあります。
+>    一致しなければ何も許可せず、助けを求めてください。
+>
+> 自分でビルドしたプログラム（`target\debug\*.exe`）も同じように検出されることがあります。
+> 手順 4 のように報告してください。
 
-自分のクライアントができるまで（レッスン 01〜02）サーバーを手で試すには、行単位の簡単な
-クライアントが必要です。Windows では **ncat**（Nmap に含まれる）を使います:
+### 3. 手で接続する – インストール不要
+
+レッスン 01〜02 では、自分のクライアントができる前にサーバーを手で試します。コースツールには
+小さなクライアントが内蔵されています:
 
 ```powershell
-winget install Insecure.Nmap
+.\mudschool.cmd connect          # = 127.0.0.1:4000
 ```
 
-インストーラーは既定の設定のまま進めてください（Npcap は任意で、不要です）。その後
-`ncat` が `PATH` に入るよう **Windows Terminal をいったん閉じて開き直します**。それから:
+設定なしで、どの Windows 端末でも日本語が正しく表示されます。レッスンでは
+`./mudschool connect` を使います。telnet や nc とあるところでも同じように使えます。
 
-```powershell
-ncat 127.0.0.1 4000
+#### それでも telnet や ncat を使いたい場合
+
+Windows 標準の telnet は UTF-8 をまったく理解しません。ncat（`winget install
+Insecure.Nmap` の後、端末を開き直す）は、コンソールが UTF-8 を前提にしていれば動きますが、
+PowerShell は最初はそうなっていません（日本語版 Windows は Shift-JIS、コードページ 932）。
+ファイルに触れずに、新しいタブすべてでこれを直す一番簡単な方法: *Windows Terminal → 設定 →
+（使っている PowerShell のプロファイル）→ コマンド ライン* を次にします
+
+```
+pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()"
 ```
 
-> Windows 標準の telnet クライアント（`dism /online /Enable-Feature /FeatureName:TelnetClient`）
-> も使えますが、UTF-8 を理解しないため日本語が文字化けします。
+（Windows PowerShell 5.1 なら `pwsh.exe` の代わりに `powershell.exe`。）（`settings.json` を直接編集する場合は、コマンド内の `"` を `\"` と書きます。）
+新しいタブで `chcp`
+を実行し、`65001` と表示されれば OK です。
 
-#### 新しい端末でも毎回 UTF-8 に
-
-ncat はサーバーから届いたバイトをそのままコンソールに書くので、コンソールが UTF-8 を
-前提にしている必要があります。PowerShell は最初はそうなっていません（日本語版 Windows は
-Shift-JIS、コードページ 932）。次を PowerShell のプロファイルに **一度だけ** 追加すれば、
-新しく開く端末はすべて UTF-8 になります:
-
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
-if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
-Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
-```
-
-1 行目は、PowerShell が自分のプロファイルを実行できるようにするためのものです。Windows は
-既定でスクリプトの実行を拒否し、プロファイルもスクリプトだからです（管理者権限は不要）。
-コマンドは、Windows Terminal で実際に使っているシェルで実行してください。Windows PowerShell と
-PowerShell 7 ではプロファイルが別です。
-
-新しいタブを開いて `chcp` で確認しましょう。`65001` と表示されれば OK です。コードページが
-違えば `doctor` が警告します。
-
-（システム全体で設定する方法もあります: *設定 → 時刻と言語 → 言語と地域 → 管理用の言語の設定
-→ システム ロケールの変更 →「ベータ: ワールドワイド言語サポートで Unicode UTF-8 を使用」*
-にチェックして再起動。ただし古いプログラムにも影響し、別の文字化けが起きることがあります。）
-
-レッスン 03 からは自分の Rust クライアントがあり、こうした設定なしでも正しく表示されます。
+PowerShell のプロファイル（`$PROFILE`）でも可能ですが、プロファイルは *ドキュメント* にあり、
+Defender の **コントロールされたフォルダー アクセス** がよく保護しています（「保護されたフォルダーへの
+アクセスがブロックされました … pwsh.exe」）。さらに `Set-ExecutionPolicy` も必要です。
+Windows Terminal の設定ならどちらも避けられます。
 
 ### 4. C コンパイラ（任意）
 
@@ -130,7 +140,7 @@ pacman -S --needed mingw-w64-ucrt-x86_64-gcc
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # Go、Rust、ncat/telnet、gcc、端末、コードページを確認
+.\mudschool.cmd doctor            # Go、Rust、gcc、端末を確認
 .\mudschool.cmd init --lang ja    # workspace\ を作る（en、sv、ja）
 .\mudschool.cmd show              # 最初のレッスン
 ```
@@ -285,7 +295,8 @@ Windows Terminal を再起動してください。BIZ UDゴシックは日本語
 | クライアントが落ちた後、端末の様子がおかしい | `reset` と入力（Windows ではタブを閉じる）。クライアントが端末を「raw モード」のままにしました。 |
 | `address already in use` | ポート 4000 ですでに何かが動いています。止めるか、`./mudschool run server -addr 127.0.0.1:4001` と `./mudschool run client 127.0.0.1:4001` を使う。 |
 | マップに四角や変な文字が出る | フォントに文字がないか、端末が UTF-8 ではありません。[フォントと端末](#フォントと端末) を参照。 |
-| Windows: telnet/ncat で日本語が文字化けする | ncat を使い、コンソールを UTF-8 にします。[新しい端末でも毎回 UTF-8 に](#新しい端末でも毎回-utf-8-に) を参照。 |
+| Windows: telnet/ncat で日本語が文字化けする | 代わりに `.\mudschool.cmd connect` を使います。[手で接続する](#3-手で接続する--インストール不要) を参照。 |
+| Windows: Defender が `cargo.exe` を検疫した | [Git、Go、Rust](#2-gitgorust) の注意書きを参照。 |
 | マップの列がずれる（日本語） | 曖昧幅の文字が全角で描かれています。[フォントと端末](#フォントと端末) を参照。 |
 | 色が出ない・おかしい | 端末が 24 ビットカラー非対応です（例: macOS のターミナル.app、古い Windows コンソール）。 |
 | `-race requires cgo` | C コンパイラを入れる（各システムの節を参照）か、`--race` なしで実行する。 |

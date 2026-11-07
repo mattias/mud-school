@@ -157,6 +157,7 @@ Add `mud.db` to your `.gitignore`.
 - Autosave: every N ticks the game loop takes snapshots of everyone and a
   separate goroutine writes them.
 - Hide the password in telnet too: send `IAC WILL ECHO` (bytes 255 251 1)
-  before the question and `IAC WONT ECHO` after.
+  before the question and `IAC WONT ECHO` after. (Try it with a real telnet:
+  `./mudschool connect` just skips telnet commands.)
 - Lock an account for a minute after three wrong passwords.
 - Save items that lie on the floor too, so the world remembers where things were dropped.

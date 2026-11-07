@@ -26,7 +26,8 @@ testernas felmeddelanden, spelets texter och spelvärlden.
 ## Kom igång
 
 **1. Installera verktygen.** Du behöver Go 1.22+, Rust (stable) och en
-terminal med UTF-8 och färg – telnet eller nc är bra att ha. Steg för steg
+terminal med UTF-8 och färg (ingen telnet behövs – `./mudschool connect` finns
+inbyggt). Steg för steg
 för Windows, macOS och Linux finns i **[docs/sv/SETUP.md](docs/sv/SETUP.md)**.
 
 Snabbast: öppna repot i **GitHub Codespaces** eller en **VS Code Dev
@@ -59,13 +60,14 @@ Rekommenderade typsnitt för kartan (t.ex. i Windows Terminal) finns i
 
 | Kommando | Vad det gör |
 |---|---|
-| `./mudschool doctor` | kontrollerar Go, Rust, telnet/nc, UTF-8 och färg |
+| `./mudschool doctor` | kontrollerar Go, Rust, gcc, UTF-8 och färg |
 | `./mudschool list` | alla lektioner och din status |
 | `./mudschool show [id]` | instruktionerna för en lektion |
 | `./mudschool check [--race]` | kör lektionens tester; vid grönt går du vidare |
 | `./mudschool watch` | som `check`, men automatiskt när du sparar |
 | `./mudschool hint` | nästa ledtråd (en i taget) |
 | `./mudschool run server` / `run client` | starta din server eller klient |
+| `./mudschool connect` | anslut till din server för hand, som telnet |
 | `./mudschool solution [--apply]` | visa (eller kopiera in) referenslösningen |
 | `./mudschool goto <id>` | hoppa till en lektion |
 | `./mudschool update` | hämta kursens rättelser till din arbetsyta efter `git pull` (din egen kod rörs aldrig) |

@@ -101,7 +101,7 @@ All of this runs in the game loop from lesson 14 – no locks.
 ## Try it yourself
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 e
 get sword
 i

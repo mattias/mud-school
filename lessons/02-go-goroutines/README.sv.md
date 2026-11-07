@@ -78,5 +78,11 @@ data – men vänta bara till lektion 05!
 
 ## Utmaningar
 
-- Räkna antal anslutna klienter och logga det. Testa med `--race`. Får du en
-  varning? Läs om `sync/atomic` (`atomic.Int64`) och fixa den.
+- Räkna antal anslutna klienter och logga det: lägg till ett vanligt fält
+  `clients int` i `Server`, räkna upp i början av `handle` och ner (med
+  `defer`) när klienten går. Kör `./mudschool check --race`: du bör få
+  `WARNING: DATA RACE`, eftersom många `handle`-goroutiner ändrar samma
+  variabel samtidigt. Läs om `sync/atomic` (`atomic.Int64`) och fixa det.
+  (Räknar du i stället i `Serve`-loopen försvinner varningen – men varför? Och
+  var skulle du räkna *ner* då? Race-detektorn rapporterar bara race som
+  faktiskt inträffar medan testerna kör.)

@@ -60,17 +60,42 @@ rustc --version
 cargo --version
 ```
 
-### 3. telnet (optional but recommended)
+### 3. ncat (optional but recommended)
 
-Open PowerShell **as administrator** once and run:
+To try your server by hand before your own client exists (lessons 01–02),
+you need a simple line-based client. On Windows, use **ncat** (from Nmap):
 
 ```powershell
-dism /online /Enable-Feature /FeatureName:TelnetClient
+winget install Insecure.Nmap
+ncat 127.0.0.1 4000
 ```
 
-> The Windows telnet client may show å, ä, ö and Japanese characters
-> incorrectly. From lesson 03 you have your own Rust client, which shows
-> everything correctly.
+> Windows' own telnet client (`dism /online /Enable-Feature /FeatureName:TelnetClient`)
+> works too, but it shows å, ä, ö and Japanese characters as mojibake – it
+> doesn't understand UTF-8.
+
+#### UTF-8 in every new terminal
+
+ncat writes what the server sends straight to the console, so the console
+must expect UTF-8. PowerShell doesn't by default (Japanese Windows uses
+Shift-JIS, code page 932). Add this to your PowerShell profile **once**, and
+every new terminal uses UTF-8:
+
+```powershell
+if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
+Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
+```
+
+Open a new tab and check with `chcp` – it should say `65001`. `doctor` warns
+if the code page is something else.
+
+(The alternative is system-wide: *Settings → Time & language → Language &
+region → Administrative language settings → Change system locale → "Beta: Use
+Unicode UTF-8 for worldwide language support"*, then restart. It also affects
+older programs, which may then show other characters wrong.)
+
+From lesson 03 you have your own Rust client, which shows everything
+correctly without any of this.
 
 ### 4. A C compiler (optional)
 
@@ -253,6 +278,7 @@ client handles correctly.
 | The terminal behaves strangely after the client crashed | Type `reset` (Windows: close the tab) – the client left the terminal in "raw mode". |
 | `address already in use` | Something is already on port 4000. Stop it, or run `./mudschool run server -addr 127.0.0.1:4001` and `./mudschool run client 127.0.0.1:4001`. |
 | Boxes or odd characters on the map | The font lacks the characters or the terminal isn't UTF-8 – see [Fonts and terminals](#fonts-and-terminals). |
+| Windows: telnet/ncat shows mojibake (e.g. Japanese) | Use ncat and make the console UTF-8 – see [UTF-8 in every new terminal](#utf-8-in-every-new-terminal). |
 | The map's columns don't line up (Japanese) | Ambiguous-width characters are drawn double-width – see [Fonts and terminals](#fonts-and-terminals). |
 | No colours or wrong colours | The terminal lacks 24-bit colour (e.g. macOS Terminal.app, the old Windows console). |
 | `-race requires cgo` | Install a C compiler (see your system's section) or run without `--race`. |

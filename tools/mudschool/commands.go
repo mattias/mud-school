@@ -296,7 +296,7 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 	if err := c.saveProgress(p); err != nil {
 		return false, err
 	}
-	if err := c.placeTests(ws, l); err != nil {
+	if _, err := c.placeTests(ws, l); err != nil {
 		return false, err
 	}
 	fmt.Printf("%s %s %s: %s\n\n", cyan("▶"), L("Lektion", "Lesson", "レッスン"), l.ID, bold(l.Title.String()))
@@ -319,6 +319,13 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		fmt.Sprintf(L("Lektion %s är klar.", "Lesson %s is done.", "レッスン %s 完了です。"), l.ID))
 	if !advance {
 		return true, nil
+	}
+	if todos := leftoverTODOs(ws, l.ID); len(todos) > 0 {
+		fmt.Println(dim(fmt.Sprintf(L(
+			"Tips: kommentarerna TODO(lesson %s) är avklarade nu – du kan ta bort dem: %s",
+			"Tip: the TODO(lesson %s) comments are done now – you can delete them: %s",
+			"ヒント: TODO(lesson %s) のコメントはもう済んでいます。消してかまいません: %s"),
+			strings.TrimLeft(l.ID, "0"), strings.Join(todos, ", "))))
 	}
 	p.Done[l.ID] = true
 	if nxt := c.next(l); nxt != nil {
@@ -500,7 +507,7 @@ func (c *course) verifyLang(selected map[string]bool) (int, error) {
 		run := len(selected) == 0 || selected[l.ID]
 		dir, cmds := checkCommands(l.Track, false)
 		check := func() (string, bool) {
-			if err := c.placeTests(ws, l); err != nil {
+			if _, err := c.placeTests(ws, l); err != nil {
 				return err.Error(), false
 			}
 			var all strings.Builder

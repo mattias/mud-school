@@ -49,10 +49,16 @@ func (c *course) record(p *Progress, rels []string, source, lesson string) {
 
 // enterWorkspace enters lesson l in the student's workspace and records the
 // files it created.
+// The lesson's tests are placed right away too, so that the student can read
+// them (the README often points at them) before the first check.
 func (c *course) enterWorkspace(p *Progress, l *Lesson) ([]string, error) {
 	written, err := c.enter(c.workspace(), l)
 	c.record(p, written, "scaffold", l.ID)
-	return written, err
+	if err != nil {
+		return written, err
+	}
+	tests, err := c.placeTests(c.workspace(), l)
+	return append(written, tests...), err
 }
 
 // sourceDirs returns the directories that hold the course's version of files
@@ -268,6 +274,12 @@ func (c *course) cmdUpdate() error {
 	p, err := c.loadProgress()
 	if err != nil {
 		return err
+	}
+	// The current lesson's tests, so the ones the README talks about are there.
+	if l, err := c.current(p); err == nil {
+		if _, err := c.placeTests(c.workspace(), l); err != nil {
+			return err
+		}
 	}
 	plan, err := c.planUpdate(p)
 	if err != nil {

@@ -104,7 +104,7 @@ Run `./mudschool check` to test.
 
 ```
 ./mudschool run server            # in one terminal
-telnet 127.0.0.1 4000             # in another (or: nc 127.0.0.1 4000)
+telnet 127.0.0.1 4000             # in another (or: nc / ncat 127.0.0.1 4000)
 ```
 
 Type a few lines. Then open a *second* telnet at the same time. What happens?

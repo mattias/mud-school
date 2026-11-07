@@ -26,7 +26,7 @@ hints, the tests' failure messages, the game's texts and the game world.
 ## Getting started
 
 **1. Install the tools.** You need Go 1.22+, Rust (stable) and a terminal with
-UTF-8 and colour – telnet or nc are good to have. Step by step for Windows,
+UTF-8 and colour (no telnet needed – `./mudschool connect` is built in). Step by step for Windows,
 macOS and Linux: **[docs/en/SETUP.md](docs/en/SETUP.md)**.
 
 Fastest: open the repository in **GitHub Codespaces** or a **VS Code Dev
@@ -59,13 +59,14 @@ Recommended fonts for the map (e.g. in Windows Terminal) are listed in
 
 | Command | What it does |
 |---|---|
-| `./mudschool doctor` | checks Go, Rust, telnet/nc, UTF-8 and colour |
+| `./mudschool doctor` | checks Go, Rust, gcc, UTF-8 and colour |
 | `./mudschool list` | every lesson and your progress |
 | `./mudschool show [id]` | the instructions for a lesson |
 | `./mudschool check [--race]` | runs the lesson's tests; when green you move on |
 | `./mudschool watch` | like `check`, but automatically when you save |
 | `./mudschool hint` | the next hint (one at a time) |
 | `./mudschool run server` / `run client` | start your server or client |
+| `./mudschool connect` | connect to your server by hand, like telnet |
 | `./mudschool solution [--apply]` | show (or copy in) the reference solution |
 | `./mudschool goto <id>` | jump to a lesson |
 | `./mudschool update` | bring course fixes into your workspace after `git pull` (your own code is never touched) |

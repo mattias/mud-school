@@ -87,7 +87,7 @@ cd workspace/server && go test ./mud -run TestParseCommand -v
 ## Try it yourself
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 help
 echo   hello  there
 L

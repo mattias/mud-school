@@ -26,7 +26,7 @@ Caves of Qud 風のタイルのゾーンと手続き
 ## はじめかた
 
 **1. ツールをインストールする。** 必要なのは Go 1.22 以降、Rust（stable）、UTF-8 と
-色を扱える端末です。telnet か nc もあると便利です。Windows・macOS・Linux 向けの
+色を扱える端末です。telnet は不要です（`./mudschool connect` が内蔵されています）。Windows・macOS・Linux 向けの
 手順は **[docs/ja/SETUP.md](docs/ja/SETUP.md)** にあります。
 
 いちばん手軽なのは、リポジトリを **GitHub Codespaces** か **VS Code の Dev Container**
@@ -59,13 +59,14 @@ git clone https://github.com/mattias/mud-school.git; cd mud-school
 
 | コマンド | 内容 |
 |---|---|
-| `./mudschool doctor` | Go、Rust、telnet/nc、UTF-8、色を確認する |
+| `./mudschool doctor` | Go、Rust、gcc、UTF-8、色を確認する |
 | `./mudschool list` | レッスン一覧と進捗 |
 | `./mudschool show [id]` | レッスンの説明 |
 | `./mudschool check [--race]` | レッスンのテストを実行。合格すれば次へ進む |
 | `./mudschool watch` | `check` と同じだが、保存時に自動で |
 | `./mudschool hint` | 次のヒント（1 つずつ） |
 | `./mudschool run server` / `run client` | 自分のサーバーまたはクライアントを起動 |
+| `./mudschool connect` | telnet のように、自分のサーバーへ手で接続する |
 | `./mudschool solution [--apply]` | 模範解答を表示（またはコピー） |
 | `./mudschool goto <id>` | レッスンへ移動 |
 | `./mudschool update` | `git pull` の後、コースの修正を作業領域に取り込む（あなたのコードには触れない） |

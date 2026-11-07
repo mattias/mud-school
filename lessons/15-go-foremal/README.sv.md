@@ -101,7 +101,7 @@ Allt detta körs i spelloopen från lektion 14 – inga lås.
 ## Testa själv
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 e
 get svärd
 i

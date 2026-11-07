@@ -71,14 +71,14 @@ Rust のクライアントの間の **契約** です。
 ## 自分で試す
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 map
 ```
 
 Rust クライアントが受け取るものを見るには:
 
 ```
-nc 127.0.0.1 4000
+./mudschool connect
 @hello mudschool 1
 Anna
 ```

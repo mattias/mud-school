@@ -27,6 +27,7 @@ Användning:
   mudschool goto <id>            hoppa till en lektion
   mudschool solution [--apply]   visa (eller kopiera in) referenslösningen
   mudschool run server|client    starta din server eller klient
+  mudschool connect [adress]     anslut till servern som telnet (standard 127.0.0.1:4000)
   mudschool verify [id...]       (lärare) kontrollera att alla lösningar klarar testerna
   mudschool reference <kat> [id] (lärare) bygg referenslösningen till och med en lektion
 `,
@@ -45,6 +46,7 @@ Usage:
   mudschool goto <id>            jump to a lesson
   mudschool solution [--apply]   show (or copy in) the reference solution
   mudschool run server|client    start your server or client
+  mudschool connect [address]    connect to the server like telnet (default 127.0.0.1:4000)
   mudschool verify [id...]       (teachers) check that every solution passes its tests
   mudschool reference <dir> [id] (teachers) build the reference solution up to a lesson
 `,
@@ -63,6 +65,7 @@ Usage:
   mudschool goto <id>            指定したレッスンへ移動する
   mudschool solution [--apply]   模範解答を表示する（またはコピーする）
   mudschool run server|client    自分のサーバーまたはクライアントを起動する
+  mudschool connect [address]    telnet のようにサーバーへ接続する（既定 127.0.0.1:4000）
   mudschool verify [id...]       （講師向け）すべての模範解答がテストに通るか確認する
   mudschool reference <dir> [id] （講師向け）指定レッスンまでの模範解答を作る
 `)
@@ -119,6 +122,8 @@ func main() {
 		err = c.cmdGoto(rest)
 	case "solution":
 		err = c.cmdSolution(hasFlag(rest, "--apply"))
+	case "connect":
+		err = c.cmdConnect(rest)
 	case "run":
 		err = c.cmdRun(rest)
 	case "verify":

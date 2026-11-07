@@ -103,10 +103,10 @@ Kör `./mudschool check` för att testa.
 
 ```
 ./mudschool run server            # i en terminal
-telnet 127.0.0.1 4000             # i en annan (eller: nc / ncat 127.0.0.1 4000)
+./mudschool connect               # i en annan (eller: telnet / nc 127.0.0.1 4000)
 ```
 
-Skriv några rader. Öppna sedan en *andra* telnet samtidigt. Vad händer?
+Skriv några rader. Anslut sedan en *andra* gång samtidigt, från en tredje terminal. Vad händer?
 Varför? (Det fixar vi i nästa lektion.)
 
 ## Fundera på

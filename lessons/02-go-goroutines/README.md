@@ -1,6 +1,6 @@
 # Lesson 02 – Many players at once
 
-Did you try connecting with two telnet windows in the last lesson? The second
+Did you try connecting twice at once in the last lesson? The second
 player didn't even get the welcome message until the first one disconnected.
 The server does one thing at a time. A MUD without other players is pretty
 lonely, so let's fix that.
@@ -64,7 +64,7 @@ one in the whole Go part of the course.
 
 ## Try it yourself
 
-Start the server and connect with three telnet windows at once. Then run
+Start the server and connect from three terminals at once (`./mudschool connect`). Then run
 `./mudschool check --race`. The race detector finds places where two
 goroutines touch the same data without synchronization. Your goroutines share
 no data yet – but just wait for lesson 05!

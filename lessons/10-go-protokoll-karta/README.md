@@ -74,14 +74,14 @@ New files: `frame.go` (the types are finished – they *are* the protocol) and `
 ## Try it yourself
 
 ```
-telnet 127.0.0.1 4000
+./mudschool connect
 map
 ```
 
 and to see what the Rust client is going to get:
 
 ```
-nc 127.0.0.1 4000
+./mudschool connect
 @hello mudschool 1
 Anna
 ```

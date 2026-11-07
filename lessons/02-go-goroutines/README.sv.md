@@ -1,6 +1,6 @@
 # Lektion 02 – Många spelare samtidigt
 
-Testade du att ansluta med två telnet-fönster i förra lektionen? Den andra
+Testade du att ansluta två gånger samtidigt i förra lektionen? Den andra
 spelaren fick inte ens välkomstmeddelandet förrän den första kopplade ner.
 Servern gör bara en sak i taget. En MUD utan andra spelare är ganska ensam,
 så nu fixar vi det.
@@ -64,7 +64,7 @@ viktigaste i hela Go-delen av kursen.
 
 ## Testa själv
 
-Starta servern och anslut med tre telnet-fönster samtidigt. Kör sedan
+Starta servern och anslut från tre terminaler samtidigt (`./mudschool connect`). Kör sedan
 `./mudschool check --race`. Race detectorn hittar ställen där två goroutines
 rör samma data utan synkronisering. Än så länge delar dina goroutines ingen
 data – men vänta bara till lektion 05!

@@ -3,7 +3,8 @@
 > 🇬🇧 English · [🇸🇪 Svenska](../sv/SETUP.md) · [🇯🇵 日本語](../ja/SETUP.md)
 
 You need **Go 1.22+**, **Rust** (stable), **Git**, a **terminal** with UTF-8
-and 24-bit colour, and preferably **telnet** or **nc**. Pick the section for
+and 24-bit colour. (telnet or nc are optional – the course tool has a
+built-in client, `./mudschool connect`.) Pick the section for
 your system and follow it from top to bottom – each one is complete on its own.
 
 | Your system | Section | Time |
@@ -60,54 +61,58 @@ rustc --version
 cargo --version
 ```
 
-### 3. ncat (optional but recommended)
+> **Microsoft Defender quarantined `cargo.exe`?** It happens now and then:
+> Defender's heuristics flag the small "proxy" programs rustup installs in
+> `%USERPROFILE%\.cargo\bin` (`cargo.exe`, `rustc.exe`, … are all copies of
+> `rustup.exe`). Don't just click *Allow* – check first:
+>
+> 1. Update Defender (*Windows Security → Virus & threat protection →
+>    Protection updates → Check for updates*).
+> 2. Reinstall Rust from the official source: `winget uninstall Rustlang.Rustup`,
+>    then `winget install Rustlang.Rustup` (or `rustup-init.exe` from
+>    <https://rustup.rs>).
+> 3. If Defender quarantines the fresh file again, it is very likely a false
+>    positive: compare `Get-FileHash $env:USERPROFILE\.cargo\bin\cargo.exe`
+>    with `Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe` (they should be
+>    identical), report the file to Microsoft at
+>    <https://www.microsoft.com/wdsi/filesubmission>, and restore it under
+>    *Protection history*.
+>
+> Programs you build yourself (`target\debug\*.exe`) can be flagged the
+> same way; the same steps apply.
 
-To try your server by hand before your own client exists (lessons 01–02),
-you need a simple line-based client. On Windows, use **ncat** (from Nmap):
+### 3. Connecting by hand – nothing to install
 
-```powershell
-winget install Insecure.Nmap
-```
-
-Accept the installer's defaults (Npcap is optional – you don't need it), then
-**close and reopen Windows Terminal** so that `ncat` is in `PATH`. Then:
-
-```powershell
-ncat 127.0.0.1 4000
-```
-
-> Windows' own telnet client (`dism /online /Enable-Feature /FeatureName:TelnetClient`)
-> works too, but it shows å, ä, ö and Japanese characters as mojibake – it
-> doesn't understand UTF-8.
-
-#### UTF-8 in every new terminal
-
-ncat writes what the server sends straight to the console, so the console
-must expect UTF-8. PowerShell doesn't by default (Japanese Windows uses
-Shift-JIS, code page 932). Add this to your PowerShell profile **once**, and
-every new terminal uses UTF-8:
+In lessons 01–02, before your own client exists, you try the server by hand.
+The course tool has a little client built in:
 
 ```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
-if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
-Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
+.\mudschool.cmd connect          # = 127.0.0.1:4000
 ```
 
-The first line lets PowerShell run your own profile at all – by default
-Windows refuses to run scripts, and the profile is a script (no
-administrator needed). Run the commands in the shell you actually use in
-Windows Terminal: Windows PowerShell and PowerShell 7 have different profiles.
+It shows å, ä, ö and Japanese correctly in every Windows terminal, without
+any settings. Where the lessons say `telnet 127.0.0.1 4000`, use this.
 
-Open a new tab and check with `chcp` – it should say `65001`. `doctor` warns
-if the code page is something else.
+#### If you want telnet or ncat anyway
 
-(The alternative is system-wide: *Settings → Time & language → Language &
-region → Administrative language settings → Change system locale → "Beta: Use
-Unicode UTF-8 for worldwide language support"*, then restart. It also affects
-older programs, which may then show other characters wrong.)
+Windows' own telnet doesn't understand UTF-8 at all. ncat (`winget install
+Insecure.Nmap`, then reopen the terminal) works if the console expects UTF-8
+– which PowerShell doesn't by default (Japanese Windows uses Shift-JIS, code
+page 932). The simplest way to fix that for every new tab, without touching
+any files: in *Windows Terminal → Settings → (your PowerShell profile) →
+Command line*, use
 
-From lesson 03 you have your own Rust client, which shows everything
-correctly without any of this.
+```
+pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()"
+```
+
+(Use `powershell.exe` instead of `pwsh.exe` for Windows PowerShell 5.1.)
+Check in a new tab with `chcp` – it should say `65001`.
+
+The PowerShell profile (`$PROFILE`) would also work, but it lives in
+*Documents*, which Defender's **controlled folder access** often protects
+("Protected folder access blocked … pwsh.exe"), and it needs
+`Set-ExecutionPolicy`. The Windows Terminal setting avoids both.
 
 ### 4. A C compiler (optional)
 
@@ -134,7 +139,7 @@ check with `gcc --version`.
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # checks Go, Rust, ncat/telnet, gcc, the terminal and the code page
+.\mudschool.cmd doctor            # checks Go, Rust, gcc and the terminal
 .\mudschool.cmd init --lang en    # creates workspace\ (en, sv or ja)
 .\mudschool.cmd show              # the first lesson
 ```
@@ -290,7 +295,8 @@ client handles correctly.
 | The terminal behaves strangely after the client crashed | Type `reset` (Windows: close the tab) – the client left the terminal in "raw mode". |
 | `address already in use` | Something is already on port 4000. Stop it, or run `./mudschool run server -addr 127.0.0.1:4001` and `./mudschool run client 127.0.0.1:4001`. |
 | Boxes or odd characters on the map | The font lacks the characters or the terminal isn't UTF-8 – see [Fonts and terminals](#fonts-and-terminals). |
-| Windows: telnet/ncat shows mojibake (e.g. Japanese) | Use ncat and make the console UTF-8 – see [UTF-8 in every new terminal](#utf-8-in-every-new-terminal). |
+| Windows: telnet/ncat shows mojibake (e.g. Japanese) | Use `.\mudschool.cmd connect` instead – see [Connecting by hand](#3-connecting-by-hand--nothing-to-install). |
+| Windows: Defender quarantined `cargo.exe` | See the note under [Git, Go and Rust](#2-git-go-and-rust). |
 | The map's columns don't line up (Japanese) | Ambiguous-width characters are drawn double-width – see [Fonts and terminals](#fonts-and-terminals). |
 | No colours or wrong colours | The terminal lacks 24-bit colour (e.g. macOS Terminal.app, the old Windows console). |
 | `-race requires cgo` | Install a C compiler (see your system's section) or run without `--race`. |

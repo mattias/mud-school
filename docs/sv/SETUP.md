@@ -3,7 +3,8 @@
 > [🇬🇧 English](../en/SETUP.md) · 🇸🇪 Svenska · [🇯🇵 日本語](../ja/SETUP.md)
 
 Du behöver **Go 1.22+**, **Rust** (stable), **Git**, en **terminal** med UTF-8
-och 24-bitars färg, och gärna **telnet** eller **nc**. Välj avsnittet för ditt
+och 24-bitars färg. (telnet eller nc är frivilliga – kursverktyget har en
+inbyggd klient, `./mudschool connect`.) Välj avsnittet för ditt
 system och följ det uppifrån och ner – varje avsnitt är komplett i sig.
 
 | Ditt system | Avsnitt | Tid |
@@ -60,54 +61,58 @@ rustc --version
 cargo --version
 ```
 
-### 3. ncat (frivilligt men rekommenderat)
+> **Satte Microsoft Defender `cargo.exe` i karantän?** Det händer ibland:
+> Defenders heuristik flaggar de små "proxy"-programmen som rustup lägger i
+> `%USERPROFILE%\.cargo\bin` (`cargo.exe`, `rustc.exe`, … är alla kopior av
+> `rustup.exe`). Klicka inte bara på *Tillåt* – kontrollera först:
+>
+> 1. Uppdatera Defender (*Windows-säkerhet → Virus- och hotskydd →
+>    Skyddsuppdateringar → Sök efter uppdateringar*).
+> 2. Installera om Rust från den officiella källan: `winget uninstall Rustlang.Rustup`,
+>    sedan `winget install Rustlang.Rustup` (eller `rustup-init.exe` från
+>    <https://rustup.rs>).
+> 3. Sätter Defender den nya filen i karantän igen är det med stor sannolikhet
+>    ett falsklarm: jämför `Get-FileHash $env:USERPROFILE\.cargo\bin\cargo.exe`
+>    med `Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe` (de ska vara
+>    identiska), rapportera filen till Microsoft på
+>    <https://www.microsoft.com/wdsi/filesubmission>, och återställ den under
+>    *Skyddshistorik*.
+>
+> Program du bygger själv (`target\debug\*.exe`) kan flaggas på samma sätt;
+> samma steg gäller.
 
-För att prova din server för hand innan din egen klient finns (lektion 01–02)
-behöver du en enkel radbaserad klient. På Windows använder du **ncat** (från Nmap):
+### 3. Ansluta för hand – inget att installera
 
-```powershell
-winget install Insecure.Nmap
-```
-
-Godkänn installationsprogrammets standardval (Npcap är frivilligt – du behöver
-det inte), och **stäng och öppna Windows Terminal igen** så att `ncat` finns i
-`PATH`. Sedan:
-
-```powershell
-ncat 127.0.0.1 4000
-```
-
-> Windows egna telnet-klient (`dism /online /Enable-Feature /FeatureName:TelnetClient`)
-> fungerar också, men den visar å, ä, ö och japanska tecken som teckengröt –
-> den förstår inte UTF-8.
-
-#### UTF-8 i varje ny terminal
-
-ncat skriver det servern skickar rakt till konsolen, så konsolen måste vänta
-sig UTF-8. Det gör PowerShell inte från början (en japansk Windows använder
-Shift-JIS, kodsida 932). Lägg till det här i din PowerShell-profil **en gång**,
-så använder varje ny terminal UTF-8:
+I lektion 01–02, innan din egen klient finns, provar du servern för hand.
+Kursverktyget har en liten inbyggd klient:
 
 ```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
-if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
-Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
+.\mudschool.cmd connect          # = 127.0.0.1:4000
 ```
 
-Första raden låter PowerShell köra din egen profil över huvud taget – som
-standard vägrar Windows köra skript, och profilen är ett skript (inga
-administratörsrättigheter behövs). Kör kommandona i det skal du faktiskt
-använder i Windows Terminal: Windows PowerShell och PowerShell 7 har olika profiler.
+Den visar å, ä, ö och japanska rätt i alla Windows-terminaler, utan några
+inställningar. Där lektionerna skriver `telnet 127.0.0.1 4000` använder du den här.
 
-Öppna en ny flik och kontrollera med `chcp` – det ska stå `65001`. `doctor`
-varnar om kodsidan är något annat.
+#### Om du ändå vill använda telnet eller ncat
 
-(Alternativet gäller hela systemet: *Inställningar → Tid och språk → Språk och
-region → Administrativa språkinställningar → Ändra systemets nationella
-inställningar → "Beta: Använd Unicode UTF-8 för språkstöd över hela världen"*,
-och starta om. Det påverkar även äldre program, som då kan visa andra tecken fel.)
+Windows egna telnet förstår inte UTF-8 alls. ncat (`winget install
+Insecure.Nmap`, öppna sedan terminalen igen) fungerar om konsolen väntar sig
+UTF-8 – vilket PowerShell inte gör från början (en japansk Windows använder
+Shift-JIS, kodsida 932). Enklaste sättet att fixa det för varje ny flik, utan
+att röra några filer: i *Windows Terminal → Inställningar → (din
+PowerShell-profil) → Kommandorad*, använd
 
-Från lektion 03 har du din egen Rust-klient, som visar allt rätt utan något av det här.
+```
+pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()"
+```
+
+(Använd `powershell.exe` i stället för `pwsh.exe` för Windows PowerShell 5.1.)
+Kontrollera i en ny flik med `chcp` – det ska stå `65001`.
+
+PowerShell-profilen (`$PROFILE`) skulle också fungera, men den ligger i
+*Dokument*, som Defenders **reglerad mappåtkomst** ofta skyddar ("Åtkomst till
+skyddad mapp blockerad … pwsh.exe"), och den kräver `Set-ExecutionPolicy`.
+Inställningen i Windows Terminal undviker båda.
 
 ### 4. En C-kompilator (frivilligt)
 
@@ -134,7 +139,7 @@ med `gcc --version`.
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # kontrollerar Go, Rust, ncat/telnet, gcc, terminalen och kodsidan
+.\mudschool.cmd doctor            # kontrollerar Go, Rust, gcc och terminalen
 .\mudschool.cmd init --lang sv    # skapar workspace\ (en, sv eller ja)
 .\mudschool.cmd show              # första lektionen
 ```
@@ -292,7 +297,8 @@ hanterar klienten rätt.
 | Terminalen beter sig konstigt efter att klienten kraschat | Skriv `reset` (Windows: stäng fliken) – klienten lämnade terminalen i "raw mode". |
 | `address already in use` | Något kör redan på port 4000. Stoppa det, eller kör `./mudschool run server -addr 127.0.0.1:4001` och `./mudschool run client 127.0.0.1:4001`. |
 | Rutor eller konstiga tecken på kartan | Typsnittet saknar tecknen eller terminalen är inte UTF-8 – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
-| Windows: telnet/ncat visar teckengröt (t.ex. å, ä, ö) | Använd ncat och gör konsolen UTF-8 – se [UTF-8 i varje ny terminal](#utf-8-i-varje-ny-terminal). |
+| Windows: telnet/ncat visar teckengröt (t.ex. å, ä, ö) | Använd `.\mudschool.cmd connect` i stället – se [Ansluta för hand](#3-ansluta-för-hand--inget-att-installera). |
+| Windows: Defender satte `cargo.exe` i karantän | Se rutan under [Git, Go och Rust](#2-git-go-och-rust). |
 | Kartans kolumner hamnar fel (japanska) | Tecken med tvetydig bredd ritas dubbelt så breda – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
 | Inga eller fel färger | Terminalen saknar 24-bitars färg (t.ex. macOS Terminal.app, den gamla Windows-konsolen). |
 | `-race requires cgo` | Installera en C-kompilator (se avsnittet för ditt system) eller kör utan `--race`. |

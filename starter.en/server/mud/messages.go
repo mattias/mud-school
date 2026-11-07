@@ -141,6 +141,14 @@ const (
 	MsgPasswordTooShort = "The password must be at least 4 characters."
 	MsgWrongPassword    = "Wrong password."
 	MsgStoreError       = "Something went wrong with saving – please try again later."
+	// zones (lesson 23)
+	MsgBlocked     = "You can't walk there."
+	MsgNoStairs    = "There are no stairs here."
+	MsgGoWhere     = "Go where? (e.g. go north)"
+	MsgErrZoneRows = "room %q: the zone is invalid (%v) – at least 3×3, rows of equal length and known tiles"
+	MsgErrZoneExit = "room %q: the zone has no opening for the exit %s"
+	// creatures that hunt (lesson 27)
+	MsgAttacksYou = "%s attacks you!"
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

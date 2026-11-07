@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Musen – klicka för att gå, verktygstips och menyer",
+    "en": "The mouse – click to walk, tooltips and menus",
+    "ja": "マウス – クリックで歩く、ツールチップ、メニュー"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Klicka för att gå (A* i klienten med BinaryHeap), ett verktygstips som säger vad som står under pekaren och en högerklicksmeny med det du kan göra.",
+    "en": "Click to walk (A* in the client with a BinaryHeap), a tooltip that says what is under the pointer, and a right-click menu with what you can do.",
+    "ja": "クリックで歩く（BinaryHeap を使ったクライアント側の A*）、ポインターの下にあるものを示すツールチップ、できることを並べた右クリックメニュー。"
+  }
+}

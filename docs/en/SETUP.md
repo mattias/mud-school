@@ -226,6 +226,9 @@ The rest (Ubuntu/Debian; on Fedora use `sudo dnf install git telnet nmap-ncat gc
 sudo apt install git telnet netcat-openbsd build-essential
 ```
 
+For the graphical client in lesson 28 (a window with tiles) you also need the
+X11 and OpenGL development files: `sudo apt install libx11-dev libxi-dev libgl1-mesa-dev`.
+
 Reopen the terminal, then check `go version`, `rustc --version` and `cargo --version`.
 
 ### 2. Get the course and start

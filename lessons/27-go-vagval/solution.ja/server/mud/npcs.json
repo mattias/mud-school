@@ -1,0 +1,153 @@
+{
+  "npcs": [
+    {
+      "id": "cat",
+      "name": "黒猫",
+      "description": "黄色い目をした細身の黒猫。あなたの知らない何かを知っているような目でこちらを見ている。",
+      "keywords": [
+        "猫",
+        "cat"
+      ],
+      "room": "torget",
+      "behaviors": [
+        {
+          "type": "wander",
+          "chance": 0.03
+        },
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "ニャー。",
+            "ゴロゴロ……"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "innkeeper",
+      "name": "女将のグレタ",
+      "description": "肩にタオルをかけた、がっしりした女性。笑い声は広場まで聞こえる。",
+      "keywords": [
+        "主人",
+        "女将",
+        "greta"
+      ],
+      "room": "krogen",
+      "behaviors": [
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "何にする？",
+            "階段に気をつけて、きしむから。",
+            "暗い森の遠吠えを聞いたかい？"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smith",
+      "name": "鍛冶屋のオロフ",
+      "description": "すすけた腕に革のエプロン。ハンマーが休むことはないようだ。",
+      "keywords": [
+        "鍛冶屋",
+        "olof"
+      ],
+      "room": "smedjan",
+      "behaviors": [
+        {
+          "type": "talk",
+          "chance": 0.015,
+          "lines": [
+            "カン、カン",
+            "近ごろはいい鉄がなかなか手に入らない。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crow",
+      "name": "カラス",
+      "description": "つややかな大きなカラス。首をかしげてこちらを観察している。",
+      "keywords": [
+        "カラス",
+        "crow"
+      ],
+      "room": "skogsbrynet",
+      "behaviors": [
+        {
+          "type": "wander",
+          "chance": 0.05
+        },
+        {
+          "type": "talk",
+          "chance": 0.03,
+          "lines": [
+            "カアー！"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rat",
+      "name": "洞窟ネズミ",
+      "description": "猫ほどもある灰色のネズミ。歯をむき出しにしている。",
+      "keywords": [
+        "ネズミ",
+        "rat"
+      ],
+      "room": "grottan",
+      "behaviors": [
+        {
+          "type": "flee",
+          "below": 0.4
+        },
+        {
+          "type": "wander",
+          "chance": 0.02
+        }
+      ],
+      "hp": 4,
+      "damage": [
+        1,
+        2
+      ],
+      "attackable": true
+    },
+    {
+      "id": "wolf",
+      "name": "灰色の狼",
+      "description": "やせた灰色の狼。暗がりで目が光っている。",
+      "keywords": [
+        "狼",
+        "wolf"
+      ],
+      "room": "morkskogen",
+      "behaviors": [
+        {
+          "type": "hunt",
+          "range": 5,
+          "chance": 0.3
+        },
+        {
+          "type": "wander",
+          "chance": 0.02
+        },
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "グルル……"
+          ]
+        }
+      ],
+      "hp": 12,
+      "damage": [
+        2,
+        4
+      ],
+      "attackable": true
+    }
+  ]
+}

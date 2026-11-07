@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Zoner – från rum till rutnät",
+    "en": "Zones – from rooms to grids",
+    "ja": "ゾーン – 部屋からグリッドへ"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Varje rum blir en zon med rutor du går omkring i, steg för steg. Protokollet får zone- och delta-frames: hela zonen en gång, sedan bara ändringarna.",
+    "en": "Every room becomes a zone of tiles you walk around in, step by step. The protocol gets zone and delta frames: the whole zone once, then only the changes.",
+    "ja": "部屋はそれぞれ、1 歩ずつ歩き回るタイルのゾーンになる。プロトコルに zone と delta のフレームが加わる。ゾーン全体は一度だけ、その後は変化だけ。"
+  }
+}

@@ -13,3 +13,24 @@ pub const ONLINE: &str = "online";
 pub const STARTER: &str = "Hej från MUD-klienten! Den här filen fyller du på i lektion 3.";
 pub const TITLE_PASSWORD: &str = " Lösenord (dolt) ";
 pub const CONFIG_ERROR: &str = "Fel i inställningarna";
+// The mouse (lesson 30): menu entries and what tiles are called.
+pub const LOOK_AT: &str = "Titta på";
+pub const ATTACK: &str = "Anfall";
+pub const PICK_UP: &str = "Plocka upp";
+pub const WALK_HERE: &str = "Gå hit";
+
+/// What a tile meaning is called, for the mouse pointer's tooltip.
+pub fn tile_name(meaning: &str) -> &'static str {
+    match meaning {
+        "floor" => "Golv",
+        "wall" => "En vägg",
+        "grass" => "Gräs",
+        "tree" => "Ett träd",
+        "water" => "Vatten",
+        "rock" => "Berg",
+        "door" => "En dörr",
+        "stairs_up" => "Trappa upp",
+        "stairs_down" => "Trappa ner",
+        _ => "Något",
+    }
+}

@@ -16,6 +16,8 @@ starter.<言語>/              言語ごとのスターターファイル: messa
 lessons/
   _shared/go/...             すべての Go レッスンでコピーされるファイル（テスト補助）
   _shared/rust/...           Rust 版（tests/mudschool_common/）
+  _shared/go-from-NN/...     Go のレッスン NN 以降の補助（レッスン NN で受講者が書く
+                             コードを使う。例: ゾーン用の go-from-23）
   NN-名前/
     lesson.json              各言語のタイトルと要約、トラック（"go"/"rust"）
     README.md                英語の説明（README.sv.md、README.ja.md）
@@ -70,7 +72,8 @@ docs/<言語>/                 カリキュラム、プロトコル、環境構�
 - **`check`**:
   1. `workspace/` 内の、名前が `mudschool_` で始まるファイルとディレクトリ
      （古いコースのテスト）をすべて削除する、
-  2. `lessons/_shared/<トラック>/` とレッスンの `tests/` をコピーする、
+  2. `lessons/_shared/<トラック>/`（と、NN がレッスン以下のすべての `<トラック>-from-NN/`）と
+     レッスンの `tests/` をコピーする、
   3. `workspace/server` で `go vet ./... && go test -count=1 ./...`（Go）、
      または `workspace/client` で `cargo test`（Rust）を実行する、
   4. 合格したら、そのレッスンの `TODO(lesson NN)` の残りを一覧にし、完了にして次のレッスンを開始する。

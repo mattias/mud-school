@@ -220,6 +220,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 sudo apt install git telnet netcat-openbsd build-essential
 ```
 
+レッスン 28 のグラフィカルクライアント（タイルを描くウィンドウ）には、X11 と OpenGL の開発用
+ファイルも必要です: `sudo apt install libx11-dev libxi-dev libgl1-mesa-dev`。
+
 端末を開き直し、`go version`、`rustc --version`、`cargo --version` を確認します。
 
 ### 2. コースを入手して始める

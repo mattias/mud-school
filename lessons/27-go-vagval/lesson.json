@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Vägval – A*, Dijkstra-kartor och jägare",
+    "en": "Pathfinding – A*, Dijkstra maps and hunters",
+    "ja": "経路探索 – A*、ダイクストラマップ、狩人"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "En generisk A* med container/heap låter vargen jaga dig runt hörn, och en Dijkstra-karta låter råttan fly. Generics, prioritetsköer och grafsökning.",
+    "en": "A generic A* with container/heap lets the wolf hunt you round corners, and a Dijkstra map lets the rat run away. Generics, priority queues and graph search.",
+    "ja": "container/heap を使った汎用 A* で狼が角を回って追いかけ、ダイクストラマップでネズミが逃げる。ジェネリクス、優先度付きキュー、グラフ探索。"
+  }
+}

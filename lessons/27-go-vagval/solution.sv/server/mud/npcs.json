@@ -1,0 +1,155 @@
+{
+  "npcs": [
+    {
+      "id": "cat",
+      "name": "en svart katt",
+      "description": "En smal svart katt med gula ögon. Den tittar på dig som om den vet något du inte vet.",
+      "keywords": [
+        "katt",
+        "katten"
+      ],
+      "room": "torget",
+      "behaviors": [
+        {
+          "type": "wander",
+          "chance": 0.03
+        },
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "Mjau.",
+            "Purr ..."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "innkeeper",
+      "name": "krögaren Greta",
+      "description": "En bredaxlad kvinna med en handduk över axeln och ett skratt som hörs ända till torget.",
+      "keywords": [
+        "krögare",
+        "krögaren",
+        "greta"
+      ],
+      "room": "krogen",
+      "behaviors": [
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "Vad får det lov att vara?",
+            "Akta trappan, den knarrar.",
+            "Har du hört ylandet från Mörkskogen?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smith",
+      "name": "smeden Olof",
+      "description": "Sotiga armar, ett läderförkläde och en hammare som aldrig verkar vila.",
+      "keywords": [
+        "smed",
+        "smeden",
+        "olof"
+      ],
+      "room": "smedjan",
+      "behaviors": [
+        {
+          "type": "talk",
+          "chance": 0.015,
+          "lines": [
+            "*klang* *klang*",
+            "Bra järn är svårt att få tag på nuförtiden."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crow",
+      "name": "en kråka",
+      "description": "En stor, blank kråka. Den lägger huvudet på sned och studerar dig.",
+      "keywords": [
+        "kråka",
+        "kråkan",
+        "fågel"
+      ],
+      "room": "skogsbrynet",
+      "behaviors": [
+        {
+          "type": "wander",
+          "chance": 0.05
+        },
+        {
+          "type": "talk",
+          "chance": 0.03,
+          "lines": [
+            "Kraa!"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rat",
+      "name": "en grottråtta",
+      "description": "En grå råtta stor som en katt. Den visar tänderna.",
+      "keywords": [
+        "råtta",
+        "råttan"
+      ],
+      "room": "grottan",
+      "behaviors": [
+        {
+          "type": "flee",
+          "below": 0.4
+        },
+        {
+          "type": "wander",
+          "chance": 0.02
+        }
+      ],
+      "hp": 4,
+      "damage": [
+        1,
+        2
+      ],
+      "attackable": true
+    },
+    {
+      "id": "wolf",
+      "name": "en grå varg",
+      "description": "Mager och grå, med ögon som lyser i mörkret.",
+      "keywords": [
+        "varg",
+        "vargen"
+      ],
+      "room": "morkskogen",
+      "behaviors": [
+        {
+          "type": "hunt",
+          "range": 5,
+          "chance": 0.3
+        },
+        {
+          "type": "wander",
+          "chance": 0.02
+        },
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "Grrr ..."
+          ]
+        }
+      ],
+      "hp": 12,
+      "damage": [
+        2,
+        4
+      ],
+      "attackable": true
+    }
+  ]
+}

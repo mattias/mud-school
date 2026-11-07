@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -203,14 +204,41 @@ func (c *course) enter(ws string, l *Lesson) ([]string, error) {
 // placeTests removes old course tests (files/directories starting with
 // "mudschool_") and copies in the current lesson's tests. It returns the
 // lesson's own test files (not the shared helpers), relative to ws.
+//
+// Shared helpers: lessons/_shared/<track>/ for every lesson, and
+// lessons/_shared/<track>-from-NN/ for lesson NN and later (helpers that use
+// code the student only writes in lesson NN).
 func (c *course) placeTests(ws string, l *Lesson) ([]string, error) {
 	if err := cleanTests(ws); err != nil {
 		return nil, err
 	}
-	if _, err := copyTree(filepath.Join(c.root, "lessons", "_shared", l.Track), ws, true); err != nil {
-		return nil, err
+	for _, dir := range c.sharedDirs(l) {
+		if _, err := copyTree(dir, ws, true); err != nil {
+			return nil, err
+		}
 	}
 	return copyTree(filepath.Join(l.Dir, "tests"), ws, true)
+}
+
+// sharedFromRe matches "go-from-23" and similar directory names.
+var sharedFromRe = regexp.MustCompile(`^([a-z]+)-from-(\d+)$`)
+
+// sharedDirs lists the shared helper directories for a lesson, in order.
+func (c *course) sharedDirs(l *Lesson) []string {
+	base := filepath.Join(c.root, "lessons", "_shared")
+	dirs := []string{filepath.Join(base, l.Track)}
+	entries, _ := os.ReadDir(base)
+	id, _ := strconv.Atoi(l.ID)
+	for _, e := range entries {
+		m := sharedFromRe.FindStringSubmatch(e.Name())
+		if !e.IsDir() || m == nil || m[1] != l.Track {
+			continue
+		}
+		if from, _ := strconv.Atoi(m[2]); id >= from {
+			dirs = append(dirs, filepath.Join(base, e.Name()))
+		}
+	}
+	return dirs
 }
 
 // todoRe finds "TODO(lesson 1)" style markers; the group is the lesson number.

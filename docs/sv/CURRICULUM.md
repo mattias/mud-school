@@ -9,8 +9,8 @@
 > 🇸🇪 Svenska · [🇬🇧 English](../en/CURRICULUM.md) · [🇯🇵 日本語](../ja/CURRICULUM.md)
 
 Det här dokumentet beskriver *hela* resan: varför den ser ut som den gör,
-vad du lär dig i varje steg och vart vi är på väg. Lektion 01–22 finns
-implementerade i `lessons/` (med tester och referenslösningar). Faserna 4–6
+vad du lär dig i varje steg och vart vi är på väg. Lektion 01–30 finns
+implementerade i `lessons/` (med tester och referenslösningar). Faserna 5–6
 är planerade och beskrivna här så att du ser helheten – och kan bygga vidare
 på egen hand.
 
@@ -24,7 +24,7 @@ på egen hand.
 4. [Fas 1 – Grunderna (lektion 01–05)](#fas-1--grunderna-lektion-0105)
 5. [Fas 2 – En värld och ett ansikte (lektion 06–13)](#fas-2--en-värld-och-ett-ansikte-lektion-0613)
 6. [Fas 3 – En levande värld (lektion 14–22)](#fas-3--en-levande-värld-lektion-1422)
-7. [Fas 4 – Tiles och zoner](#fas-4--tiles-och-zoner-planerad)
+7. [Fas 4 – Tiles och zoner (lektion 23–30)](#fas-4--tiles-och-zoner-lektion-2330)
 8. [Fas 5 – En utbyggbar server](#fas-5--en-utbyggbar-server-planerad)
 9. [Fas 6 – Ut i världen](#fas-6--ut-i-världen-valfria-spår)
 10. [Begreppskarta: Go och Rust sida vid sida](#begreppskarta-go-och-rust-sida-vid-sida)
@@ -156,9 +156,9 @@ Fas 1  Grunderna             01 ─ 05   Go: TCP, goroutines, kommandon, spelare
 Fas 2  En värld och ett      06 ─ 13   Go: chatt, rum, världsfiler, protokoll + karta
        ansikte                         Rust: trådar, serde, färgkarta, TUI med ratatui
 Fas 3  En levande värld      14 ─ 22   spelloop, föremål, NPC:er, strid, sparande
-─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 4  Tiles och zoner       23 ─ 30   zoner à la Caves of Qud, procedurgenerering,
                                        synfält, A*, grafisk klient med tileset
+─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 5  En utbyggbar server   31 ─ 36   omladdning live, Lua-skript, WASM-plugins
                                        i Rust, hooks, copyover, bygga i spelet
 Fas 6  Ut i världen          valfritt  webbklient (Rust→WASM), async Rust,
@@ -224,26 +224,29 @@ Proptest i Rust och en bot-klient är utmaningar i lektion 22.
 **Efter fas 3** lever världen: saker händer medan du sitter still, och den
 minns dig nästa dag.
 
-## Fas 4 – Tiles och zoner (planerad)
+## Fas 4 – Tiles och zoner (lektion 23–30)
 
 **Mål:** från rum-graf till tile-värld à la *Caves of Qud*: varje rum blir
-en **zon** – en karta på t.ex. 80×25 rutor där du går ruta för ruta. Går du
+en **zon** – en karta på t.ex. 31×13 rutor där du går ruta för ruta. Går du
 över kanten hamnar du i nästa zon. Rum-kartan från lektion 10 blir
 *världskartan*. Klienten får riktig grafik.
 
-| # | Spår | Lektion | Innehåll |
-|---|---|---|---|
-| 23 | Go | Zoner | Zoner med tiles och entiteter med `(x, y)`. Protokollet får `zone`-frames (hela zonen) och `delta`-frames (bara ändringar) – du lär dig varför man inte skickar allt varje tick. |
-| 24 | Go | Procedurgenerering | Grottor med cellulära automater, gångar med "drunkard's walk", terräng med brus (simplex), allt från en seed så att samma värld kan återskapas. |
-| 25 | Rust | Kamera | Visa en del av en stor zon, följ spelaren, scrolla. Koordinatsystem, `saturating_sub`, `clamp`. |
-| 26 | Go | Synfält | Rekursiv *shadowcasting* på servern (så att ingen kan fuska) och "fog of war": rutor du sett men inte ser nu ritas mörkare. |
-| 27 | Go | Vägsökning | A* för varelser med `container/heap` och generics. Jämför med Dijkstra-kartor (som i *Brogue*). |
-| 28 | Rust | Grafisk klient | Ett eget fönster med `macroquad` (enkelt) eller `bevy` (stort ekosystem). Ladda ett CP437-tileset (16×16 glyfer – samma idé som Dwarf Fortress-tilesets) eller ett CC0-paket som Kenneys *1-Bit Pack*. **En trait `Renderer` med två implementationer** – terminal och tiles – och resten av klienten är oförändrad. Här lönar sig beslutet från lektion 10. |
-| 29 | Rust | Ljus och liv | Ljuskällor med färgblandning, animerat vatten, partiklar, skärmskakning vid träff. Belysning i *Brogue*-stil. |
-| 30 | Rust | Musen | Klicka för att gå (A* på klienten), muspekare som visar "En gammal gran" i en tooltip, högerklicksmeny. |
+| # | Spår | Lektion | Spelet får | Språket lär dig |
+|---|---|---|---|---|
+| 23 | Go | Zoner | varje rum ett rutnät; steg för steg; handgjorda zoner i världsfilen; `zone`- och `delta`-frames | 2D-rutnät, jämförbara structs som nycklar, skillnader i tillstånd |
+| 24 | Go | Procedurgenerering | grottor (cellautomater), skogar och sjöar (värdebrus), gångar (den fulle mannens vandring), allt från ett frö | `math/rand/v2` med frö, `hash/fnv`, flood fill, egenskapstester |
+| 25 | Rust | Kameran | zonen på skärmen, en kamera som följer dig, gå med piltangenterna | serde med `rename`, `From`, `BTreeMap`, `saturating_sub`, match-villkor |
+| 26 | Go | Synfält | rekursiv skuggkastning på servern, krigets dimma, bara synliga entiteter skickas | rekursion, symmetri, skilja på vad servern vet och vad en klient får veta |
+| 27 | Go | Vägval | vargar som jagar dig, råttor som flyr | generisk A* (`[N comparable]`), `container/heap`, Dijkstra-kartor |
+| 28 | Rust | En grafisk klient | ett fönster med kursens eget tileset; krigets dimma i båda klienterna | en trait `Renderer` med flera implementationer, Cargo-features, ett andra program, macroquad |
+| 29 | Rust | Ljus och liv | facklor, mörka grottor, glittrande vatten, gnistor och skakningar | ljus som tal, animation som rena funktioner av tiden, partiklar, standardmetoder |
+| 30 | Rust | Musen | klicka för att gå, verktygstips, en högerklicksmeny | A* med `BinaryHeap` + `Reverse`, koordinatsystem, en kö av handlingar över tid |
 
-Alla klientdelar organiseras då som ett **Cargo workspace**: `mud-core`
-(protokoll, tillstånd), `mud-tui` och `mud-gfx`. Bra övning i modulär design.
+Att organisera klienten som ett **Cargo workspace** (`mud-core`, `mud-tui`,
+`mud-gfx`) är en utmaning i lektion 28.
+
+**Efter fas 4** ser MUD:en ut som en roguelike: genererade grottor och
+skogar, saker du bara ser när du ser dem, och ett fönster med tiles.
 
 ## Fas 5 – En utbyggbar server (planerad)
 
@@ -344,7 +347,7 @@ Ungefärliga tider för någon som kan programmera men är ny i Go och Rust:
 | Fas 1 (01–05) | 8–12 timmar |
 | Fas 2 (06–13) | 15–25 timmar |
 | Fas 3 (14–22) | 25–35 timmar |
-| Fas 4 | 30–45 timmar |
+| Fas 4 (23–30) | 30–45 timmar |
 | Fas 5 | 25–40 timmar |
 
 Rust-lektionerna tar typiskt längre tid än Go-lektionerna. Det är normalt –

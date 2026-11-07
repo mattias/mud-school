@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "En grafisk klient – ett fönster med tiles",
+    "en": "A graphical client – a window with tiles",
+    "ja": "グラフィカルクライアント – タイルを描くウィンドウ"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Ett eget fönster med macroquad och ett tileset. En trait Renderer med flera implementationer – och resten av klienten är oförändrad. Här lönar sig beslutet från lektion 10.",
+    "en": "A window of its own with macroquad and a tileset. A trait Renderer with several implementations – and the rest of the client is unchanged. This is where the decision from lesson 10 pays off.",
+    "ja": "macroquad とタイルセットで専用のウィンドウを。複数の実装を持つトレイト Renderer。クライアントの他の部分はそのまま。レッスン 10 の決断が実を結ぶ。"
+  }
+}

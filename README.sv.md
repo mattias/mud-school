@@ -14,11 +14,16 @@ terminalklient med färgkarta i Dwarf Fortress-stil, statusrad och logg:
 (En riktig skärmbild av referenslösningen efter lektion 13. Telnet fungerar också, då blir kartan ren ASCII.)
 
 Fas 3 (lektion 14–22) väcker världen till liv: en spelloop, föremål, varelser
-som vandrar, strid och spelare som sparas i SQLite. Sedan fortsätter
-kursplanen: zoner med tiles och procedurgenerering à la Caves of Qud, en grafisk klient med tileset, och en
-server som kan byggas ut **medan den kör** – med omladdning av världen,
-Lua-skript, plugins skrivna i Rust och kompilerade till WebAssembly, och
-den klassiska MUD-tekniken *copyover*.
+som vandrar, strid och spelare som sparas i SQLite. Fas 4 (lektion 23–30) gör
+varje rum till en zon av rutor à la *Caves of Qud* – genererad från ett frö,
+med synfält och jagande varelser – och lägger till en grafisk klient med eget
+tileset, ljus och mus:
+
+![Den grafiska klienten från lektion 28: en zon ritad med tiles, synfältet som en cirkel](docs/images/gfx.png)
+
+Sedan fortsätter kursplanen med en server som kan byggas ut **medan den kör** –
+omladdning av världen, Lua-skript, plugins skrivna i Rust och kompilerade till
+WebAssembly, och den klassiska MUD-tekniken *copyover*.
 
 Kursen finns på **engelska, svenska och japanska** – instruktioner, ledtrådar,
 testernas felmeddelanden, spelets texter och spelvärlden.
@@ -66,7 +71,7 @@ Rekommenderade typsnitt för kartan (t.ex. i Windows Terminal) finns i
 | `./mudschool check [--race]` | kör lektionens tester; vid grönt går du vidare |
 | `./mudschool watch` | som `check`, men automatiskt när du sparar |
 | `./mudschool hint` | nästa ledtråd (en i taget) |
-| `./mudschool run server` / `run client` | starta din server eller klient |
+| `./mudschool run server` / `run client` / `run gfx` | starta din server, klient eller grafiska klient |
 | `./mudschool connect` | anslut till din server för hand, som telnet |
 | `./mudschool solution [--apply]` | visa (eller kopiera in) referenslösningen |
 | `./mudschool goto <id>` | hoppa till en lektion |
@@ -115,8 +120,16 @@ Du behöver aldrig köra `init` igen.
 | 20 | Go | Spara | `database/sql`, SQLite, transaktioner, migreringar, bcrypt |
 | 21 | Rust | Inställningar och inloggning | `clap`, `toml`, `thiserror` |
 | 22 | Go | Testa på riktigt | fuzzing, egenskapsbaserade tester |
+| 23 | Go | Zoner | 2D-rutnät, skillnader i tillstånd, `zone`/`delta`-frames |
+| 24 | Go | Procedurgenerering | cellautomater, brus, flood fill, frön |
+| 25 | Rust | Kameran | serde `rename`, `BTreeMap`, `saturating_sub` |
+| 26 | Go | Synfält | rekursiv skuggkastning, krigets dimma |
+| 27 | Go | Vägval | generisk A*, `container/heap`, Dijkstra-kartor |
+| 28 | Rust | En grafisk klient | en `Renderer`-trait, Cargo-features, macroquad |
+| 29 | Rust | Ljus och liv | färgblandning, animation som funktioner av tiden, partiklar |
+| 30 | Rust | Musen | `BinaryHeap` + `Reverse`, koordinatsystem |
 
-Fas 4–6 (lektion 23–36 och valfria spår) beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
+Fas 5–6 (lektion 31–36 och valfria spår) beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
 
 ## Dokumentation
 

@@ -141,6 +141,14 @@ const (
 	MsgPasswordTooShort = "Lösenordet måste vara minst 4 tecken."
 	MsgWrongPassword    = "Fel lösenord."
 	MsgStoreError       = "Något gick fel med sparningen – försök igen senare."
+	// zones (lesson 23)
+	MsgBlocked     = "Det går inte att gå dit."
+	MsgNoStairs    = "Det finns ingen trappa här."
+	MsgGoWhere     = "Gå vart? (t.ex. go north)"
+	MsgErrZoneRows = "rum %q: zonen är felaktig (%v) – minst 3×3, lika långa rader och kända tecken"
+	MsgErrZoneExit = "rum %q: zonen saknar en öppning för utgången %s"
+	// creatures that hunt (lesson 27)
+	MsgAttacksYou = "%s anfaller dig!"
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

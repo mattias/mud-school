@@ -7,8 +7,8 @@
 > tile graphics, scripts and plugins that load without a restart.
 
 This document describes the *whole* journey: why it looks the way it does,
-what you learn in every step and where we are heading. Lessons 01–22 are
-implemented in `lessons/` (with tests and reference solutions). Phases 4–6 are
+what you learn in every step and where we are heading. Lessons 01–30 are
+implemented in `lessons/` (with tests and reference solutions). Phases 5–6 are
 planned and described here so that you can see the big picture – and build on
 your own.
 
@@ -22,7 +22,7 @@ your own.
 4. [Phase 1 – The basics (lessons 01–05)](#phase-1--the-basics-lessons-0105)
 5. [Phase 2 – A world and a face (lessons 06–13)](#phase-2--a-world-and-a-face-lessons-0613)
 6. [Phase 3 – A living world (lessons 14–22)](#phase-3--a-living-world-lessons-1422)
-7. [Phase 4 – Tiles and zones](#phase-4--tiles-and-zones-planned)
+7. [Phase 4 – Tiles and zones (lessons 23–30)](#phase-4--tiles-and-zones-lessons-2330)
 8. [Phase 5 – An extensible server](#phase-5--an-extensible-server-planned)
 9. [Phase 6 – Out into the world](#phase-6--out-into-the-world-optional-tracks)
 10. [Concept map: Go and Rust side by side](#concept-map-go-and-rust-side-by-side)
@@ -156,9 +156,9 @@ Phase 1  The basics           01 ─ 05   Go: TCP, goroutines, commands, players
 Phase 2  A world and a face   06 ─ 13   Go: chat, rooms, world files, protocol + map
                                         Rust: threads, serde, colour map, TUI with ratatui
 Phase 3  A living world       14 ─ 22   game loop, items, NPCs, combat, saving
-───────────────────────────────────────────────────── implemented above ───
 Phase 4  Tiles and zones      23 ─ 30   Caves of Qud-style zones, procedural generation,
                                         field of view, A*, graphical client with a tileset
+───────────────────────────────────────────────────── implemented above ───
 Phase 5  An extensible server 31 ─ 36   live reloading, Lua scripts, WASM plugins
                                         in Rust, hooks, copyover, building in the game
 Phase 6  Out into the world   optional  web client (Rust→WASM), async Rust,
@@ -223,26 +223,29 @@ Proptest in Rust and a bot client are challenges in lesson 22.
 **After phase 3** the world lives: things happen while you sit still, and it
 remembers you the next day.
 
-## Phase 4 – Tiles and zones (planned)
+## Phase 4 – Tiles and zones (lessons 23–30)
 
 **Goal:** from room graph to tile world à la *Caves of Qud*: every room
-becomes a **zone** – a map of e.g. 80×25 cells where you walk cell by cell.
+becomes a **zone** – a map of e.g. 31×13 cells where you walk cell by cell.
 Walk over the edge and you end up in the next zone. The room map from lesson
 10 becomes the *world map*. The client gets real graphics.
 
-| # | Track | Lesson | Contents |
-|---|---|---|---|
-| 23 | Go | Zones | Zones with tiles and entities with `(x, y)`. The protocol gets `zone` frames (the whole zone) and `delta` frames (only changes) – you learn why you don't send everything every tick. |
-| 24 | Go | Procedural generation | Caves with cellular automata, tunnels with a "drunkard's walk", terrain with noise (simplex), all from a seed so the same world can be recreated. |
-| 25 | Rust | The camera | Show part of a large zone, follow the player, scroll. Coordinate systems, `saturating_sub`, `clamp`. |
-| 26 | Go | Field of view | Recursive *shadowcasting* on the server (so nobody can cheat) and "fog of war": cells you have seen but can't see now are drawn darker. |
-| 27 | Go | Pathfinding | A* for creatures with `container/heap` and generics. Compare with Dijkstra maps (as in *Brogue*). |
-| 28 | Rust | A graphical client | A window of its own with `macroquad` (simple) or `bevy` (large ecosystem). Load a CP437 tileset (16×16 glyphs – the same idea as Dwarf Fortress tilesets) or a CC0 pack like Kenney's *1-Bit Pack*. **A trait `Renderer` with two implementations** – terminal and tiles – and the rest of the client is unchanged. This is where the decision from lesson 10 pays off. |
-| 29 | Rust | Light and life | Light sources with colour blending, animated water, particles, screen shake on hits. *Brogue*-style lighting. |
-| 30 | Rust | The mouse | Click to walk (A* in the client), a mouse pointer showing "An old spruce" in a tooltip, a right-click menu. |
+| # | Track | Lesson | The game gets | The language teaches you |
+|---|---|---|---|---|
+| 23 | Go | Zones | every room a grid of tiles; step by step; hand-made zones in the world file; `zone` and `delta` frames | 2D grids, comparable structs as map keys, diffing state |
+| 24 | Go | Procedural generation | caves (cellular automata), forests and lakes (value noise), tunnels (drunkard's walk), all from a seed | seeded `math/rand/v2`, `hash/fnv`, flood fill, property tests |
+| 25 | Rust | The camera | the zone on screen, a camera that follows you, walking with the arrow keys | serde with `rename`, `From`, `BTreeMap`, `saturating_sub`, match guards |
+| 26 | Go | Field of view | recursive shadowcasting on the server, fog of war, only visible entities are sent | recursion, symmetry, separating what the server knows from what a client may know |
+| 27 | Go | Pathfinding | wolves that hunt you, rats that flee | generic A* (`[N comparable]`), `container/heap`, Dijkstra maps |
+| 28 | Rust | A graphical client | a window with the course's own tileset; the fog of war in both clients | a trait `Renderer` with several implementations, Cargo features, a second binary, macroquad |
+| 29 | Rust | Light and life | torches, dark caves, shimmering water, sparks and screen shake | light as numbers, animation as pure functions of time, particles, default methods |
+| 30 | Rust | The mouse | click to walk, tooltips, a right-click menu | A* with `BinaryHeap` + `Reverse`, coordinate systems, a queue of actions over time |
 
-All client parts are then organized as a **Cargo workspace**: `mud-core`
-(protocol, state), `mud-tui` and `mud-gfx`. A good exercise in modular design.
+Organizing the client as a **Cargo workspace** (`mud-core`, `mud-tui`,
+`mud-gfx`) is a challenge in lesson 28.
+
+**After phase 4** the MUD looks like a roguelike: generated caves and
+forests, things you only see when you see them, and a window with tiles.
 
 ## Phase 5 – An extensible server (planned)
 
@@ -342,7 +345,7 @@ Approximate times for someone who can program but is new to Go and Rust:
 | Phase 1 (01–05) | 8–12 hours |
 | Phase 2 (06–13) | 15–25 hours |
 | Phase 3 (14–22) | 25–35 hours |
-| Phase 4 | 30–45 hours |
+| Phase 4 (23–30) | 30–45 hours |
 | Phase 5 | 25–40 hours |
 
 The Rust lessons typically take longer than the Go lessons. That is normal –

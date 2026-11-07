@@ -14,11 +14,16 @@ client with a Dwarf Fortress-style colour map, a status bar and a log:
 (A real screenshot of the reference solution after lesson 13. Telnet works too; then the map is plain ASCII.)
 
 Phase 3 (lessons 14–22) brings the world to life: a game loop, items,
-creatures that wander, combat, and players who are saved in SQLite. Then the
-curriculum continues: zones with tiles and procedural generation à la Caves of Qud, a graphical client with a tileset,
-and a server that can be extended **while it is running** – with live world
-reloading, Lua scripts, plugins written in Rust and compiled to WebAssembly,
-and the classic MUD technique *copyover*.
+creatures that wander, combat, and players who are saved in SQLite. Phase 4
+(lessons 23–30) turns every room into a zone of tiles à la *Caves of Qud* –
+generated from a seed, with a field of view and hunting creatures – and adds a
+graphical client with its own tileset, light and a mouse:
+
+![The graphical client from lesson 28: a zone drawn with tiles, the field of view as a circle](docs/images/gfx.png)
+
+Then the curriculum continues with a server that can be extended **while it
+is running** – live world reloading, Lua scripts, plugins written in Rust and
+compiled to WebAssembly, and the classic MUD technique *copyover*.
 
 The course is available in **English, Swedish and Japanese** – instructions,
 hints, the tests' failure messages, the game's texts and the game world.
@@ -65,7 +70,7 @@ Recommended fonts for the map (e.g. in Windows Terminal) are listed in
 | `./mudschool check [--race]` | runs the lesson's tests; when green you move on |
 | `./mudschool watch` | like `check`, but automatically when you save |
 | `./mudschool hint` | the next hint (one at a time) |
-| `./mudschool run server` / `run client` | start your server or client |
+| `./mudschool run server` / `run client` / `run gfx` | start your server, client or graphical client |
 | `./mudschool connect` | connect to your server by hand, like telnet |
 | `./mudschool solution [--apply]` | show (or copy in) the reference solution |
 | `./mudschool goto <id>` | jump to a lesson |
@@ -114,8 +119,16 @@ automatically, and `doctor` tells you when something is waiting. You never need 
 | 20 | Go | Saving | `database/sql`, SQLite, transactions, migrations, bcrypt |
 | 21 | Rust | Settings and login | `clap`, `toml`, `thiserror` |
 | 22 | Go | Testing for real | fuzzing, property-based tests |
+| 23 | Go | Zones | 2D grids, diffing state, `zone`/`delta` frames |
+| 24 | Go | Procedural generation | cellular automata, noise, flood fill, seeds |
+| 25 | Rust | The camera | serde `rename`, `BTreeMap`, `saturating_sub` |
+| 26 | Go | Field of view | recursive shadowcasting, fog of war |
+| 27 | Go | Pathfinding | generic A*, `container/heap`, Dijkstra maps |
+| 28 | Rust | A graphical client | a `Renderer` trait, Cargo features, macroquad |
+| 29 | Rust | Light and life | colour blending, animation as functions of time, particles |
+| 30 | Rust | The mouse | `BinaryHeap` + `Reverse`, coordinate systems |
 
-Phases 4–6 (lessons 23–36 and optional tracks) are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
+Phases 5–6 (lessons 31–36 and optional tracks) are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
 
 ## Documentation
 

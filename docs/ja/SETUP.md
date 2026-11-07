@@ -67,6 +67,12 @@ cargo --version
 
 ```powershell
 winget install Insecure.Nmap
+```
+
+インストーラーは既定の設定のまま進めてください（Npcap は任意で、不要です）。その後
+`ncat` が `PATH` に入るよう **Windows Terminal をいったん閉じて開き直します**。それから:
+
+```powershell
 ncat 127.0.0.1 4000
 ```
 
@@ -81,9 +87,15 @@ Shift-JIS、コードページ 932）。次を PowerShell のプロファイル�
 新しく開く端末はすべて UTF-8 になります:
 
 ```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
 Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
 ```
+
+1 行目は、PowerShell が自分のプロファイルを実行できるようにするためのものです。Windows は
+既定でスクリプトの実行を拒否し、プロファイルもスクリプトだからです（管理者権限は不要）。
+コマンドは、Windows Terminal で実際に使っているシェルで実行してください。Windows PowerShell と
+PowerShell 7 ではプロファイルが別です。
 
 新しいタブを開いて `chcp` で確認しましょう。`65001` と表示されれば OK です。コードページが
 違えば `doctor` が警告します。
@@ -118,7 +130,7 @@ pacman -S --needed mingw-w64-ucrt-x86_64-gcc
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # Go、Rust、telnet、gcc、端末を確認
+.\mudschool.cmd doctor            # Go、Rust、ncat/telnet、gcc、端末、コードページを確認
 .\mudschool.cmd init --lang ja    # workspace\ を作る（en、sv、ja）
 .\mudschool.cmd show              # 最初のレッスン
 ```

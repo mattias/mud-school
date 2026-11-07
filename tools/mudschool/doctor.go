@@ -73,9 +73,9 @@ func (c *course) cmdDoctor() error {
 	}
 	if client == "telnet" && runtime.GOOS == "windows" {
 		warn("telnet/nc", "telnet", L(
-			"Windows telnet visar å, ä, ö och japanska fel. Installera ncat i stället: `winget install Insecure.Nmap`, sedan `ncat 127.0.0.1 4000`.",
-			"Windows telnet shows non-English characters wrong. Install ncat instead: `winget install Insecure.Nmap`, then `ncat 127.0.0.1 4000`.",
-			"Windows の telnet では日本語が文字化けします。代わりに ncat を入れてください: `winget install Insecure.Nmap`、その後 `ncat 127.0.0.1 4000`。"))
+			"Windows telnet visar å, ä, ö och japanska fel. Installera ncat i stället: `winget install Insecure.Nmap`, öppna en ny terminal, sedan `ncat 127.0.0.1 4000`.",
+			"Windows telnet shows non-English characters wrong. Install ncat instead: `winget install Insecure.Nmap`, open a new terminal, then `ncat 127.0.0.1 4000`.",
+			"Windows の telnet では日本語が文字化けします。代わりに ncat を入れてください: `winget install Insecure.Nmap`、新しい端末を開いてから `ncat 127.0.0.1 4000`。"))
 	} else if client != "" {
 		ok("telnet/nc", client)
 	} else {
@@ -130,9 +130,9 @@ func (c *course) cmdDoctor() error {
 	// bytes as they are, so the console must expect UTF-8.
 	if cp, found := consoleCodePage(); found && cp != 65001 {
 		warn(L("kodsida", "code page", "コードページ"), fmt.Sprintf(L("konsolen använder kodsida %d, inte UTF-8 (65001)", "the console uses code page %d, not UTF-8 (65001)", "コンソールのコードページが %d で、UTF-8（65001）ではありません"), cp), L(
-			"ncat/telnet visar då å, ä, ö och japanska fel. Gör UTF-8 permanent i PowerShell – se SETUP.md, \"UTF-8 i varje ny terminal\".",
-			"ncat/telnet will then show non-English characters wrong. Make UTF-8 permanent in PowerShell – see SETUP.md, \"UTF-8 in every new terminal\".",
-			"そのままでは ncat/telnet で日本語が文字化けします。PowerShell で UTF-8 を常に使うように設定してください。SETUP.md の「新しい端末でも毎回 UTF-8 に」を参照。"))
+			"ncat/telnet visar då å, ä, ö och japanska fel. Gör UTF-8 permanent i PowerShell – se docs/sv/SETUP.md, \"UTF-8 i varje ny terminal\".",
+			"ncat/telnet will then show non-English characters wrong. Make UTF-8 permanent in PowerShell – see docs/en/SETUP.md, \"UTF-8 in every new terminal\".",
+			"そのままでは ncat/telnet で日本語が文字化けします。PowerShell で UTF-8 を常に使うように設定してください。docs/ja/SETUP.md の「新しい端末でも毎回 UTF-8 に」を参照。"))
 	}
 
 	// Workspace
@@ -216,9 +216,9 @@ func telnetHint() string {
 	switch runtime.GOOS {
 	case "windows":
 		return L(
-			"Bra för att prova servern för hand: `winget install Insecure.Nmap` ger ncat (`ncat 127.0.0.1 4000`). Windows egen telnet visar å, ä, ö fel.",
-			"Handy for trying the server by hand: `winget install Insecure.Nmap` gives you ncat (`ncat 127.0.0.1 4000`). Windows' own telnet shows non-English characters wrong.",
-			"サーバーを手で試すのに便利です: `winget install Insecure.Nmap` で ncat が入ります（`ncat 127.0.0.1 4000`）。Windows 標準の telnet は日本語が文字化けします。")
+			"Bra för att prova servern för hand: `winget install Insecure.Nmap` ger ncat (öppna en ny terminal, sedan `ncat 127.0.0.1 4000`). Windows egna telnet visar å, ä, ö fel.",
+			"Handy for trying the server by hand: `winget install Insecure.Nmap` gives you ncat (open a new terminal, then `ncat 127.0.0.1 4000`). Windows' own telnet shows non-English characters wrong.",
+			"サーバーを手で試すのに便利です: `winget install Insecure.Nmap` で ncat が入ります（新しい端末を開いてから `ncat 127.0.0.1 4000`）。Windows 標準の telnet は日本語が文字化けします。")
 	case "darwin":
 		return L("Bra för att prova servern för hand: `brew install telnet`", "Handy for trying the server by hand: `brew install telnet`", "サーバーを手で試すのに便利です: `brew install telnet`")
 	default:

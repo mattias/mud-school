@@ -67,10 +67,17 @@ behöver du en enkel radbaserad klient. På Windows använder du **ncat** (från
 
 ```powershell
 winget install Insecure.Nmap
+```
+
+Godkänn installationsprogrammets standardval (Npcap är frivilligt – du behöver
+det inte), och **stäng och öppna Windows Terminal igen** så att `ncat` finns i
+`PATH`. Sedan:
+
+```powershell
 ncat 127.0.0.1 4000
 ```
 
-> Windows egen telnet-klient (`dism /online /Enable-Feature /FeatureName:TelnetClient`)
+> Windows egna telnet-klient (`dism /online /Enable-Feature /FeatureName:TelnetClient`)
 > fungerar också, men den visar å, ä, ö och japanska tecken som teckengröt –
 > den förstår inte UTF-8.
 
@@ -82,9 +89,15 @@ Shift-JIS, kodsida 932). Lägg till det här i din PowerShell-profil **en gång*
 så använder varje ny terminal UTF-8:
 
 ```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
 Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
 ```
+
+Första raden låter PowerShell köra din egen profil över huvud taget – som
+standard vägrar Windows köra skript, och profilen är ett skript (inga
+administratörsrättigheter behövs). Kör kommandona i det skal du faktiskt
+använder i Windows Terminal: Windows PowerShell och PowerShell 7 har olika profiler.
 
 Öppna en ny flik och kontrollera med `chcp` – det ska stå `65001`. `doctor`
 varnar om kodsidan är något annat.
@@ -121,7 +134,7 @@ med `gcc --version`.
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # kontrollerar Go, Rust, telnet, gcc och terminalen
+.\mudschool.cmd doctor            # kontrollerar Go, Rust, ncat/telnet, gcc, terminalen och kodsidan
 .\mudschool.cmd init --lang sv    # skapar workspace\ (en, sv eller ja)
 .\mudschool.cmd show              # första lektionen
 ```

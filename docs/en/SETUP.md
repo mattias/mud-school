@@ -67,6 +67,12 @@ you need a simple line-based client. On Windows, use **ncat** (from Nmap):
 
 ```powershell
 winget install Insecure.Nmap
+```
+
+Accept the installer's defaults (Npcap is optional – you don't need it), then
+**close and reopen Windows Terminal** so that `ncat` is in `PATH`. Then:
+
+```powershell
 ncat 127.0.0.1 4000
 ```
 
@@ -82,9 +88,15 @@ Shift-JIS, code page 932). Add this to your PowerShell profile **once**, and
 every new terminal uses UTF-8:
 
 ```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
 Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
 ```
+
+The first line lets PowerShell run your own profile at all – by default
+Windows refuses to run scripts, and the profile is a script (no
+administrator needed). Run the commands in the shell you actually use in
+Windows Terminal: Windows PowerShell and PowerShell 7 have different profiles.
 
 Open a new tab and check with `chcp` – it should say `65001`. `doctor` warns
 if the code page is something else.
@@ -122,7 +134,7 @@ check with `gcc --version`.
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # checks Go, Rust, telnet, gcc and the terminal
+.\mudschool.cmd doctor            # checks Go, Rust, ncat/telnet, gcc, the terminal and the code page
 .\mudschool.cmd init --lang en    # creates workspace\ (en, sv or ja)
 .\mudschool.cmd show              # the first lesson
 ```

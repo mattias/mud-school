@@ -65,6 +65,8 @@ sparas en ändrad `messages.go`/`messages.rs` först som `.bak`.
 - **Att gå in i en lektion** kopierar `scaffold/` och `scaffold.<språk>/` –
   men bara filer som inte redan finns. Studentens kod skrivs aldrig över.
   Lektionens tester läggs också in direkt, så att README kan hänvisa till dem.
+  Tills lektionen är löst markerar editorn de nya testerna (odefinierade namn)
+  – det är väntat; `run server`/`run client` påverkas inte.
 - **`check`**:
   1. tar bort alla filer och kataloger i `workspace/` vars namn börjar på
      `mudschool_` (gamla kurstester),

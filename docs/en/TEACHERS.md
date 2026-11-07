@@ -65,6 +65,8 @@ If the student switches languages with `./mudschool lang`, an edited
 - **Entering a lesson** copies `scaffold/` and `scaffold.<lang>/` – but only
   files that don't exist yet. The student's code is never overwritten. The
   lesson's tests are placed right away too, so the README can point at them.
+  Until the lesson is solved, editors flag the new tests (undefined names) –
+  that is expected; `run server`/`run client` are unaffected.
 - **`check`**:
   1. removes every file and directory in `workspace/` whose name starts with
      `mudschool_` (old course tests),

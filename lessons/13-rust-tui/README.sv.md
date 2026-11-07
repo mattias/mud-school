@@ -97,7 +97,7 @@ kvar – ett vanligt knep när man vill *flytta ut* något ur en `&mut`.
 ./mudschool run client
 ```
 
-Öppna en till klient (eller telnet) och prata med dig själv. Gå runt och se
+Öppna en till klient (eller `./mudschool connect`) och prata med dig själv. Gå runt och se
 kartan och statusraden uppdateras.
 
 ## Fundera på

@@ -158,6 +158,7 @@ Lägg till `mud.db` i din `.gitignore`.
 - Autosparning: var N:e tick tar spelloopen ögonblicksbilder av alla och en
   separat goroutine skriver dem.
 - Dölj lösenordet i telnet också: skicka `IAC WILL ECHO` (byte 255 251 1)
-  före frågan och `IAC WONT ECHO` efter.
+  före frågan och `IAC WONT ECHO` efter. (Prova med en riktig telnet:
+  `./mudschool connect` hoppar bara över telnet-kommandon.)
 - Lås ett konto en minut efter tre felaktiga lösenord.
 - Spara även saker som ligger på marken, så att världen minns var saker släpptes.

@@ -71,15 +71,19 @@ cargo --version
 > 2. Reinstall Rust from the official source: `winget uninstall Rustlang.Rustup`,
 >    then `winget install Rustlang.Rustup` (or `rustup-init.exe` from
 >    <https://rustup.rs>).
-> 3. If Defender quarantines the fresh file again, it is very likely a false
->    positive: compare `Get-FileHash $env:USERPROFILE\.cargo\bin\cargo.exe`
->    with `Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe` (they should be
->    identical), report the file to Microsoft at
->    <https://www.microsoft.com/wdsi/filesubmission>, and restore it under
->    *Protection history*.
+> 3. If the fresh file is quarantined again, check that rustup is genuine.
+>    `cargo.exe` is gone, but it is a hard link to `rustup.exe`, which is a
+>    copy of the official `rustup-init.exe`. Run `rustup self update`, then
+>    compare `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash` with
+>    the first word of <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> (ignore upper/lower case).
+> 4. If they match, it is a false positive: report the file to Microsoft at
+>    <https://www.microsoft.com/wdsi/filesubmission>, then in *Protection
+>    history* choose the item → *Actions* → *Allow on device*. A plain
+>    *Restore* may be quarantined again until Microsoft updates its
+>    definitions. If they don't match – don't allow anything; ask for help.
 >
 > Programs you build yourself (`target\debug\*.exe`) can be flagged the
-> same way; the same steps apply.
+> same way; report them as in step 4.
 
 ### 3. Connecting by hand – nothing to install
 
@@ -91,7 +95,8 @@ The course tool has a little client built in:
 ```
 
 It shows å, ä, ö and Japanese correctly in every Windows terminal, without
-any settings. Where the lessons say `telnet 127.0.0.1 4000`, use this.
+any settings. The lessons use `./mudschool connect`; where they mention
+telnet or nc, this works the same.
 
 #### If you want telnet or ncat anyway
 
@@ -107,7 +112,8 @@ pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputE
 ```
 
 (Use `powershell.exe` instead of `pwsh.exe` for Windows PowerShell 5.1.)
-Check in a new tab with `chcp` – it should say `65001`.
+(If you edit `settings.json` by hand instead, write each `"` inside the
+command as `\"`.) Check in a new tab with `chcp` – it should say `65001`.
 
 The PowerShell profile (`$PROFILE`) would also work, but it lives in
 *Documents*, which Defender's **controlled folder access** often protects

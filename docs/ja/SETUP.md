@@ -69,14 +69,18 @@ cargo --version
 >    更新プログラムのチェック*）。
 > 2. 公式の入手元から Rust を入れ直す: `winget uninstall Rustlang.Rustup` の後に
 >    `winget install Rustlang.Rustup`（または <https://rustup.rs> の `rustup-init.exe`）。
-> 3. 新しいファイルもまた検疫されるなら、誤検出の可能性が非常に高いです:
->    `Get-FileHash $env:USERPROFILE\.cargo\bin\cargo.exe` と
->    `Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe` を比べ（同じはずです）、
->    <https://www.microsoft.com/wdsi/filesubmission> から Microsoft に報告し、
->    *保護の履歴* で復元します。
+> 3. 新しいファイルもまた検疫されたら、rustup が本物か確かめます。`cargo.exe` は消えて
+>    いますが、これは `rustup.exe` へのハードリンクで、`rustup.exe` は公式の
+>    `rustup-init.exe` のコピーです。`rustup self update` を実行してから、
+>    `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash` を
+>    <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> の最初の語と比べます（大文字・小文字は無視）。
+> 4. 一致すれば誤検出です: <https://www.microsoft.com/wdsi/filesubmission> から
+>    Microsoft に報告し、*保護の履歴* でその項目 → *操作* → *デバイスで許可* を選びます。
+>    単なる *復元* では、Microsoft が定義を更新するまで再び検疫されることがあります。
+>    一致しなければ何も許可せず、助けを求めてください。
 >
 > 自分でビルドしたプログラム（`target\debug\*.exe`）も同じように検出されることがあります。
-> 手順は同じです。
+> 手順 4 のように報告してください。
 
 ### 3. 手で接続する – インストール不要
 
@@ -87,8 +91,8 @@ cargo --version
 .\mudschool.cmd connect          # = 127.0.0.1:4000
 ```
 
-設定なしで、どの Windows 端末でも日本語が正しく表示されます。レッスンに
-`telnet 127.0.0.1 4000` とあるところでは、これを使ってください。
+設定なしで、どの Windows 端末でも日本語が正しく表示されます。レッスンでは
+`./mudschool connect` を使います。telnet や nc とあるところでも同じように使えます。
 
 #### それでも telnet や ncat を使いたい場合
 
@@ -102,7 +106,7 @@ PowerShell は最初はそうなっていません（日本語版 Windows は Sh
 pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()"
 ```
 
-（Windows PowerShell 5.1 なら `pwsh.exe` の代わりに `powershell.exe`。）新しいタブで `chcp`
+（Windows PowerShell 5.1 なら `pwsh.exe` の代わりに `powershell.exe`。）（`settings.json` を直接編集する場合は、コマンド内の `"` を `\"` と書きます。）新しいタブで `chcp`
 を実行し、`65001` と表示されれば OK です。
 
 PowerShell のプロファイル（`$PROFILE`）でも可能ですが、プロファイルは *ドキュメント* にあり、

@@ -2,7 +2,7 @@
 
 `ParseCommand` has been with you since lesson 4. It has tests. It works. Or…?
 
-Type `look`, a **tab** and `sword` in telnet. The server answers that it
+Type `look`, a **tab** and `sword` in `./mudschool connect` (or telnet). The server answers that it
 doesn't know the command `look	sword` – the tab became part of the verb. None
 of the tests you have seen caught that, because nobody thought of writing that
 example.

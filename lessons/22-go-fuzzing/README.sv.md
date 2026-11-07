@@ -2,7 +2,7 @@
 
 `ParseCommand` har följt dig sedan lektion 4. Den har tester. Den fungerar. Eller…?
 
-Skriv `look`, en **tabb** och `sword` i telnet. Servern svarar att den inte
+Skriv `look`, en **tabb** och `sword` i `./mudschool connect` (eller telnet). Servern svarar att den inte
 känner till kommandot `look	sword` – tabben blev en del av verbet. Inget av
 testerna du har sett fångade det, för ingen kom på att skriva just det exemplet.
 

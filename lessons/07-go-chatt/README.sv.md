@@ -81,7 +81,7 @@ testet; med utkorgar går det igenom.
 
 ## Testa själv
 
-Starta servern, två klienter (telnet eller din Rust-klient från lektion 06)
+Starta servern, två klienter (`./mudschool connect` eller din Rust-klient från lektion 06)
 och prata med dig själv. Kör `./mudschool check --race` också.
 
 ## Fundera på

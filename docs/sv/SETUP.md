@@ -71,15 +71,19 @@ cargo --version
 > 2. Installera om Rust från den officiella källan: `winget uninstall Rustlang.Rustup`,
 >    sedan `winget install Rustlang.Rustup` (eller `rustup-init.exe` från
 >    <https://rustup.rs>).
-> 3. Sätter Defender den nya filen i karantän igen är det med stor sannolikhet
->    ett falsklarm: jämför `Get-FileHash $env:USERPROFILE\.cargo\bin\cargo.exe`
->    med `Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe` (de ska vara
->    identiska), rapportera filen till Microsoft på
->    <https://www.microsoft.com/wdsi/filesubmission>, och återställ den under
->    *Skyddshistorik*.
+> 3. Hamnar den nya filen i karantän igen, kontrollera att rustup är äkta.
+>    `cargo.exe` är borta, men den är en hård länk till `rustup.exe`, som är en
+>    kopia av den officiella `rustup-init.exe`. Kör `rustup self update` och
+>    jämför sedan `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash`
+>    med första ordet i <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> (stora/små bokstäver spelar ingen roll).
+> 4. Stämmer de är det ett falsklarm: rapportera filen till Microsoft på
+>    <https://www.microsoft.com/wdsi/filesubmission>, och välj sedan objektet i
+>    *Skyddshistorik* → *Åtgärder* → *Tillåt på enhet*. En vanlig *Återställ*
+>    kan hamna i karantän igen tills Microsoft har uppdaterat sina definitioner.
+>    Stämmer de inte – tillåt ingenting; be om hjälp.
 >
 > Program du bygger själv (`target\debug\*.exe`) kan flaggas på samma sätt;
-> samma steg gäller.
+> rapportera dem som i steg 4.
 
 ### 3. Ansluta för hand – inget att installera
 
@@ -91,7 +95,8 @@ Kursverktyget har en liten inbyggd klient:
 ```
 
 Den visar å, ä, ö och japanska rätt i alla Windows-terminaler, utan några
-inställningar. Där lektionerna skriver `telnet 127.0.0.1 4000` använder du den här.
+inställningar. Lektionerna använder `./mudschool connect`; där de nämner
+telnet eller nc fungerar den här likadant.
 
 #### Om du ändå vill använda telnet eller ncat
 
@@ -107,7 +112,8 @@ pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputE
 ```
 
 (Använd `powershell.exe` i stället för `pwsh.exe` för Windows PowerShell 5.1.)
-Kontrollera i en ny flik med `chcp` – det ska stå `65001`.
+(Redigerar du `settings.json` för hand i stället skriver du varje `"` i
+kommandot som `\"`.) Kontrollera i en ny flik med `chcp` – det ska stå `65001`.
 
 PowerShell-profilen (`$PROFILE`) skulle också fungera, men den ligger i
 *Dokument*, som Defenders **reglerad mappåtkomst** ofta skyddar ("Åtkomst till

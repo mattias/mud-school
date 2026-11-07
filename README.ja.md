@@ -26,8 +26,8 @@ Caves of Qud 風のタイルのゾーンと手続き
 ## はじめかた
 
 **1. ツールをインストールする。** 必要なのは Go 1.22 以降、Rust（stable）、UTF-8 と
-色を扱える端末です。telnet は不要です（`./mudschool connect` が内蔵されています）。Windows・macOS・Linux 向けの
-手順は **[docs/ja/SETUP.md](docs/ja/SETUP.md)** にあります。
+色を扱える端末です。telnet は不要です（`./mudschool connect` が内蔵されています）。
+Windows・macOS・Linux 向けの手順は **[docs/ja/SETUP.md](docs/ja/SETUP.md)** にあります。
 
 いちばん手軽なのは、リポジトリを **GitHub Codespaces** か **VS Code の Dev Container**
 で開くことです。すべてインストール済みです（`.devcontainer/`）。

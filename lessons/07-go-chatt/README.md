@@ -82,7 +82,7 @@ hangs; with outboxes it passes.
 
 ## Try it yourself
 
-Start the server and two clients (telnet or your Rust client from lesson 06)
+Start the server and two clients (`./mudschool connect` or your Rust client from lesson 06)
 and talk to yourself. Run `./mudschool check --race` too.
 
 ## Think about

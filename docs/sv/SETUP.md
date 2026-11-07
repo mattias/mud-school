@@ -60,16 +60,54 @@ rustc --version
 cargo --version
 ```
 
-### 3. telnet (frivilligt men rekommenderat)
+### 3. ncat (frivilligt men rekommenderat)
 
-Öppna PowerShell **som administratör** en gång och kör:
+För att prova din server för hand innan din egen klient finns (lektion 01–02)
+behöver du en enkel radbaserad klient. På Windows använder du **ncat** (från Nmap):
 
 ```powershell
-dism /online /Enable-Feature /FeatureName:TelnetClient
+winget install Insecure.Nmap
 ```
 
-> Windows telnet-klient kan visa å, ä, ö och japanska tecken fel. Från
-> lektion 03 har du din egen Rust-klient, som visar allt rätt.
+Godkänn installationsprogrammets standardval (Npcap är frivilligt – du behöver
+det inte), och **stäng och öppna Windows Terminal igen** så att `ncat` finns i
+`PATH`. Sedan:
+
+```powershell
+ncat 127.0.0.1 4000
+```
+
+> Windows egna telnet-klient (`dism /online /Enable-Feature /FeatureName:TelnetClient`)
+> fungerar också, men den visar å, ä, ö och japanska tecken som teckengröt –
+> den förstår inte UTF-8.
+
+#### UTF-8 i varje ny terminal
+
+ncat skriver det servern skickar rakt till konsolen, så konsolen måste vänta
+sig UTF-8. Det gör PowerShell inte från början (en japansk Windows använder
+Shift-JIS, kodsida 932). Lägg till det här i din PowerShell-profil **en gång**,
+så använder varje ny terminal UTF-8:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
+if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
+Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
+```
+
+Första raden låter PowerShell köra din egen profil över huvud taget – som
+standard vägrar Windows köra skript, och profilen är ett skript (inga
+administratörsrättigheter behövs). Kör kommandona i det skal du faktiskt
+använder i Windows Terminal: Windows PowerShell och PowerShell 7 har olika profiler.
+
+Öppna en ny flik och kontrollera med `chcp` – det ska stå `65001`. `doctor`
+varnar om kodsidan är något annat.
+
+(Alternativet gäller hela systemet: *Inställningar → Tid och språk → Språk och
+region → Administrativa språkinställningar → Ändra systemets nationella
+inställningar → "Beta: Använd Unicode UTF-8 för språkstöd över hela världen"*,
+och starta om. Det påverkar även äldre program, som då kan visa andra tecken fel.)
+
+Från lektion 03 har du din egen Rust-klient, som visar allt rätt utan något av det här.
 
 ### 4. En C-kompilator (frivilligt)
 
@@ -96,7 +134,7 @@ med `gcc --version`.
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # kontrollerar Go, Rust, telnet, gcc och terminalen
+.\mudschool.cmd doctor            # kontrollerar Go, Rust, ncat/telnet, gcc, terminalen och kodsidan
 .\mudschool.cmd init --lang sv    # skapar workspace\ (en, sv eller ja)
 .\mudschool.cmd show              # första lektionen
 ```
@@ -254,6 +292,7 @@ hanterar klienten rätt.
 | Terminalen beter sig konstigt efter att klienten kraschat | Skriv `reset` (Windows: stäng fliken) – klienten lämnade terminalen i "raw mode". |
 | `address already in use` | Något kör redan på port 4000. Stoppa det, eller kör `./mudschool run server -addr 127.0.0.1:4001` och `./mudschool run client 127.0.0.1:4001`. |
 | Rutor eller konstiga tecken på kartan | Typsnittet saknar tecknen eller terminalen är inte UTF-8 – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
+| Windows: telnet/ncat visar teckengröt (t.ex. å, ä, ö) | Använd ncat och gör konsolen UTF-8 – se [UTF-8 i varje ny terminal](#utf-8-i-varje-ny-terminal). |
 | Kartans kolumner hamnar fel (japanska) | Tecken med tvetydig bredd ritas dubbelt så breda – se [Typsnitt och terminaler](#typsnitt-och-terminaler). |
 | Inga eller fel färger | Terminalen saknar 24-bitars färg (t.ex. macOS Terminal.app, den gamla Windows-konsolen). |
 | `-race requires cgo` | Installera en C-kompilator (se avsnittet för ditt system) eller kör utan `--race`. |

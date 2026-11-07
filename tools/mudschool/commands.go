@@ -277,6 +277,7 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		return false, err
 	}
 	ws := c.workspace()
+	// Also (re)places the lesson's tests, so an edited test is reset.
 	if _, err := c.enterWorkspace(p, l); err != nil {
 		return false, err
 	}
@@ -294,9 +295,6 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 			"! 作業領域の %d 個のファイルにコースの新しい版があります。./mudschool update を実行してください"), pending)))
 	}
 	if err := c.saveProgress(p); err != nil {
-		return false, err
-	}
-	if err := c.placeTests(ws, l); err != nil {
 		return false, err
 	}
 	fmt.Printf("%s %s %s: %s\n\n", cyan("▶"), L("Lektion", "Lesson", "レッスン"), l.ID, bold(l.Title.String()))
@@ -320,6 +318,13 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 	if !advance {
 		return true, nil
 	}
+	if todos := leftoverTODOs(ws, l.ID); len(todos) > 0 {
+		fmt.Println(dim(fmt.Sprintf(L(
+			"Tips: kommentarerna TODO(lesson %s) är avklarade nu – du kan ta bort dem: %s",
+			"Tip: the TODO(lesson %s) comments are done now – you can delete them: %s",
+			"ヒント: TODO(lesson %s) のコメントはもう済んでいます。消してかまいません: %s"),
+			strings.TrimLeft(l.ID, "0"), strings.Join(todos, ", "))))
+	}
 	p.Done[l.ID] = true
 	if nxt := c.next(l); nxt != nil {
 		p.Current = nxt.ID
@@ -329,6 +334,10 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		}
 		fmt.Printf("\n%s %s %s\n", L("Nästa lektion:", "Next lesson:", "次のレッスン:"), nxt.ID, bold(nxt.Title.String()))
 		for _, f := range created {
+			if strings.HasPrefix(filepath.Base(f), "mudschool_") {
+				fmt.Println(dim(L("  kursens test (ändra inte): workspace/", "  course test (don't edit): workspace/", "  コースのテスト（編集しない）: workspace/") + filepath.ToSlash(f)))
+				continue
+			}
 			fmt.Println(dim(L("  ny fil: workspace/", "  new file: workspace/", "  新しいファイル: workspace/") + f))
 		}
 		fmt.Println(L("Kör", "Run", "次を実行:"), cyan("./mudschool show"))
@@ -500,7 +509,7 @@ func (c *course) verifyLang(selected map[string]bool) (int, error) {
 		run := len(selected) == 0 || selected[l.ID]
 		dir, cmds := checkCommands(l.Track, false)
 		check := func() (string, bool) {
-			if err := c.placeTests(ws, l); err != nil {
+			if _, err := c.placeTests(ws, l); err != nil {
 				return err.Error(), false
 			}
 			var all strings.Builder

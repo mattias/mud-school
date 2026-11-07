@@ -78,5 +78,11 @@ no data yet – but just wait for lesson 05!
 
 ## Challenges
 
-- Count the connected clients and log the number. Test with `--race`. Do you
-  get a warning? Read about `sync/atomic` (`atomic.Int64`) and fix it.
+- Count the connected clients and log the number: add a plain `clients int`
+  field to `Server`, count up at the start of `handle` and down (with
+  `defer`) when the client leaves. Run `./mudschool check --race`: you should
+  get `WARNING: DATA RACE`, because many `handle` goroutines change the same
+  variable at once. Read about `sync/atomic` (`atomic.Int64`) and fix it.
+  (Count in `Serve`'s loop instead and the warning disappears – but why? And
+  where would you count *down* then? The race detector only reports races
+  that actually happen while the tests run.)

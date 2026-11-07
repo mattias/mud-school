@@ -22,7 +22,7 @@ lessons/
     HINTS.md                 hints, one per "## " heading (HINTS.sv.md, HINTS.ja.md)
     scaffold/                NEW files the student gets when the lesson starts
     scaffold.<lang>/         language-dependent new files (e.g. the world)
-    tests/                   tests copied in by `mudschool check`
+    tests/                   tests, placed when the lesson starts (and again by `check`)
     solution/                the reference solution: files as they look AFTER the lesson
     solution.<lang>/         language-dependent parts of the solution (rarely needed)
 workspace/                   the student's code (ignored by git)
@@ -63,14 +63,18 @@ If the student switches languages with `./mudschool lang`, an edited
 - **`init`** copies `starter/` and `starter.<lang>/` to `workspace/` and
   enters the first lesson.
 - **Entering a lesson** copies `scaffold/` and `scaffold.<lang>/` – but only
-  files that don't exist yet. The student's code is never overwritten.
+  files that don't exist yet. The student's code is never overwritten. The
+  lesson's tests are placed right away too, so the README can point at them.
+  Until the lesson is solved, editors flag the new tests (undefined names) –
+  that is expected; `run server`/`run client` are unaffected.
 - **`check`**:
   1. removes every file and directory in `workspace/` whose name starts with
      `mudschool_` (old course tests),
   2. copies in `lessons/_shared/<track>/` and the lesson's `tests/`,
   3. runs `go vet ./... && go test -count=1 ./...` in `workspace/server`
      (Go) or `cargo test` in `workspace/client` (Rust),
-  4. when green: marks the lesson done and enters the next one.
+  4. when green: lists leftover `TODO(lesson NN)` markers for the lesson,
+     marks it done and enters the next one.
 - **`doctor`** checks that Go, Rust and the tools are present.
 
 Only the current lesson's tests run. That is deliberate: the behaviour changes

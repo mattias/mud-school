@@ -22,7 +22,7 @@ lessons/
     HINTS.md                 ledtrådar, en per "## "-rubrik (HINTS.sv.md, HINTS.ja.md)
     scaffold/                NYA filer studenten får när lektionen börjar
     scaffold.<språk>/        språkberoende nya filer (t.ex. världen)
-    tests/                   tester som kopieras in vid `mudschool check`
+    tests/                   tester, som läggs in när lektionen börjar (och igen vid `check`)
     solution/                referenslösningen: filer som de ser ut EFTER lektionen
     solution.<språk>/        språkberoende delar av lösningen (sällan behövs)
 workspace/                   studentens kod (ignoreras av git)
@@ -64,13 +64,17 @@ sparas en ändrad `messages.go`/`messages.rs` först som `.bak`.
   går in i första lektionen.
 - **Att gå in i en lektion** kopierar `scaffold/` och `scaffold.<språk>/` –
   men bara filer som inte redan finns. Studentens kod skrivs aldrig över.
+  Lektionens tester läggs också in direkt, så att README kan hänvisa till dem.
+  Tills lektionen är löst markerar editorn de nya testerna (odefinierade namn)
+  – det är väntat; `run server`/`run client` påverkas inte.
 - **`check`**:
   1. tar bort alla filer och kataloger i `workspace/` vars namn börjar på
      `mudschool_` (gamla kurstester),
   2. kopierar in `lessons/_shared/<spår>/` och lektionens `tests/`,
   3. kör `go vet ./... && go test -count=1 ./...` i `workspace/server`
      (Go) eller `cargo test` i `workspace/client` (Rust),
-  4. vid grönt: markerar lektionen klar och går in i nästa.
+  4. vid grönt: listar kvarglömda `TODO(lesson NN)`-markeringar för lektionen,
+     markerar den klar och går in i nästa.
 - **`doctor`** kontrollerar att Go, Rust och verktygen finns.
 
 Bara den aktuella lektionens tester körs. Det är avsiktligt: beteendet

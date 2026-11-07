@@ -201,16 +201,56 @@ func (c *course) enter(ws string, l *Lesson) ([]string, error) {
 }
 
 // placeTests removes old course tests (files/directories starting with
-// "mudschool_") and copies in the current lesson's tests.
-func (c *course) placeTests(ws string, l *Lesson) error {
+// "mudschool_") and copies in the current lesson's tests. It returns the
+// lesson's own test files (not the shared helpers), relative to ws.
+func (c *course) placeTests(ws string, l *Lesson) ([]string, error) {
 	if err := cleanTests(ws); err != nil {
-		return err
+		return nil, err
 	}
 	if _, err := copyTree(filepath.Join(c.root, "lessons", "_shared", l.Track), ws, true); err != nil {
-		return err
+		return nil, err
 	}
-	_, err := copyTree(filepath.Join(l.Dir, "tests"), ws, true)
-	return err
+	return copyTree(filepath.Join(l.Dir, "tests"), ws, true)
+}
+
+// todoRe finds "TODO(lesson 1)" style markers; the group is the lesson number.
+var todoRe = regexp.MustCompile(`TODO\(lesson 0*(\d+)\)`)
+
+// leftoverTODOs lists "file:line" for every TODO(lesson id) marker in the
+// workspace – markers the student has finished and may delete.
+func leftoverTODOs(ws, id string) []string {
+	id = strings.TrimLeft(id, "0")
+	var found []string
+	_ = filepath.WalkDir(ws, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		if d.IsDir() {
+			if d.Name() == "target" || d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		ext := filepath.Ext(path)
+		if strings.HasPrefix(d.Name(), "mudschool_") || (ext != ".go" && ext != ".rs") {
+			return nil
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil
+		}
+		for i, line := range strings.Split(string(data), "\n") {
+			for _, m := range todoRe.FindAllStringSubmatch(line, -1) {
+				if m[1] == id {
+					rel, _ := filepath.Rel(ws, path)
+					found = append(found, fmt.Sprintf("%s:%d", filepath.ToSlash(rel), i+1))
+					break
+				}
+			}
+		}
+		return nil
+	})
+	return found
 }
 
 func cleanTests(ws string) error {

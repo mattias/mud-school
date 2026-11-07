@@ -103,7 +103,7 @@ Kör `./mudschool check` för att testa.
 
 ```
 ./mudschool run server            # i en terminal
-telnet 127.0.0.1 4000             # i en annan (eller: nc 127.0.0.1 4000)
+telnet 127.0.0.1 4000             # i en annan (eller: nc / ncat 127.0.0.1 4000)
 ```
 
 Skriv några rader. Öppna sedan en *andra* telnet samtidigt. Vad händer?

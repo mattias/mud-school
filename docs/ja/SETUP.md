@@ -60,16 +60,51 @@ rustc --version
 cargo --version
 ```
 
-### 3. telnet（任意だがおすすめ）
+### 3. ncat（任意だがおすすめ）
 
-一度だけ **管理者として** PowerShell を開き、次を実行します:
+自分のクライアントができるまで（レッスン 01〜02）サーバーを手で試すには、行単位の簡単な
+クライアントが必要です。Windows では **ncat**（Nmap に含まれる）を使います:
 
 ```powershell
-dism /online /Enable-Feature /FeatureName:TelnetClient
+winget install Insecure.Nmap
 ```
 
-> Windows の telnet クライアントでは日本語が文字化けすることがあります。レッスン 03
-> からは自分の Rust クライアントがあり、そちらは正しく表示されます。
+インストーラーは既定の設定のまま進めてください（Npcap は任意で、不要です）。その後
+`ncat` が `PATH` に入るよう **Windows Terminal をいったん閉じて開き直します**。それから:
+
+```powershell
+ncat 127.0.0.1 4000
+```
+
+> Windows 標準の telnet クライアント（`dism /online /Enable-Feature /FeatureName:TelnetClient`）
+> も使えますが、UTF-8 を理解しないため日本語が文字化けします。
+
+#### 新しい端末でも毎回 UTF-8 に
+
+ncat はサーバーから届いたバイトをそのままコンソールに書くので、コンソールが UTF-8 を
+前提にしている必要があります。PowerShell は最初はそうなっていません（日本語版 Windows は
+Shift-JIS、コードページ 932）。次を PowerShell のプロファイルに **一度だけ** 追加すれば、
+新しく開く端末はすべて UTF-8 になります:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
+if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
+Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
+```
+
+1 行目は、PowerShell が自分のプロファイルを実行できるようにするためのものです。Windows は
+既定でスクリプトの実行を拒否し、プロファイルもスクリプトだからです（管理者権限は不要）。
+コマンドは、Windows Terminal で実際に使っているシェルで実行してください。Windows PowerShell と
+PowerShell 7 ではプロファイルが別です。
+
+新しいタブを開いて `chcp` で確認しましょう。`65001` と表示されれば OK です。コードページが
+違えば `doctor` が警告します。
+
+（システム全体で設定する方法もあります: *設定 → 時刻と言語 → 言語と地域 → 管理用の言語の設定
+→ システム ロケールの変更 →「ベータ: ワールドワイド言語サポートで Unicode UTF-8 を使用」*
+にチェックして再起動。ただし古いプログラムにも影響し、別の文字化けが起きることがあります。）
+
+レッスン 03 からは自分の Rust クライアントがあり、こうした設定なしでも正しく表示されます。
 
 ### 4. C コンパイラ（任意）
 
@@ -95,7 +130,7 @@ pacman -S --needed mingw-w64-ucrt-x86_64-gcc
 cd $HOME
 git clone https://github.com/mattias/mud-school.git
 cd mud-school
-.\mudschool.cmd doctor            # Go、Rust、telnet、gcc、端末を確認
+.\mudschool.cmd doctor            # Go、Rust、ncat/telnet、gcc、端末、コードページを確認
 .\mudschool.cmd init --lang ja    # workspace\ を作る（en、sv、ja）
 .\mudschool.cmd show              # 最初のレッスン
 ```
@@ -250,6 +285,7 @@ Windows Terminal を再起動してください。BIZ UDゴシックは日本語
 | クライアントが落ちた後、端末の様子がおかしい | `reset` と入力（Windows ではタブを閉じる）。クライアントが端末を「raw モード」のままにしました。 |
 | `address already in use` | ポート 4000 ですでに何かが動いています。止めるか、`./mudschool run server -addr 127.0.0.1:4001` と `./mudschool run client 127.0.0.1:4001` を使う。 |
 | マップに四角や変な文字が出る | フォントに文字がないか、端末が UTF-8 ではありません。[フォントと端末](#フォントと端末) を参照。 |
+| Windows: telnet/ncat で日本語が文字化けする | ncat を使い、コンソールを UTF-8 にします。[新しい端末でも毎回 UTF-8 に](#新しい端末でも毎回-utf-8-に) を参照。 |
 | マップの列がずれる（日本語） | 曖昧幅の文字が全角で描かれています。[フォントと端末](#フォントと端末) を参照。 |
 | 色が出ない・おかしい | 端末が 24 ビットカラー非対応です（例: macOS のターミナル.app、古い Windows コンソール）。 |
 | `-race requires cgo` | C コンパイラを入れる（各システムの節を参照）か、`--race` なしで実行する。 |

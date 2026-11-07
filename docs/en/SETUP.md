@@ -75,7 +75,8 @@ cargo --version
 >    `cargo.exe` is gone, but it is a hard link to `rustup.exe`, which is a
 >    copy of the official `rustup-init.exe`. Run `rustup self update`, then
 >    compare `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash` with
->    the first word of <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> (ignore upper/lower case).
+>    the first word of <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> (ignore upper/lower case; on ARM use
+>    `aarch64-pc-windows-msvc` in the address).
 > 4. If they match, it is a false positive: report the file to Microsoft at
 >    <https://www.microsoft.com/wdsi/filesubmission>, then in *Protection
 >    history* choose the item → *Actions* → *Allow on device*. A plain

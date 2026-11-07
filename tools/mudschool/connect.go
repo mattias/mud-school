@@ -50,16 +50,20 @@ func (c *course) cmdConnect(args []string) error {
 	// without a newline (a prompt, or a forgotten "\r\n" in lesson 01).
 	var f telnetFilter
 	buf := make([]byte, 4096)
+	endsInNewline := true
 	for {
 		n, err := conn.Read(buf)
-		if n > 0 {
-			os.Stdout.Write(f.filter(buf[:n]))
+		if out := f.filter(buf[:n]); len(out) > 0 {
+			os.Stdout.Write(out)
+			endsInNewline = out[len(out)-1] == '\n'
 		}
 		if err != nil {
 			break
 		}
 	}
-	fmt.Println()
+	if !endsInNewline {
+		fmt.Println()
+	}
 	fmt.Println(dim(L("Servern stängde anslutningen.", "The server closed the connection.", "サーバーが接続を閉じました。")))
 	return nil
 }

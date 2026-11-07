@@ -73,7 +73,8 @@ cargo --version
 >    いますが、これは `rustup.exe` へのハードリンクで、`rustup.exe` は公式の
 >    `rustup-init.exe` のコピーです。`rustup self update` を実行してから、
 >    `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash` を
->    <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> の最初の語と比べます（大文字・小文字は無視）。
+>    <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> の最初の語と比べます（大文字・小文字は無視。ARM 版では
+>    アドレスの部分を `aarch64-pc-windows-msvc` にします）。
 > 4. 一致すれば誤検出です: <https://www.microsoft.com/wdsi/filesubmission> から
 >    Microsoft に報告し、*保護の履歴* でその項目 → *操作* → *デバイスで許可* を選びます。
 >    単なる *復元* では、Microsoft が定義を更新するまで再び検疫されることがあります。
@@ -106,7 +107,8 @@ PowerShell は最初はそうなっていません（日本語版 Windows は Sh
 pwsh.exe -NoLogo -NoExit -Command "[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()"
 ```
 
-（Windows PowerShell 5.1 なら `pwsh.exe` の代わりに `powershell.exe`。）（`settings.json` を直接編集する場合は、コマンド内の `"` を `\"` と書きます。）新しいタブで `chcp`
+（Windows PowerShell 5.1 なら `pwsh.exe` の代わりに `powershell.exe`。）（`settings.json` を直接編集する場合は、コマンド内の `"` を `\"` と書きます。）
+新しいタブで `chcp`
 を実行し、`65001` と表示されれば OK です。
 
 PowerShell のプロファイル（`$PROFILE`）でも可能ですが、プロファイルは *ドキュメント* にあり、

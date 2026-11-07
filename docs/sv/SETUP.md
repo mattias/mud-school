@@ -75,7 +75,8 @@ cargo --version
 >    `cargo.exe` är borta, men den är en hård länk till `rustup.exe`, som är en
 >    kopia av den officiella `rustup-init.exe`. Kör `rustup self update` och
 >    jämför sedan `(Get-FileHash $env:USERPROFILE\.cargo\bin\rustup.exe).Hash`
->    med första ordet i <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> (stora/små bokstäver spelar ingen roll).
+>    med första ordet i <https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe.sha256> (stora/små bokstäver spelar ingen roll; på ARM
+>    står det `aarch64-pc-windows-msvc` i adressen).
 > 4. Stämmer de är det ett falsklarm: rapportera filen till Microsoft på
 >    <https://www.microsoft.com/wdsi/filesubmission>, och välj sedan objektet i
 >    *Skyddshistorik* → *Åtgärder* → *Tillåt på enhet*. En vanlig *Återställ*

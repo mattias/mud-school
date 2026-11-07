@@ -87,7 +87,7 @@ Shift-JIS、コードページ 932）。次を PowerShell のプロファイル�
 新しく開く端末はすべて UTF-8 になります:
 
 ```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
 if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
 Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
 ```

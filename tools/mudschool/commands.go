@@ -335,7 +335,7 @@ func (c *course) cmdCheck(race, advance bool) (bool, error) {
 		fmt.Printf("\n%s %s %s\n", L("Nästa lektion:", "Next lesson:", "次のレッスン:"), nxt.ID, bold(nxt.Title.String()))
 		for _, f := range created {
 			if strings.HasPrefix(filepath.Base(f), "mudschool_") {
-				fmt.Println(dim(L("  kursens test (ändra inte): workspace/", "  the course's tests (don't edit): workspace/", "  コースのテスト（編集しない）: workspace/") + filepath.ToSlash(f)))
+				fmt.Println(dim(L("  kursens test (ändra inte): workspace/", "  course test (don't edit): workspace/", "  コースのテスト（編集しない）: workspace/") + filepath.ToSlash(f)))
 				continue
 			}
 			fmt.Println(dim(L("  ny fil: workspace/", "  new file: workspace/", "  新しいファイル: workspace/") + f))

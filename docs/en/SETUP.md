@@ -88,7 +88,7 @@ Shift-JIS, code page 932). Add this to your PowerShell profile **once**, and
 every new terminal uses UTF-8:
 
 ```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
 if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
 Add-Content $PROFILE '[Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.UTF8Encoding]::new()'
 ```

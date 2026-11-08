@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -90,8 +91,13 @@ func (s *Server) LoadPlugins(dir string) (*Plugins, error) {
 func (pl *Plugins) load(ctx context.Context, path string) (*Plugin, error) {
 	// TODO(lesson 33): read the file, pl.rt.InstantiateWithConfig with the name,
 	// look up the exports abi_version, alloc, dealloc, on_command (all needed),
+	// require an exported memory (len(mod.ExportedMemoryDefinitions()) > 0 –
+	// mod.Memory() is a non-nil interface even without one) and the right signatures
+	// (Definition().ParamTypes()/ResultTypes(): abi_version ()→i32,
+	// alloc (i32)→i32, dealloc (i32,i32)→(), on_command (i32,i32)→i32), then
 	// call abi_version and require ABIVersion. Close the module on every error.
 	_, _, _ = os.ReadFile, strings.TrimSuffix, filepath.Base
+	_, _ = slices.Equal[[]api.ValueType], api.ValueTypeI32
 	return nil, errors.New("TODO: Plugins.load")
 }
 

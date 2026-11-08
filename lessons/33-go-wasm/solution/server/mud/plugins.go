@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -104,6 +105,25 @@ func (pl *Plugins) load(ctx context.Context, path string) (*Plugin, error) {
 	if version == nil || p.alloc == nil || p.dealloc == nil || p.onCommand == nil {
 		mod.Close(ctx)
 		return nil, errors.New("missing exports (abi_version, alloc, dealloc, on_command)")
+	}
+	if len(mod.ExportedMemoryDefinitions()) == 0 { // mod.Memory() is never nil: a typed nil
+		mod.Close(ctx)
+		return nil, errors.New("the plugin exports no memory")
+	}
+	// The signatures must match too – otherwise res[0] below, or the calls in
+	// pl.call, would crash the server instead of failing the plugin.
+	i32 := api.ValueTypeI32
+	for name, want := range map[string][2][]api.ValueType{
+		"abi_version": {nil, {i32}},
+		"alloc":       {{i32}, {i32}},
+		"dealloc":     {{i32, i32}, nil},
+		"on_command":  {{i32, i32}, {i32}},
+	} {
+		def := mod.ExportedFunction(name).Definition()
+		if !slices.Equal(def.ParamTypes(), want[0]) || !slices.Equal(def.ResultTypes(), want[1]) {
+			mod.Close(ctx)
+			return nil, fmt.Errorf("%s has the wrong signature", name)
+		}
 	}
 	res, err := version.Call(ctx)
 	if err != nil {

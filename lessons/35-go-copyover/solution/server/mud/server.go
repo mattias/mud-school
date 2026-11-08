@@ -73,8 +73,9 @@ type Server struct {
 	pluginDir string   // lesson 33
 	plugins   *Plugins // owned by the game loop
 
-	onCopyover  func(state []byte, files []*os.File) error // lesson 35
-	handingOver atomic.Bool                                // true during a copyover
+	onCopyover      func(state []byte, files []*os.File) error // lesson 35
+	handingOver     atomic.Bool                                // true during a copyover
+	copyoverRunning atomic.Bool                                // one @copyover at a time
 
 	hooks map[string][]Hook // lesson 34; owned by the game loop
 

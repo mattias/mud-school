@@ -89,14 +89,18 @@ All for administrators only (otherwise `MsgNotAdmin`), in the room you stand in:
 - Rooms whose exits change get a new zone; everything in them keeps a walkable position.
 - With a world file (`Options.WorldPath`) the whole world is saved to it after
   every change – atomically, in order, outside the game loop; the watcher doesn't
-  reload the server's own saves. Without one: `MsgNotSaved`.
+  reload the server's own saves; a stopping server waits for the saves still
+  being written. Without one: `MsgNotSaved`.
 
 ## Task
 
 `olc.go` is partly given (`slug`, `newRoomID`, `change`, `rezone`, `cmdDesc`,
-`cmdName`, `worldSnapshot`, `writeFileAtomic`): write `cmdDig`, `cmdExit` and
-`saveWorld`. Then the fields on `Server`, the commands, and the check in
-`watchWorld`.
+`cmdName`, `worldSnapshot`, `finishSaves`, `writeFileAtomic`): write `cmdDig`,
+`cmdExit` and `saveWorld`. Then the fields on `Server` (`saves` is a
+`sync.WaitGroup`), the commands, the check in `watchWorld`, and in `run`: call
+`s.finishSaves()` when the loop stops, so that a change made just before Ctrl+C
+(or a copyover) is not lost. While you are there, close the Lua state
+(`s.scripts.L.Close()`) and the plugins (`s.plugins.Close()`) too.
 
 Build a little area of your own: start the server with `-world my-world.json
 -admin YourName`, dig, describe, and look at the file afterwards.

@@ -111,6 +111,8 @@ alternativet, fälten, `dispatch`, beteendetypen och flaggan.
 - Vad skulle ett elakt skript fortfarande kunna göra? (Minne? `string.rep("x", 1e9)`?)
 - API:t ger skripten namn (strängar), inte Go-pekare. Varför?
 - Lua körs i spelloopen. Ett skript som tar 40 ms – vad gör det med tickfrekvensen? Vad skulle du göra åt det?
+- Ett skript kan registrera `@vadsomhelst` – och `adminOnly` skyddar bara de
+  inbyggda kommandona. Borde skript få ha `@`-kommandon alls?
 
 ## Utmaningar
 

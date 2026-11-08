@@ -151,8 +151,28 @@ func (s *Server) saveWorld(p *Player) {
 	// TODO(lesson 36): MsgNotSaved without a world file. Otherwise the JSON of
 	// worldSnapshot here, in the loop; then in a goroutine, under s.saveMu: skip
 	// it if a newer snapshot (saveSeq/savedSeq) is already written,
-	// writeFileAtomic, and remember the file's stamp in s.ownWrite.
+	// writeFileAtomic, and remember the file's stamp in s.ownWrite. Count the
+	// goroutine in s.saves (Add before go, Done when finished): finishSaves waits for it.
 	_, _, _ = json.MarshalIndent, log.Printf, os.Stat
+}
+
+// finishSaves waits, when the game loop stops, for the world saves that are
+// still being written. A failed save asks the loop to tell the builder, so the
+// loop keeps running the work it is sent until the saves are done.
+func (s *Server) finishSaves() {
+	done := make(chan struct{})
+	go func() {
+		s.saves.Wait()
+		close(done)
+	}()
+	for {
+		select {
+		case f := <-s.events:
+			f()
+		case <-done:
+			return
+		}
+	}
 }
 
 // writeFileAtomic writes data to a temporary file next to path and renames it.
@@ -160,6 +180,9 @@ func writeFileAtomic(path string, data []byte) error {
 	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".*")
 	if err != nil {
 		return err
+	}
+	if fi, err := os.Stat(path); err == nil {
+		tmp.Chmod(fi.Mode().Perm()) // CreateTemp makes 0600; keep the file's mode
 	}
 	if _, err := tmp.Write(data); err != nil {
 		tmp.Close()

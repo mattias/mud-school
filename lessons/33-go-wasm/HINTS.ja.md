@@ -16,6 +16,11 @@ p := &Plugin{Name: name, mod: mod,
 `ExportedFunction` は、ないエクスポートには `nil` を返します。どれかを呼ぶ前に、4 つすべて
 （`abi_version` も）を確かめましょう。
 
+プラグインが正しい名前を間違った型でエクスポートすることもあります。
+`mod.ExportedFunction(name).Definition().ParamTypes()` と `.ResultTypes()` を
+`[]api.ValueType{api.ValueTypeI32}` などと比べ（`slices.Equal`）、`len(mod.ExportedMemoryDefinitions()) > 0` も
+確かめましょう（メモリがなくても `mod.Memory()` はただの `nil` にはなりません）。そうしないと `res[0]` や `Memory().Write` がゲームループの中でパニックします。
+
 ## call
 
 ```go

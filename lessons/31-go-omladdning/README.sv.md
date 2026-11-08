@@ -116,6 +116,10 @@ beskrivning i filen.
 - Vad händer om filen sparas mitt i pollningen – halvskriven? (Testerna skriver
   en temporär fil och byter namn på den. Varför hjälper det?)
 - Två omladdningar tätt efter varandra – kan de tillämpas i fel ordning?
+- En administratör är bara ett *namn*. Utan databas (`-db ""`), eller innan
+  Anna har registrerat sig, kan vem som helst logga in som Anna – och lektion
+  35–36 ger administratörer `@copyover` och rätten att skriva världsfilen. Kör
+  med lösenord (lektion 20) och registrera administratörsnamnen först. Vad mer skulle du vilja ha?
 
 ## Utmaningar
 

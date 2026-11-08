@@ -58,11 +58,13 @@ ingetdera: inget meddelande, ingen sparning, inget "Anna gick". En flagga,
 
 ### Den riktiga exec:en
 
-`main.go` gör operativsystemdelen (given): `startNewServer` skriver
+`copyover_main.go` (given, bredvid `main.go`) gör operativsystemdelen:
+`startNewServer` skriver
 tillståndet till en temporär fil och startar `os.Executable()` – programmet
 på disken, så ett nybyggt program betyder ny kod – med `ExtraFiles` och
 miljövariabeln `MUD_COPYOVER`. När `main` startar med den variabeln satt
-adopterar den filerna i stället för att öppna en ny lyssnare.
+adopterar den filerna (`adoptCopyover`) i stället för att öppna en ny
+lyssnare. Att koppla in det i `main.go` är några rader – se tipsen.
 
 ### Windows
 
@@ -95,7 +97,11 @@ Prova copyover i WSL. Testerna som behöver det hoppas över på Windows.
    ingenting medan `s.handingOver` är satt.
 2. `copyover.go` är delvis given (typerna, `fileOf`, `Done`, `cmdCopyover`,
    `copyover`): skriv `PrepareCopyover`, `HandOver`, `Adopt` och `adopt`.
-3. `Options.OnCopyover`, fälten och kommandot; `main.go` är given.
+3. `Options.OnCopyover`, fälten (`onCopyover`, och `handingOver` och
+   `copyoverRunning` som `atomic.Bool` – den givna `cmdCopyover` använder den
+   senare så att bara en copyover körs åt gången) och kommandot.
+4. Koppla in `copyover_main.go` (given) i `main.go`: `OnCopyover: startNewServer`,
+   `adoptCopyover` när `MUD_COPYOVER` är satt, och vänta på `srv.Done()` också.
 
 Prova på riktigt (Linux, macOS eller WSL):
 

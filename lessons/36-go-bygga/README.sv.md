@@ -89,14 +89,18 @@ Allt bara för administratörer (annars `MsgNotAdmin`), i rummet du står i:
 - Rum vars utgångar ändras får en ny zon; allt i dem behåller en gångbar position.
 - Med en världsfil (`Options.WorldPath`) sparas hela världen i den efter
   varje ändring – atomiskt, i ordning, utanför spelloopen; bevakningen laddar
-  inte om serverns egna sparningar. Utan världsfil: `MsgNotSaved`.
+  inte om serverns egna sparningar; en server som stannar väntar på
+  sparningarna som fortfarande skrivs. Utan världsfil: `MsgNotSaved`.
 
 ## Uppgift
 
 `olc.go` är delvis given (`slug`, `newRoomID`, `change`, `rezone`,
-`cmdDesc`, `cmdName`, `worldSnapshot`, `writeFileAtomic`): skriv `cmdDig`,
-`cmdExit` och `saveWorld`. Sedan fälten på `Server`, kommandona och
-kontrollen i `watchWorld`.
+`cmdDesc`, `cmdName`, `worldSnapshot`, `finishSaves`, `writeFileAtomic`):
+skriv `cmdDig`, `cmdExit` och `saveWorld`. Sedan fälten på `Server` (`saves`
+är en `sync.WaitGroup`), kommandona, kontrollen i `watchWorld`, och i `run`:
+anropa `s.finishSaves()` när loopen stannar, så att en ändring precis före
+Ctrl+C (eller en copyover) inte går förlorad. Stäng samtidigt Lua-tillståndet
+(`s.scripts.L.Close()`) och pluginen (`s.plugins.Close()`).
 
 Bygg ett litet eget område: starta servern med `-world min-värld.json -admin
 DittNamn`, gräv, beskriv och titta i filen efteråt.

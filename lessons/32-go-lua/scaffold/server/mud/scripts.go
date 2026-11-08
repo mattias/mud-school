@@ -134,7 +134,7 @@ func (sc *Scripts) run(fn *lua.LFunction, args ...lua.LValue) error {
 func (s *Server) LoadScripts(dir string) (*Scripts, error) {
 	// TODO(lesson 32): s.newScripts(), then L.DoFile for every *.lua in dir in
 	// name order (with a time limit each); collect the errors with the file
-	// names (errors.Join) â one broken file must not stop the others.
+	// names (errors.Join) – one broken file must not stop the others.
 	_, _ = filepath.Glob, sort.Strings
 	return s.newScripts(), nil
 }

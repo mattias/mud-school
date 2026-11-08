@@ -82,13 +82,16 @@ JSON はゲームループの **中で** 作り（一貫したスナップショ
 - 出口が変わった部屋は新しいゾーンになり、中のものはすべて歩ける位置にとどまる。
 - ワールドファイル（`Options.WorldPath`）があれば、変更のたびに世界全体をそこに保存する。
   不可分に、順番どおりに、ゲームループの外で。監視はサーバー自身の保存を再読み込みしない。
-  なければ `MsgNotSaved`。
+  止まるサーバーは、まだ書いている途中の保存を待つ。なければ `MsgNotSaved`。
 
 ## 課題
 
 `olc.go` は一部用意されています（`slug`、`newRoomID`、`change`、`rezone`、`cmdDesc`、
-`cmdName`、`worldSnapshot`、`writeFileAtomic`）。`cmdDig`、`cmdExit`、`saveWorld` を
-書きましょう。次に `Server` のフィールド、コマンド、`watchWorld` のチェック。
+`cmdName`、`worldSnapshot`、`finishSaves`、`writeFileAtomic`）。`cmdDig`、`cmdExit`、
+`saveWorld` を書きましょう。次に `Server` のフィールド（`saves` は `sync.WaitGroup`）、
+コマンド、`watchWorld` のチェック、そして `run` の中: ループが止まるときに
+`s.finishSaves()` を呼び、Ctrl+C（や copyover）の直前の変更が失われないようにします。
+ついでに Lua の状態（`s.scripts.L.Close()`）とプラグイン（`s.plugins.Close()`）も閉じましょう。
 
 自分だけの小さな地域を作ってみましょう: `-world my-world.json -admin 自分の名前` で
 サーバーを起動し、掘り、説明を書き、後でファイルを見てみます。

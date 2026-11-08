@@ -50,3 +50,35 @@ go func() {
 	s.play(p)
 }()
 ```
+
+## main.go
+
+Ändringarna i `main.go`, ungefär:
+
+```go
+// After a copyover the listener is inherited, not opened.
+statePath := os.Getenv("MUD_COPYOVER")
+os.Unsetenv("MUD_COPYOVER")
+var l net.Listener
+var err error
+if statePath == "" {
+	if l, err = net.Listen("tcp", *addr); err != nil { /* as before */ }
+}
+// ...
+srv := mud.NewServerWithOptions(mud.Options{ /* as before */ OnCopyover: startNewServer})
+if statePath != "" {
+	if l, err = adoptCopyover(srv, statePath); err != nil {
+		log.Fatalf("copyover: %v", err)
+	}
+}
+// ...
+// the Ctrl+C goroutine: select { case <-ctx.Done(): case <-srv.Done(): return }
+// and after Serve (the server stops either way; ctx says which way):
+<-srv.Done()
+if ctx.Err() != nil { // Ctrl+C
+	<-shutdownDone
+	log.Print("bye")
+} else {
+	log.Print("handed over to the new server – bye")
+}
+```

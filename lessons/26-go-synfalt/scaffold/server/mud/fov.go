@@ -29,7 +29,7 @@ func ComputeFOV(z *Zone, origin Pos, radius int) map[Pos]bool {
 // end are the slopes of the part of the row that is still lit. When it meets
 // a wall it calls itself for the part before the wall, and continues after it.
 func castLight(z *Zone, origin Pos, radius, row int, start, end float64, o [4]int, vis map[Pos]bool) {
-	// TODO(lesson 26): recursive shadowcasting â see the README and HINTS.
+	// TODO(lesson 26): recursive shadowcasting – see the README and HINTS.
 }
 
 // updateFOV recomputes what the player sees and adds it to what they have

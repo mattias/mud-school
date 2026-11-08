@@ -73,13 +73,15 @@ type Server struct {
 	pluginDir string   // lesson 33
 	plugins   *Plugins // owned by the game loop
 
-	onCopyover  func(state []byte, files []*os.File) error // lesson 35
-	handingOver atomic.Bool                                // true during a copyover
+	onCopyover      func(state []byte, files []*os.File) error // lesson 35
+	handingOver     atomic.Bool                                // true during a copyover
+	copyoverRunning atomic.Bool                                // one @copyover at a time
 
-	saveMu   sync.Mutex   // held while the world file is written and while the watcher looks at it
-	saveSeq  int64        // numbers the snapshots, in the game loop (lesson 36)
-	savedSeq int64        // the newest snapshot written; protected by saveMu
-	ownWrite atomic.Value // fileStamp of the world file we wrote ourselves (lesson 36)
+	saveMu   sync.Mutex     // held while the world file is written and while the watcher looks at it
+	saveSeq  int64          // numbers the snapshots, in the game loop (lesson 36)
+	savedSeq int64          // the newest snapshot written; protected by saveMu
+	ownWrite atomic.Value   // fileStamp of the world file we wrote ourselves (lesson 36)
+	saves    sync.WaitGroup // world saves still being written (lesson 36)
 
 	hooks map[string][]Hook // lesson 34; owned by the game loop
 

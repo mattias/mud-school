@@ -16,6 +16,13 @@ p := &Plugin{Name: name, mod: mod,
 `ExportedFunction` returnerar `nil` för en export som saknas – kontrollera
 alla fyra (också `abi_version`) innan du anropar någon av dem.
 
+Ett plugin kan också exportera rätt namn med fel typer. Jämför
+`mod.ExportedFunction(name).Definition().ParamTypes()` och `.ResultTypes()`
+med `[]api.ValueType{api.ValueTypeI32}` och liknande (`slices.Equal`), och
+kontrollera `len(mod.ExportedMemoryDefinitions()) > 0` (`mod.Memory()` är
+aldrig ett vanligt `nil`, inte ens utan minne) – annars får `res[0]` eller `Memory().Write`
+panik inne i spelloopen.
+
 ## call
 
 ```go

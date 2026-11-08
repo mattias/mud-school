@@ -58,11 +58,13 @@ the player goroutines to skip their clean-up.
 
 ### The real exec
 
-`main.go` does the operating-system part (given): `startNewServer` writes the
+`copyover_main.go` (given, next to `main.go`) does the operating-system part:
+`startNewServer` writes the
 state to a temporary file and starts `os.Executable()` – the binary on disk,
 so a freshly built binary means new code – with `ExtraFiles` and the
 environment variable `MUD_COPYOVER`. When `main` starts with that variable
-set, it adopts the files instead of opening a new listener.
+set, it adopts the files (`adoptCopyover`) instead of opening a new listener.
+Wiring that into `main.go` is a few lines – see the hints.
 
 ### Windows
 
@@ -95,7 +97,11 @@ Try copyover in WSL. The tests that need it are skipped on Windows.
    while `s.handingOver` is set.
 2. `copyover.go` is partly given (the types, `fileOf`, `Done`, `cmdCopyover`,
    `copyover`): write `PrepareCopyover`, `HandOver`, `Adopt` and `adopt`.
-3. `Options.OnCopyover`, the fields and the command; `main.go` is given.
+3. `Options.OnCopyover`, the fields (`onCopyover`, and `handingOver` and
+   `copyoverRunning` as `atomic.Bool` – the given `cmdCopyover` uses the latter
+   so that only one copyover runs at a time) and the command.
+4. Wire `copyover_main.go` (given) into `main.go`: `OnCopyover: startNewServer`,
+   `adoptCopyover` when `MUD_COPYOVER` is set, and wait for `srv.Done()` too.
 
 Try it for real (Linux, macOS or WSL):
 

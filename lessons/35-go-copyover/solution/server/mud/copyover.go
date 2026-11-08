@@ -139,7 +139,7 @@ func (s *Server) Adopt(state *CopyoverState, files []*os.File) (net.Listener, er
 		return nil, err
 	}
 	s.start()
-	s.ticks = state.Ticks
+	s.call(func() { s.ticks = state.Ticks }) // the loop runs now: it owns s.ticks
 	for _, cp := range state.Players {
 		if cp.File <= 0 || cp.File >= len(files) {
 			continue
@@ -200,10 +200,15 @@ func cmdCopyover(s *Server, p *Player, cmd Command) {
 		p.SendKind(KindError, fmt.Sprintf(MsgCopyoverFailed, "not available"))
 		return
 	}
+	if !s.copyoverRunning.CompareAndSwap(false, true) {
+		p.SendKind(KindError, fmt.Sprintf(MsgCopyoverFailed, "a copyover is already in progress"))
+		return
+	}
 	name := p.Name
 	go func() { // PrepareCopyover and starting a process must not run in the loop
 		err := s.copyover()
 		if err != nil {
+			s.copyoverRunning.Store(false) // nothing was handed over: try again
 			log.Printf("copyover: %v", err)
 			s.do(func() {
 				if p := s.players[name]; p != nil {

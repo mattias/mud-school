@@ -89,8 +89,9 @@ Built-in commands first, then scripts (lesson 32), then plugins, then
 
 - `Options.PluginDir` – a folder with `.wasm` files, loaded in name order when
   the server is created and reloaded when a file changes (every `ReloadEvery`).
-- `LoadPlugins(dir) (*Plugins, error)` – a plugin with missing exports, the
-  wrong ABI version or that isn't WebAssembly is skipped; the error names the
+- `LoadPlugins(dir) (*Plugins, error)` – a plugin with missing exports, exports
+  with the wrong signature, no exported memory, the wrong ABI version or that
+  isn't WebAssembly is skipped – it must never crash the server; the error names the
   file (and the version); the others load. `Plugins.Close()`.
 - A command that no built-in command or script took is offered to the plugins
   (`"player\tverb\targs"`); the first one returning 1 has handled it.

@@ -85,8 +85,9 @@ res, err := mod.ExportedFunction("abi_version").Call(ctx)   // []uint64
 
 - `Options.PluginDir` – `.wasm` ファイルのフォルダー。サーバーを作るときに名前順に読み込み、
   ファイルが変われば再読み込みする（`ReloadEvery` ごと）。
-- `LoadPlugins(dir) (*Plugins, error)` – エクスポートが足りない、ABI バージョンが違う、
-  WebAssembly でない、のいずれかのプラグインは飛ばす。エラーにはファイル名（とバージョン）を
+- `LoadPlugins(dir) (*Plugins, error)` – エクスポートが足りない、エクスポートのシグネチャが違う、
+  メモリをエクスポートしていない、ABI バージョンが違う、WebAssembly でない、のいずれかの
+  プラグインは飛ばす（サーバーを落としてはならない）。エラーにはファイル名（とバージョン）を
   含める。他は読み込む。`Plugins.Close()`。
 - 組み込みのコマンドもスクリプトも引き受けなかったコマンドはプラグインに渡す
   （`"player\tverb\targs"`）。最初に 1 を返したプラグインが処理したことになる。

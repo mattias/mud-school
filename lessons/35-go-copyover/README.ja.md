@@ -55,10 +55,11 @@ Go のコードが必要です。ゲームループの新機能、戦闘のバ�
 
 ### 本物の exec
 
-OS の部分は `main.go` が行います（用意済み）。`startNewServer` は状態を一時ファイルに書き、
+OS の部分は `copyover_main.go`（用意済み、`main.go` の隣）が行います。`startNewServer` は状態を一時ファイルに書き、
 `ExtraFiles` と環境変数 `MUD_COPYOVER` を付けて `os.Executable()`（ディスク上のバイナリ。
 ビルドし直したばかりなら新しいコード）を起動します。`main` はその変数があると、新しい
-リスナーを開く代わりにファイルを引き取ります。
+リスナーを開く代わりにファイルを引き取ります（`adoptCopyover`）。これを `main.go` に
+つなぐのは数行です。ヒントを見てください。
 
 ### Windows
 
@@ -89,7 +90,11 @@ Windows には、このやり方でソケットを新しいプロセスに渡す
    何もしないようにする。
 2. `copyover.go` は一部用意されています（型、`fileOf`、`Done`、`cmdCopyover`、`copyover`）。
    `PrepareCopyover`、`HandOver`、`Adopt`、`adopt` を書きましょう。
-3. `Options.OnCopyover`、フィールド、コマンド。`main.go` は用意済み。
+3. `Options.OnCopyover`、フィールド（`onCopyover`、そして `atomic.Bool` の `handingOver` と
+   `copyoverRunning`。用意済みの `cmdCopyover` は後者を使い、copyover が同時に 1 つしか
+   走らないようにします）、コマンド。
+4. 用意済みの `copyover_main.go` を `main.go` につなぐ: `OnCopyover: startNewServer`、
+   `MUD_COPYOVER` があるときは `adoptCopyover`、そして `srv.Done()` も待つ。
 
 本物で試してみましょう（Linux、macOS、WSL）:
 

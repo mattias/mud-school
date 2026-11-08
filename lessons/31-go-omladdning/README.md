@@ -117,6 +117,10 @@ description in the file.
 - What if the file is saved in the middle of the poll – half written? (The
   tests write a temporary file and rename it. Why does that help?)
 - Two reloads in quick succession – can they be applied in the wrong order?
+- An administrator is only a *name*. Without a database (`-db ""`), or before
+  Anna has registered, anyone can log in as Anna – and lessons 35–36 give
+  administrators `@copyover` and the right to write the world file. Run with
+  passwords (lesson 20) and register the admin names first. What else would you want?
 
 ## Challenges
 

@@ -112,6 +112,8 @@ example.
 - The API gives scripts names (strings), not Go pointers. Why?
 - Lua runs in the game loop. A script that takes 40 ms – what does that do to
   the tick rate? What would you do about it?
+- A script can register `@anything` – and `adminOnly` only guards the built-in
+  commands. Should scripts be allowed `@` commands at all?
 
 ## Challenges
 

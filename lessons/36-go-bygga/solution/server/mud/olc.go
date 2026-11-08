@@ -226,7 +226,9 @@ func (s *Server) saveWorld(p *Player) {
 	name := p.Name
 	s.saveSeq++
 	seq := s.saveSeq
+	s.saves.Add(1)
 	go func() {
+		defer s.saves.Done()
 		s.saveMu.Lock()
 		if seq < s.savedSeq {
 			s.saveMu.Unlock()
@@ -251,11 +253,33 @@ func (s *Server) saveWorld(p *Player) {
 	}()
 }
 
+// finishSaves waits, when the game loop stops, for the world saves that are
+// still being written. A failed save asks the loop to tell the builder, so the
+// loop keeps running the work it is sent until the saves are done.
+func (s *Server) finishSaves() {
+	done := make(chan struct{})
+	go func() {
+		s.saves.Wait()
+		close(done)
+	}()
+	for {
+		select {
+		case f := <-s.events:
+			f()
+		case <-done:
+			return
+		}
+	}
+}
+
 // writeFileAtomic writes data to a temporary file next to path and renames it.
 func writeFileAtomic(path string, data []byte) error {
 	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".*")
 	if err != nil {
 		return err
+	}
+	if fi, err := os.Stat(path); err == nil {
+		tmp.Chmod(fi.Mode().Perm()) // CreateTemp makes 0600; keep the file's mode
 	}
 	if _, err := tmp.Write(data); err != nil {
 		tmp.Close()

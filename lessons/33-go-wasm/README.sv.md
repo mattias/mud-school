@@ -88,7 +88,8 @@ Inbyggda kommandon först, sedan skript (lektion 32), sedan plugins, sedan
 - `Options.PluginDir` – en mapp med `.wasm`-filer, laddade i namnordning när
   servern skapas och omladdade när en fil ändras (var `ReloadEvery`).
 - `LoadPlugins(dir) (*Plugins, error)` – ett plugin som saknar exporter, har
-  fel ABI-version eller inte är WebAssembly hoppas över; felet nämner filen
+  exporter med fel signatur, inget exporterat minne, fel ABI-version eller inte
+  är WebAssembly hoppas över – det får aldrig krascha servern; felet nämner filen
   (och versionen); de andra laddas. `Plugins.Close()`.
 - Ett kommando som inget inbyggt kommando eller skript tog erbjuds pluginen
   (`"player\tverb\targs"`); det första som returnerar 1 har hanterat det.

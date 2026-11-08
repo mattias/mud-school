@@ -140,7 +140,7 @@ efter inloggning och i varje nytt rum – och som svar på `zone`.
   "entities":[{"id":"p:Anna","kind":"player","name":"Anna","glyph":"@","x":4,"y":2},
               {"id":"i:lamp","kind":"item","name":"a lamp","glyph":"*","x":5,"y":2}],
   "self":"p:Anna",
-  "visible":["000111111","000111111","000111111","000111111","000111111"]}}
+  "visible":["111111111","111111111","111111111","111111111","111111111"]}}
 ```
 
 | Fält | Typ | Beskrivning |
@@ -163,9 +163,7 @@ ett kommando eller ett tick om något ändrats. Mycket mindre än en hel zon.
 ```json
 {"type":"delta","delta":{"room":"torget",
   "moved":[{"id":"p:Anna","kind":"player","name":"Anna","glyph":"@","x":5,"y":2}],
-  "removed":["n:cat"],
-  "tiles":[{"x":1,"y":1,"code":".","meaning":"floor"}],
-  "visible":["001111111","001111111","001111111","001111111","001111111"]}}
+  "removed":["n:cat"]}}
 ```
 
 | Fält | Typ | Beskrivning |

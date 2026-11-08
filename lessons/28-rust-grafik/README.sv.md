@@ -58,9 +58,13 @@ gfx = ["dep:macroquad"]
 
 [[bin]]
 name = "mud-gfx"
-path = "src/bin/mud-gfx.rs"
+path = "gfx/main.rs"
 required-features = ["gfx"]
 ```
+
+Programmet ligger i `gfx/main.rs`, inte i `src/bin/`: Cargo hittar program i
+`src/bin/` på egen hand – och skulle försöka bygga det här innan du har lagt
+till macroquad. Posten `[[bin]]` talar om för Cargo var det finns.
 
 `cargo test` och `cargo run` bygger inte macroquad alls. `cargo run
 --release --features gfx --bin mud-gfx` gör det – och i koden finns
@@ -101,7 +105,7 @@ nu ritas mörkare (`shade(färg, FOG)`), i fönstret *och* i terminalen.
   - `draw_scene(scene, renderer)` – statusen på rad 0, cellerna en rad ner
     (`y + 1`), loggen under zonen, inmatningen på sista raden;
   - `TextRenderer` – ritar i ett rutnät av tecken; `lines()`.
-- `gfx.rs` och `src/bin/mud-gfx.rs` (givna): fönster-renderern och programmet.
+- `gfx.rs` och `gfx/main.rs` (givna): fönster-renderern och programmet.
 - `Cargo.toml`: featuren, det valfria beroendet, det andra programmet,
   `default-run`. `assets/tiles.png` är given.
 - Terminalklienten gör också utforskade men inte synliga rutor mörkare.

@@ -92,7 +92,7 @@ while let Some(Reverse((_, g, cur))) = open.pop() { ... }
 マスから下へ 1 行に 1 つ）、`Scene::zone_cell(x, y)`、そしてデフォルト本体（ふつうのテキスト）を
 持つ `Renderer::overlay`。
 
-ウィンドウ（`mud-gfx.rs`、`gfx.rs`）: ホバー、左右のクリック、`WALK_STEP` ごとに 1 歩、
+ウィンドウ（`gfx/main.rs`、`gfx.rs`）: ホバー、左右のクリック、`WALK_STEP` ごとに 1 歩、
 テキストの後ろに暗い箱を描く overlay。
 
 ## 課題

@@ -56,9 +56,13 @@ gfx = ["dep:macroquad"]
 
 [[bin]]
 name = "mud-gfx"
-path = "src/bin/mud-gfx.rs"
+path = "gfx/main.rs"
 required-features = ["gfx"]
 ```
+
+プログラムは `src/bin/` ではなく `gfx/main.rs` にあります。Cargo は `src/bin/` のプログラムを
+自動で見つけるので、macroquad を加える前にビルドしようとしてしまうからです。`[[bin]]` の
+項目で Cargo に場所を教えます。
 
 `cargo test` と `cargo run` は macroquad をまったくビルドしません。`cargo run --release
 --features gfx --bin mud-gfx` のときだけビルドされ、コード内の
@@ -94,7 +98,7 @@ required-features = ["gfx"]
   - `draw_scene(scene, renderer)` – 0 行目にステータス、セルは 1 行下（`y + 1`）、ゾーンの
     下にログ、最後の行に入力。
   - `TextRenderer` – 文字のグリッドに描く。`lines()`。
-- `gfx.rs` と `src/bin/mud-gfx.rs`（用意済み）: ウィンドウの renderer とプログラム。
+- `gfx.rs` と `gfx/main.rs`（用意済み）: ウィンドウの renderer とプログラム。
 - `Cargo.toml`: feature、省略可能な依存関係、2 つ目のバイナリ、`default-run`。
   `assets/tiles.png` は用意済み。
 - 端末クライアントも、探索済みだが見えないマスを暗くする。

@@ -92,7 +92,7 @@ pub trait Renderer {
 `App::tick(now)`。攻撃を受けたら（`hp` が下がったら）自分のマスの中央（`x + 0.5, y + 0.5`）に
 赤い火花を 12 個。端末も `cell_light` を使う。
 
-`gfx.rs` と `mud-gfx.rs`: `particle` は小さな四角を描き、`shake` はゾーンをずらし、ループは
+`gfx.rs` と `gfx/main.rs`: `particle` は小さな四角を描き、`shake` はゾーンをずらし、ループは
 `app.tick(now)` と `build_scene_at(..., now)` を呼ぶ。
 
 ## 課題

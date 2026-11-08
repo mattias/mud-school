@@ -79,8 +79,11 @@ func NewZone(w, h int, t byte) *Zone {
 
 // ParseZone reads hand-made rows like "#####", "#...#".
 func ParseZone(rows []string) (*Zone, error) {
-	if len(rows) < 3 || len(rows[0]) < 3 {
-		return nil, fmt.Errorf("%d×%d", len(rows), len(rows[0]))
+	if len(rows) < 3 {
+		return nil, fmt.Errorf("%d rows", len(rows))
+	}
+	if len(rows[0]) < 3 {
+		return nil, fmt.Errorf("%q", rows[0])
 	}
 	z := &Zone{W: len(rows[0]), H: len(rows)}
 	for _, row := range rows {

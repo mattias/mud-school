@@ -97,7 +97,7 @@ camera from lesson 25 – so a click can be turned back into a zone cell.
 menu's labels, one per row from the cell downwards), `Scene::zone_cell(x, y)`,
 and `Renderer::overlay` with a default body (ordinary text).
 
-The window (`mud-gfx.rs`, `gfx.rs`): hover, left and right click, a step per
+The window (`gfx/main.rs`, `gfx.rs`): hover, left and right click, a step per
 `WALK_STEP`, and an overlay with a dark box behind the text.
 
 ## Task

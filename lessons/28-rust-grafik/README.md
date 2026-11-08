@@ -57,9 +57,13 @@ gfx = ["dep:macroquad"]
 
 [[bin]]
 name = "mud-gfx"
-path = "src/bin/mud-gfx.rs"
+path = "gfx/main.rs"
 required-features = ["gfx"]
 ```
+
+The program is in `gfx/main.rs`, not in `src/bin/`: Cargo finds programs in
+`src/bin/` by itself – and would try to build this one before you have added
+macroquad. The `[[bin]]` entry tells Cargo where it is.
 
 `cargo test` and `cargo run` don't build macroquad at all. `cargo run
 --release --features gfx --bin mud-gfx` does – and in the code,
@@ -101,7 +105,7 @@ terminal.
   - `draw_scene(scene, renderer)` – the status on row 0, the cells one row
     down (`y + 1`), the log under the zone, the input on the last row;
   - `TextRenderer` – draws into a grid of characters; `lines()`.
-- `gfx.rs` and `src/bin/mud-gfx.rs` (given): the window renderer and the program.
+- `gfx.rs` and `gfx/main.rs` (given): the window renderer and the program.
 - `Cargo.toml`: the feature, the optional dependency, the second binary,
   `default-run`. `assets/tiles.png` is given.
 - The terminal client dims explored-but-not-visible cells too.

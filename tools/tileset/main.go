@@ -4,7 +4,8 @@
 //
 //	go run tools/tileset/main.go lessons/28-rust-grafik/scaffold/client/assets/tiles.png
 //
-// The order of the tiles must match sprite_for in the client (tileset.rs).
+// The order of the tiles must match tile_sprite and entity_sprite in the
+// client (tileset.rs).
 package main
 
 import (

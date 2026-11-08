@@ -139,6 +139,19 @@ pub struct Menu {
     pub items: Vec<MenuItem>,
 }
 
+impl Menu {
+    /// The entry under the screen cell (cx, cy), if any. The menu is drawn
+    /// one column right of its cell and one row per entry downwards (see
+    /// build_scene); `origin` is the zone cell at the top left of the view.
+    pub fn row_at(&self, origin: (usize, usize), cx: u16, cy: u16) -> Option<usize> {
+        let left = self.cell.0.saturating_sub(origin.0) as u16 + 1;
+        let top = self.cell.1.saturating_sub(origin.1) as u16 + 1;
+        let width = self.items.iter().map(|i| i.label.chars().count() + 2).max().unwrap_or(0) as u16;
+        let row = cy.checked_sub(top)? as usize;
+        (cx >= left && cx < left + width && row < self.items.len()).then_some(row)
+    }
+}
+
 /// How long one step of a clicked walk takes.
 pub const WALK_STEP: Duration = Duration::from_millis(150);
 
@@ -190,7 +203,14 @@ impl App {
                 }
                 self.status = Some(status);
             }
-            ServerMsg::Zone { zone } => self.zone = Some(ZoneView::from(zone)),
+            ServerMsg::Zone { zone } => {
+                // A new room: a clicked walk or an open menu belongs to the old one.
+                if self.zone.as_ref().is_some_and(|z| z.room != zone.room) {
+                    self.walk.clear();
+                    self.menu = None;
+                }
+                self.zone = Some(ZoneView::from(zone));
+            }
             ServerMsg::Delta { delta } => {
                 if let Some(z) = &mut self.zone {
                     z.apply(delta);

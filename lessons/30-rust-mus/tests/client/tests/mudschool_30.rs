@@ -34,10 +34,10 @@ fn app() -> App {
 fn a_star_in_the_client() {
     let app = app();
     let z = app.zone.as_ref().unwrap();
-    let path = find_path(z, (1, 1), (7, 1)).expect(l("en väg runt väggen", "a path round the wall", "壁を回る経路"));
+    let path = find_path(z, (1, 1), (7, 1)).unwrap_or_else(|| panic!("{}", l("en väg runt väggen", "a path round the wall", "壁を回る経路")));
     assert_eq!(path.len(), 6, "{}: {path:?}", l("den kortaste vägen med diagonala steg", "the shortest path with diagonal steps", "斜め移動を含む最短経路"));
     assert_eq!(*path.last().unwrap(), (7, 1));
-    assert!(path.iter().all(|&(x, _)| x != 4 || path.iter().any(|&p| p == (4, 3))), "{}", l("vägen går genom öppningen", "the path goes through the opening", "経路は開口部を通る"));
+    assert!(path.iter().all(|&(x, _)| x != 4 || path.contains(&(4, 3))), "{}", l("vägen går genom öppningen", "the path goes through the opening", "経路は開口部を通る"));
     assert_eq!(find_path(z, (1, 1), (4, 1)), None, "{}", l("in i en vägg: ingen väg", "into a wall: no path", "壁の中へ: 経路なし"));
     assert_eq!(find_path(z, (1, 1), (5, 4)), None, "{}", l("till en okänd ruta: ingen väg", "to an unknown cell: no path", "未知のマスへ: 経路なし"));
     assert_eq!(find_path(z, (1, 1), (1, 1)), Some(vec![]));
@@ -122,4 +122,36 @@ fn the_scene_maps_the_mouse() {
         "the tooltip should be drawn (overlay)",
         "ツールチップが描かれるべきです（overlay）"
     ), text.lines().join("\n"));
+}
+
+#[test]
+fn a_new_room_stops_the_walk() {
+    let mut app = app();
+    app.left_click((3, 3), None);
+    app.right_click((6, 1));
+    assert!(!app.walk.is_empty() && app.menu.is_some());
+    let other = serde_json::json!({"type": "zone", "zone": {
+        "room": "elsewhere", "width": 3, "height": 3, "rows": ["...", "...", "..."],
+        "legend": {".": "floor"},
+        "entities": [{"id": "p:Anna", "kind": "player", "name": "Anna", "glyph": "@", "x": 1, "y": 1}],
+        "self": "p:Anna"}});
+    app.on_server(parse_line(&other.to_string()));
+    assert!(app.walk.is_empty() && app.menu.is_none(), "{}", l(
+        "i ett nytt rum hör promenaden och menyn till det gamla – de ska försvinna",
+        "in a new room the walk and the menu belong to the old one – they should go",
+        "新しい部屋では、歩行とメニューは古い部屋のものなので消すべきです"
+    ));
+}
+
+#[test]
+fn the_menu_knows_where_it_is() {
+    let mut app = app();
+    app.right_click((6, 1));
+    let menu = app.menu.clone().unwrap();
+    // Drawn one column right of the cell, one row per entry: screen (7, 2), (7, 3), (7, 4).
+    assert_eq!(menu.row_at((0, 0), 7, 2), Some(0));
+    assert_eq!(menu.row_at((0, 0), 8, 4), Some(2));
+    assert_eq!(menu.row_at((0, 0), 6, 2), None, "{}", l("till vänster om menyn", "left of the menu", "メニューの左"));
+    assert_eq!(menu.row_at((0, 0), 7, 5), None, "{}", l("under menyn", "below the menu", "メニューの下"));
+    assert_eq!(menu.row_at((0, 0), 60, 2), None, "{}", l("långt till höger", "far to the right", "はるか右"));
 }

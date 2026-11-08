@@ -87,7 +87,7 @@ async fn main() {
         }
     });
 
-    let atlas = Texture2D::from_file_with_format(include_bytes!("../../assets/tiles.png"), None);
+    let atlas = Texture2D::from_file_with_format(include_bytes!("../assets/tiles.png"), None);
     atlas.set_filter(FilterMode::Nearest); // crisp pixels, no blur
 
     let mut app = App::new();

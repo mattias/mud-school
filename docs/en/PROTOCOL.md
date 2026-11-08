@@ -140,7 +140,7 @@ so after logging in and in every new room – and in reply to `zone`.
   "entities":[{"id":"p:Anna","kind":"player","name":"Anna","glyph":"@","x":4,"y":2},
               {"id":"i:lamp","kind":"item","name":"a lamp","glyph":"*","x":5,"y":2}],
   "self":"p:Anna",
-  "visible":["000111111","000111111","000111111","000111111","000111111"]}}
+  "visible":["111111111","111111111","111111111","111111111","111111111"]}}
 ```
 
 | Field | Type | Description |
@@ -163,9 +163,7 @@ command or a tick if anything changed. Much smaller than a whole zone.
 ```json
 {"type":"delta","delta":{"room":"torget",
   "moved":[{"id":"p:Anna","kind":"player","name":"Anna","glyph":"@","x":5,"y":2}],
-  "removed":["n:cat"],
-  "tiles":[{"x":1,"y":1,"code":".","meaning":"floor"}],
-  "visible":["001111111","001111111","001111111","001111111","001111111"]}}
+  "removed":["n:cat"]}}
 ```
 
 | Field | Type | Description |

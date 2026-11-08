@@ -14,10 +14,9 @@ use mud_client::app::App;
 use mud_client::config::{Cli, Config};
 use mud_client::gfx::GfxRenderer;
 use mud_client::messages;
-use mud_client::mouse::screen_to_cell;
 use mud_client::net::Connection;
 use mud_client::protocol::{parse_line, Kind};
-use mud_client::scene::{build_scene_at, draw_scene};
+use mud_client::scene::{build_scene, draw_scene};
 
 fn window_conf() -> Conf {
     Conf {
@@ -88,7 +87,7 @@ async fn main() {
         }
     });
 
-    let atlas = Texture2D::from_file_with_format(include_bytes!("../../assets/tiles.png"), None);
+    let atlas = Texture2D::from_file_with_format(include_bytes!("../assets/tiles.png"), None);
     atlas.set_filter(FilterMode::Nearest); // crisp pixels, no blur
 
     let mut app = App::new();
@@ -108,43 +107,11 @@ async fn main() {
             break;
         }
 
-        let now = std::time::Instant::now();
-        app.tick(now); // particles move (lesson 29)
         clear_background(BLACK);
-        let mut renderer = GfxRenderer { atlas: &atlas, scale: 2.0, shake: (0.0, 0.0) };
+        let mut renderer = GfxRenderer { atlas: &atlas, scale: 2.0 };
         let size = renderer.cell_px();
         let (cols, rows) = ((screen_width() / size) as u16, (screen_height() / size) as u16);
-        // The mouse (lesson 30): hover, left click (walk or choose), right click (menu).
-        let layout = build_scene_at(&app, cols, rows, now);
-        let (mx, my) = mouse_position();
-        let (cx, cy) = screen_to_cell(mx, my, size);
-        app.hover = layout.zone_cell(cx, cy);
-        if is_mouse_button_pressed(MouseButton::Left) {
-            // The menu is drawn from the clicked cell downwards, one entry per row.
-            let menu_row = app.menu.as_ref().and_then(|m| {
-                let top = m.cell.1.saturating_sub(layout.origin.1) as u16 + 1;
-                cy.checked_sub(top).map(|row| row as usize)
-            });
-            if let Some(cell) = app.hover {
-                if let Some(cmd) = app.left_click(cell, menu_row) {
-                    let _ = outgoing.send_line(&cmd);
-                }
-            } else {
-                app.menu = None;
-            }
-        }
-        if is_mouse_button_pressed(MouseButton::Right) {
-            if let Some(cell) = app.hover {
-                app.right_click(cell);
-            }
-        }
-        if let Some(step) = app.next_walk_step(now) {
-            let _ = outgoing.send_line(&step);
-        }
-
-        let scene = build_scene_at(&app, cols, rows, now);
-        renderer.shake = scene.shake;
-        draw_scene(&scene, &mut renderer);
+        draw_scene(&build_scene(&app, cols, rows), &mut renderer);
         next_frame().await;
     }
 }

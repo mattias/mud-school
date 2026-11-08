@@ -98,7 +98,7 @@ befintlig implementation.
 `new()`), `App::tick(now)`; en träff (lägre `hp`) ger 12 röda gnistor mitt i
 din ruta (`x + 0.5, y + 0.5`). Terminalen använder också `cell_light`.
 
-`gfx.rs` och `mud-gfx.rs`: `particle` ritar en liten kvadrat, `shake` flyttar
+`gfx.rs` och `gfx/main.rs`: `particle` ritar en liten kvadrat, `shake` flyttar
 zonen, och loopen anropar `app.tick(now)` och `build_scene_at(..., now)`.
 
 ## Uppgift

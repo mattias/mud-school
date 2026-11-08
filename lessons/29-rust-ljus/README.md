@@ -98,7 +98,7 @@ trait *with* a default doesn't break any existing implementation.
 `new()`), `App::tick(now)`; a hit (lower `hp`) bursts 12 red sparks in the
 middle of your cell (`x + 0.5, y + 0.5`). The terminal uses `cell_light` too.
 
-`gfx.rs` and `mud-gfx.rs`: `particle` draws a small square, `shake` moves the
+`gfx.rs` and `gfx/main.rs`: `particle` draws a small square, `shake` moves the
 zone, and the loop calls `app.tick(now)` and `build_scene_at(..., now)`.
 
 ## Task

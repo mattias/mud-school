@@ -95,7 +95,7 @@ kameran från lektion 25 – så att ett klick kan räknas om till en zonruta.
 eller menyns texter, en per rad från rutan och nedåt), `Scene::zone_cell(x, y)`,
 och `Renderer::overlay` med en standardkropp (vanlig text).
 
-Fönstret (`mud-gfx.rs`, `gfx.rs`): hover, vänster- och högerklick, ett steg
+Fönstret (`gfx/main.rs`, `gfx.rs`): hover, vänster- och högerklick, ett steg
 per `WALK_STEP`, och en overlay med en mörk ruta bakom texten.
 
 ## Uppgift

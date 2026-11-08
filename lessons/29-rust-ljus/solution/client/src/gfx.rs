@@ -53,7 +53,7 @@ impl Renderer for GfxRenderer<'_> {
                 if let Some(bg) = cell.bg {
                     draw_rectangle(px, py, size, size, color(shade(bg, cell.light)));
                 }
-                draw_text(&cell.glyph.to_string(), px + size * 0.25, py + size * 0.8, size, color(shade(cell.fg, cell.light)));
+                draw_text(cell.glyph.encode_utf8(&mut [0; 4]), px + size * 0.25, py + size * 0.8, size, color(shade(cell.fg, cell.light)));
             }
         }
         if let Some(index) = cell.entity {

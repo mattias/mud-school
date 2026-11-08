@@ -22,5 +22,5 @@ gfx = ["dep:macroquad"]
 
 [[bin]]
 name = "mud-gfx"
-path = "src/bin/mud-gfx.rs"
+path = "gfx/main.rs"
 required-features = ["gfx"]

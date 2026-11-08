@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Bygga i spelet – världen ändras inifrån",
+    "en": "Building in the game – changing the world from inside",
+    "ja": "ゲーム内での建築 – 世界を内側から変える"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Online creation: @dig, @desc, @name och @exit. Varje ändring valideras, sparas atomiskt i världsfilen och syns för alla direkt – kursens sista steg mot en server som aldrig behöver startas om.",
+    "en": "Online creation: @dig, @desc, @name and @exit. Every change is validated, saved atomically to the world file and visible to everyone at once – the course's last step towards a server that never needs a restart.",
+    "ja": "オンラインクリエーション: @dig、@desc、@name、@exit。変更はすべて検証され、ワールドファイルに不可分に保存され、すぐに全員に見える。再起動のいらないサーバーへのコース最後の一歩。"
+  }
+}

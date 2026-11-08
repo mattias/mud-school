@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Copyover – ny kod utan att någon kopplas ner",
+    "en": "Copyover – new code without disconnecting anyone",
+    "ja": "copyover – 誰も切断せずに新しいコードへ"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Den klassiska MUD-tekniken: servern startar en ny version av sig själv och lämnar över de öppna anslutningarna som fildeskriptorer, tillsammans med spelarnas tillstånd.",
+    "en": "The classic MUD technique: the server starts a new version of itself and hands over the open connections as file descriptors, together with the players' state.",
+    "ja": "MUD の古典的な技法: サーバーが自分の新しい版を起動し、開いている接続をファイルディスクリプターとして、プレイヤーの状態と一緒に引き渡す。"
+  }
+}

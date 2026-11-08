@@ -7,10 +7,9 @@
 > tile graphics, scripts and plugins that load without a restart.
 
 This document describes the *whole* journey: why it looks the way it does,
-what you learn in every step and where we are heading. Lessons 01–30 are
-implemented in `lessons/` (with tests and reference solutions). Phases 5–6 are
-planned and described here so that you can see the big picture – and build on
-your own.
+what you learn in every step and where we are heading. Lessons 01–36 are
+implemented in `lessons/` (with tests and reference solutions). Phase 6 is a
+set of optional tracks, described here as ideas to build on on your own.
 
 ---
 
@@ -23,7 +22,7 @@ your own.
 5. [Phase 2 – A world and a face (lessons 06–13)](#phase-2--a-world-and-a-face-lessons-0613)
 6. [Phase 3 – A living world (lessons 14–22)](#phase-3--a-living-world-lessons-1422)
 7. [Phase 4 – Tiles and zones (lessons 23–30)](#phase-4--tiles-and-zones-lessons-2330)
-8. [Phase 5 – An extensible server](#phase-5--an-extensible-server-planned)
+8. [Phase 5 – An extensible server (lessons 31–36)](#phase-5--an-extensible-server-lessons-3136)
 9. [Phase 6 – Out into the world](#phase-6--out-into-the-world-optional-tracks)
 10. [Concept map: Go and Rust side by side](#concept-map-go-and-rust-side-by-side)
 11. [Further reading](#further-reading)
@@ -158,9 +157,9 @@ Phase 2  A world and a face   06 ─ 13   Go: chat, rooms, world files, protocol
 Phase 3  A living world       14 ─ 22   game loop, items, NPCs, combat, saving
 Phase 4  Tiles and zones      23 ─ 30   Caves of Qud-style zones, procedural generation,
                                         field of view, A*, graphical client with a tileset
-───────────────────────────────────────────────────── implemented above ───
 Phase 5  An extensible server 31 ─ 36   live reloading, Lua scripts, WASM plugins
                                         in Rust, hooks, copyover, building in the game
+───────────────────────────────────────────────────── implemented above ───
 Phase 6  Out into the world   optional  web client (Rust→WASM), async Rust,
                                         GMCP, operations and load testing
 ```
@@ -247,19 +246,19 @@ Organizing the client as a **Cargo workspace** (`mud-core`, `mud-tui`,
 **After phase 4** the MUD looks like a roguelike: generated caves and
 forests, things you only see when you see them, and a window with tiles.
 
-## Phase 5 – An extensible server (planned)
+## Phase 5 – An extensible server (lessons 31–36)
 
 **Goal:** the server should never need a restart to get new content or new
 features. This is the culmination of the course and ties everything together.
 
-| # | Track | Lesson | Contents |
-|---|---|---|---|
-| 31 | Go | Reloading data | Watch the world files (polling or `fsnotify`), validate (lesson 09!), and swap the world *atomically* in the game loop. Players in removed rooms are moved to a safe place. The admin command `@reload`. |
-| 32 | Go | Scripts in Lua | Embedded Lua with `gopher-lua` (pure Go). Commands and NPC behaviours in `.lua` files that reload live. A sandbox (no `os`/`io`), a time limit per script with `context`, and the hard question: *what API should scripts get?* The command registry from lesson 04 suddenly becomes very important. |
-| 33 | Rust → Go | Plugins in WebAssembly | Write plugins in **Rust**, compile to `wasm32-unknown-unknown`, run them in the Go server with `wazero` (pure Go, no cgo). An ABI of your own: the plugin exports `on_command(ptr, len)`, the server offers `send(player, text)`. Memory limits, "fuel" against endless loops, versioning. **This is where the languages truly meet.** |
-| 34 | Go | Events and hooks | An event bus: `OnEnterRoom`, `OnSay`, `OnTick`, `OnDeath`. Scripts and plugins subscribe; hooks can cancel actions ("the door is locked"). |
-| 35 | Go | Copyover | The classic MUD technique from the 90s: the server starts a *new version of itself* with `exec` and hands over the open connections (file descriptors via `ExtraFiles`) and the player state. The players only see "The world shudders for a moment..." New code – without anyone being disconnected. |
-| 36 | Go | Building in the game | *Online creation*: `@dig north Dark cave`, `@desc ...`, `@exit ...` – changes are validated, saved to the world file and visible to everyone immediately. |
+| # | Track | Lesson | The game gets | The language teaches you |
+|---|---|---|---|---|
+| 31 | Go | Reloading the world | the world file is watched and swapped live; `@reload`; administrators | polling with `os.Stat` and a ticker, validate outside the loop, swap inside it, migrating live state |
+| 32 | Go | Scripts in Lua | commands and creature behaviours in `.lua` files, reloaded when you save | embedding gopher-lua, a sandbox, `context` time limits, API design |
+| 33 | Go (+ Rust) | Plugins in WebAssembly | a plugin written in Rust, compiled to `wasm32`, running in the Go server | wazero, an ABI of your own, shared memory, memory and time limits, versioning |
+| 34 | Go | Events and hooks | `enter`, `say`, `tick`, `death`; hooks in Go and Lua that can say no | an event bus, functions as subscribers, Lua return values |
+| 35 | Go | Copyover | a new binary takes over without anyone being disconnected | file descriptors, `ExtraFiles`, `net.FileConn`/`FileListener`, handing over state |
+| 36 | Go | Building in the game | `@dig`, `@desc`, `@name`, `@exit`, validated and saved at once | apply–validate–undo, atomic writes, ordering concurrent saves |
 
 Three levels of extensibility, from simplest to most powerful:
 
@@ -346,7 +345,7 @@ Approximate times for someone who can program but is new to Go and Rust:
 | Phase 2 (06–13) | 15–25 hours |
 | Phase 3 (14–22) | 25–35 hours |
 | Phase 4 (23–30) | 30–45 hours |
-| Phase 5 | 25–40 hours |
+| Phase 5 (31–36) | 25–40 hours |
 
 The Rust lessons typically take longer than the Go lessons. That is normal –
 the borrow checker is a threshold everyone has to get over.

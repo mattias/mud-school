@@ -149,6 +149,35 @@ const (
 	MsgErrZoneExit = "rum %q: zonen saknar en öppning för utgången %s"
 	// creatures that hunt (lesson 27)
 	MsgAttacksYou = "%s anfaller dig!"
+	// reloading the world (lesson 31)
+	MsgNotAdmin     = "Det får bara administratörer göra."
+	MsgNoWorldFile  = "Servern startades utan världsfil (-world) – det finns inget att ladda om."
+	MsgReloadFailed = "Världsfilen har fel – ingenting ändrades:\n%v"
+	MsgReloaded     = "Världen skimrar till – den har byggts om."
+	MsgRoomGone     = "Rummet du var i finns inte längre – du befinner dig någon annanstans."
+	// scripts in Lua (lesson 32)
+	MsgScriptError      = "Något gick fel i ett skript."
+	MsgScriptLoadFailed = "Ett skript har fel:\n%v"
+	// plugins in WebAssembly (lesson 33)
+	MsgPluginError      = "Något gick fel i ett plugin."
+	MsgPluginLoadFailed = "Ett plugin har fel:\n%v"
+	// events and hooks (lesson 34)
+	MsgCancelled = "Något hindrar dig."
+	// copyover (lesson 35)
+	MsgCopyoverDone   = "Världen skälver ett ögonblick ... allt är som förut, och ändå nytt."
+	MsgCopyoverFailed = "Copyover misslyckades: %v"
+	// building in the game (lesson 36)
+	MsgDigUsage     = "Så här: @dig <riktning> <namn>, t.ex. @dig north Mörk grotta"
+	MsgDescUsage    = "Så här: @desc <beskrivning>"
+	MsgNameUsage    = "Så här: @name <namn>"
+	MsgExitUsage    = "Så här: @exit <riktning> <rums-id> (eller none för att ta bort)"
+	MsgExitExists   = "Det finns redan en utgång åt %s."
+	MsgNewRoomDesc  = "Ett tomt rum. Beskriv det med @desc."
+	MsgDug          = "Du gräver åt %s och skapar %q (%s)."
+	MsgBuilt        = "Klart."
+	MsgBuildInvalid = "Det skulle göra världen ogiltig – ingenting ändrades:\n%v"
+	MsgNotSaved     = "(Servern har ingen världsfil – ändringen sparas inte.)"
+	MsgSaveFailed   = "Världen kunde inte sparas: %v"
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

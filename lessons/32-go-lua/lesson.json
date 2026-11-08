@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Skript i Lua – nya kommandon utan omstart",
+    "en": "Scripts in Lua – new commands without a restart",
+    "ja": "Lua のスクリプト – 再起動なしで新しいコマンド"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Kommandon och varelsebeteenden i .lua-filer som laddas om när du sparar. Ett inbäddat språk i ren Go, en sandlåda, en tidsgräns – och frågan vilket API skripten ska få.",
+    "en": "Commands and creature behaviours in .lua files that reload when you save. An embedded language in pure Go, a sandbox, a time limit – and the question of what API scripts should get.",
+    "ja": "保存すると再読み込みされる .lua ファイルのコマンドと生き物の振る舞い。純粋な Go で組み込む言語、サンドボックス、制限時間、そしてスクリプトにどんな API を与えるかという問い。"
+  }
+}

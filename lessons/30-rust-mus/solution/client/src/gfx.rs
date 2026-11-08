@@ -69,9 +69,10 @@ impl Renderer for GfxRenderer<'_> {
 
     fn overlay(&mut self, x: u16, y: u16, text: &str) {
         let size = self.cell_px();
-        let dims = measure_text(text, None, (size * 0.8) as u16, 1.0);
-        draw_rectangle(x as f32 * size, y as f32 * size, dims.width + 8.0, size, Color::from_rgba(20, 20, 30, 230));
-        draw_rectangle_lines(x as f32 * size, y as f32 * size, dims.width + 8.0, size, 1.0, GRAY);
+        // As wide as Menu::row_at counts it: one cell per character.
+        let width = text.chars().count() as f32 * size;
+        draw_rectangle(x as f32 * size, y as f32 * size, width, size, Color::from_rgba(20, 20, 30, 230));
+        draw_rectangle_lines(x as f32 * size, y as f32 * size, width, size, 1.0, GRAY);
         self.text(x, y, text, Rgb(255, 255, 200));
     }
 

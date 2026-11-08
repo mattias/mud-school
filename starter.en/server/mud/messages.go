@@ -149,6 +149,35 @@ const (
 	MsgErrZoneExit = "room %q: the zone has no opening for the exit %s"
 	// creatures that hunt (lesson 27)
 	MsgAttacksYou = "%s attacks you!"
+	// reloading the world (lesson 31)
+	MsgNotAdmin     = "Only administrators can do that."
+	MsgNoWorldFile  = "The server was started without a world file (-world) – there is nothing to reload."
+	MsgReloadFailed = "The world file has errors – nothing was changed:\n%v"
+	MsgReloaded     = "The world shimmers – it has been rebuilt."
+	MsgRoomGone     = "The room you were in is gone – you find yourself somewhere else."
+	// scripts in Lua (lesson 32)
+	MsgScriptError      = "Something went wrong in a script."
+	MsgScriptLoadFailed = "A script has errors:\n%v"
+	// plugins in WebAssembly (lesson 33)
+	MsgPluginError      = "Something went wrong in a plugin."
+	MsgPluginLoadFailed = "A plugin has errors:\n%v"
+	// events and hooks (lesson 34)
+	MsgCancelled = "Something stops you."
+	// copyover (lesson 35)
+	MsgCopyoverDone   = "The world shudders for a moment ... everything is as it was, and yet new."
+	MsgCopyoverFailed = "Copyover failed: %v"
+	// building in the game (lesson 36)
+	MsgDigUsage     = "Like this: @dig <direction> <name>, e.g. @dig north Dark cave"
+	MsgDescUsage    = "Like this: @desc <description>"
+	MsgNameUsage    = "Like this: @name <name>"
+	MsgExitUsage    = "Like this: @exit <direction> <room id> (or none to remove it)"
+	MsgExitExists   = "There is already an exit %s."
+	MsgNewRoomDesc  = "An empty room. Describe it with @desc."
+	MsgDug          = "You dig %s and create %q (%s)."
+	MsgBuilt        = "Done."
+	MsgBuildInvalid = "That would make the world invalid – nothing was changed:\n%v"
+	MsgNotSaved     = "(The server has no world file – the change is not saved.)"
+	MsgSaveFailed   = "The world could not be saved: %v"
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

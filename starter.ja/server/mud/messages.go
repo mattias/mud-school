@@ -149,6 +149,35 @@ const (
 	MsgErrZoneExit = "部屋 %q: 出口 %s に対応する開口部がゾーンにありません"
 	// creatures that hunt (lesson 27)
 	MsgAttacksYou = "%s が襲いかかってきた！"
+	// reloading the world (lesson 31)
+	MsgNotAdmin     = "それは管理者だけができます。"
+	MsgNoWorldFile  = "サーバーはワールドファイル（-world）なしで起動しました。再読み込みするものがありません。"
+	MsgReloadFailed = "ワールドファイルに誤りがあります。何も変更していません:\n%v"
+	MsgReloaded     = "世界が揺らめいた。作り直されたのだ。"
+	MsgRoomGone     = "いた部屋がなくなった。気づくと別の場所にいる。"
+	// scripts in Lua (lesson 32)
+	MsgScriptError      = "スクリプトで問題が起きました。"
+	MsgScriptLoadFailed = "スクリプトに誤りがあります:\n%v"
+	// plugins in WebAssembly (lesson 33)
+	MsgPluginError      = "プラグインで問題が起きました。"
+	MsgPluginLoadFailed = "プラグインに誤りがあります:\n%v"
+	// events and hooks (lesson 34)
+	MsgCancelled = "何かに阻まれた。"
+	// copyover (lesson 35)
+	MsgCopyoverDone   = "一瞬、世界が震えた……すべては元のまま、それでいて新しい。"
+	MsgCopyoverFailed = "copyover に失敗しました: %v"
+	// building in the game (lesson 36)
+	MsgDigUsage     = "使い方: @dig <方向> <名前>（例: @dig north 暗い洞窟）"
+	MsgDescUsage    = "使い方: @desc <説明>"
+	MsgNameUsage    = "使い方: @name <名前>"
+	MsgExitUsage    = "使い方: @exit <方向> <部屋 ID>（消すときは none）"
+	MsgExitExists   = "%sにはすでに出口があります。"
+	MsgNewRoomDesc  = "何もない部屋。@desc で説明を書こう。"
+	MsgDug          = "%sへ掘り進み、%q（%s）を作った。"
+	MsgBuilt        = "完了。"
+	MsgBuildInvalid = "それでは世界が正しくなくなります。何も変更していません:\n%v"
+	MsgNotSaved     = "（サーバーにワールドファイルがないので、変更は保存されません。）"
+	MsgSaveFailed   = "世界を保存できませんでした: %v"
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

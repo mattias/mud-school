@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Ladda om världen – utan omstart",
+    "en": "Reloading the world – without a restart",
+    "ja": "世界の再読み込み – 再起動なしで"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Servern bevakar världsfilen, validerar den och byter ut världen atomiskt i spelloopen. Adminkommandot @reload, och spelare i rum som försvunnit flyttas i säkerhet.",
+    "en": "The server watches the world file, validates it and swaps the world atomically in the game loop. The admin command @reload, and players in rooms that disappeared are moved to safety.",
+    "ja": "サーバーがワールドファイルを監視し、検証して、ゲームループの中で世界を不可分に入れ替える。管理者コマンド @reload。消えた部屋にいたプレイヤーは安全な場所へ移される。"
+  }
+}

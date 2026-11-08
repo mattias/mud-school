@@ -21,9 +21,10 @@ tileset, ljus och mus:
 
 ![Den grafiska klienten från lektion 28: en zon ritad med tiles, synfältet som en cirkel](docs/images/gfx.png)
 
-Sedan fortsätter kursplanen med en server som kan byggas ut **medan den kör** –
-omladdning av världen, Lua-skript, plugins skrivna i Rust och kompilerade till
-WebAssembly, och den klassiska MUD-tekniken *copyover*.
+Fas 5 (lektion 31–36) gör servern utbyggbar **medan den kör**: omladdning av
+världen, Lua-skript, plugins skrivna i Rust och kompilerade till WebAssembly,
+händelser och hooks, den klassiska MUD-tekniken *copyover*, och att bygga
+världen inifrån spelet.
 
 Kursen finns på **engelska, svenska och japanska** – instruktioner, ledtrådar,
 testernas felmeddelanden, spelets texter och spelvärlden.
@@ -128,8 +129,14 @@ Du behöver aldrig köra `init` igen.
 | 28 | Rust | En grafisk klient | en `Renderer`-trait, Cargo-features, macroquad |
 | 29 | Rust | Ljus och liv | färgblandning, animation som funktioner av tiden, partiklar |
 | 30 | Rust | Musen | `BinaryHeap` + `Reverse`, koordinatsystem |
+| 31 | Go | Ladda om världen | pollning, validera-sedan-byt, adminkommandon |
+| 32 | Go | Skript i Lua | ett inbäddat språk, en sandlåda, tidsgränser med `context` |
+| 33 | Go + Rust | Plugins i WebAssembly | wazero, ett ABI, Rust kompilerat till `wasm32` |
+| 34 | Go | Händelser och hooks | en händelsebuss, handlingar som kan avbrytas |
+| 35 | Go | Copyover | fildeskriptorer, `ExtraFiles`, överlämning av anslutningar |
+| 36 | Go | Bygga i spelet | genomför–validera–ångra, atomiska skrivningar |
 
-Fas 5–6 (lektion 31–36 och valfria spår) beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
+Fas 6 (valfria spår) och hela resan beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
 
 ## Dokumentation
 

@@ -79,7 +79,7 @@ func NewZone(w, h int, t byte) *Zone {
 
 // ParseZone reads hand-made rows like "#####", "#...#".
 func ParseZone(rows []string) (*Zone, error) {
-	// TODO(lesson 23): at least 3Ã3, every row as wide as the first, only
+	// TODO(lesson 23): at least 3×3, every row as wide as the first, only
 	// codes from tileMeanings. Return an error that says what is wrong.
 	return nil, fmt.Errorf("TODO")
 }

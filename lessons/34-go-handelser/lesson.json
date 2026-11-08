@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Händelser och hooks – säga nej till en handling",
+    "en": "Events and hooks – saying no to an action",
+    "ja": "イベントとフック – 行動に「否」と言う"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "En händelsebuss: enter, say, tick, death. Go-kod och Lua-skript prenumererar, och en hook kan stoppa en handling – \"Valvdörren är låst.\"",
+    "en": "An event bus: enter, say, tick, death. Go code and Lua scripts subscribe, and a hook can stop an action – \"The vault door is locked.\"",
+    "ja": "イベントバス: enter、say、tick、death。Go のコードと Lua のスクリプトが購読し、フックは行動を止められる。「金庫室の扉は鍵がかかっている。」"
+  }
+}

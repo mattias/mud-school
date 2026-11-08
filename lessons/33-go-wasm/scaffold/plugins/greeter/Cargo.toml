@@ -1,0 +1,17 @@
+[package]
+name = "greeter"
+version = "0.1.0"
+edition = "2021"
+
+# A plugin for the MUD School server (lesson 33). Build it with:
+#   cargo build --release --target wasm32-unknown-unknown
+# and copy target/wasm32-unknown-unknown/release/greeter.wasm to server/plugins/.
+# (Once: rustup target add wasm32-unknown-unknown)
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"

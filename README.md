@@ -21,9 +21,10 @@ graphical client with its own tileset, light and a mouse:
 
 ![The graphical client from lesson 28: a zone drawn with tiles, the field of view as a circle](docs/images/gfx.png)
 
-Then the curriculum continues with a server that can be extended **while it
-is running** – live world reloading, Lua scripts, plugins written in Rust and
-compiled to WebAssembly, and the classic MUD technique *copyover*.
+Phase 5 (lessons 31–36) makes the server extensible **while it is running**:
+live world reloading, Lua scripts, plugins written in Rust and compiled to
+WebAssembly, events and hooks, the classic MUD technique *copyover*, and
+building the world from inside the game.
 
 The course is available in **English, Swedish and Japanese** – instructions,
 hints, the tests' failure messages, the game's texts and the game world.
@@ -127,8 +128,14 @@ automatically, and `doctor` tells you when something is waiting. You never need 
 | 28 | Rust | A graphical client | a `Renderer` trait, Cargo features, macroquad |
 | 29 | Rust | Light and life | colour blending, animation as functions of time, particles |
 | 30 | Rust | The mouse | `BinaryHeap` + `Reverse`, coordinate systems |
+| 31 | Go | Reloading the world | polling, validate-then-swap, admin commands |
+| 32 | Go | Scripts in Lua | an embedded language, a sandbox, `context` time limits |
+| 33 | Go + Rust | Plugins in WebAssembly | wazero, an ABI, Rust compiled to `wasm32` |
+| 34 | Go | Events and hooks | an event bus, cancellable actions |
+| 35 | Go | Copyover | file descriptors, `ExtraFiles`, handing over connections |
+| 36 | Go | Building in the game | apply–validate–undo, atomic writes |
 
-Phases 5–6 (lessons 31–36 and optional tracks) are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
+Phase 6 (optional tracks) and the whole journey are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
 
 ## Documentation
 

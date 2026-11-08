@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Plugins i WebAssembly – Rust i Go-servern",
+    "en": "Plugins in WebAssembly – Rust inside the Go server",
+    "ja": "WebAssembly のプラグイン – Go サーバーの中の Rust"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Plugins skrivna i Rust, kompilerade till wasm32 och körda i Go-servern med wazero. Ett eget ABI, delat minne, minnes- och tidsgränser, versioner. Här möts språken på riktigt.",
+    "en": "Plugins written in Rust, compiled to wasm32 and run in the Go server with wazero. An ABI of your own, shared memory, memory and time limits, versions. This is where the languages truly meet.",
+    "ja": "Rust で書いて wasm32 にコンパイルし、wazero で Go サーバーの中で動かすプラグイン。独自の ABI、共有メモリ、メモリと時間の制限、バージョン。ここで 2 つの言語が本当に出会う。"
+  }
+}

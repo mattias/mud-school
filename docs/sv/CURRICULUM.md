@@ -9,10 +9,9 @@
 > 🇸🇪 Svenska · [🇬🇧 English](../en/CURRICULUM.md) · [🇯🇵 日本語](../ja/CURRICULUM.md)
 
 Det här dokumentet beskriver *hela* resan: varför den ser ut som den gör,
-vad du lär dig i varje steg och vart vi är på väg. Lektion 01–30 finns
-implementerade i `lessons/` (med tester och referenslösningar). Faserna 5–6
-är planerade och beskrivna här så att du ser helheten – och kan bygga vidare
-på egen hand.
+vad du lär dig i varje steg och vart vi är på väg. Lektion 01–36 finns
+implementerade i `lessons/` (med tester och referenslösningar). Fas 6 är en
+samling valfria spår, beskrivna här som idéer att bygga vidare på egen hand.
 
 ---
 
@@ -25,7 +24,7 @@ på egen hand.
 5. [Fas 2 – En värld och ett ansikte (lektion 06–13)](#fas-2--en-värld-och-ett-ansikte-lektion-0613)
 6. [Fas 3 – En levande värld (lektion 14–22)](#fas-3--en-levande-värld-lektion-1422)
 7. [Fas 4 – Tiles och zoner (lektion 23–30)](#fas-4--tiles-och-zoner-lektion-2330)
-8. [Fas 5 – En utbyggbar server](#fas-5--en-utbyggbar-server-planerad)
+8. [Fas 5 – En utbyggbar server (lektion 31–36)](#fas-5--en-utbyggbar-server-lektion-3136)
 9. [Fas 6 – Ut i världen](#fas-6--ut-i-världen-valfria-spår)
 10. [Begreppskarta: Go och Rust sida vid sida](#begreppskarta-go-och-rust-sida-vid-sida)
 11. [Läsanvisningar](#läsanvisningar)
@@ -158,9 +157,9 @@ Fas 2  En värld och ett      06 ─ 13   Go: chatt, rum, världsfiler, protokol
 Fas 3  En levande värld      14 ─ 22   spelloop, föremål, NPC:er, strid, sparande
 Fas 4  Tiles och zoner       23 ─ 30   zoner à la Caves of Qud, procedurgenerering,
                                        synfält, A*, grafisk klient med tileset
-─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 5  En utbyggbar server   31 ─ 36   omladdning live, Lua-skript, WASM-plugins
                                        i Rust, hooks, copyover, bygga i spelet
+─────────────────────────────────────────────────── implementerat ovanför ───
 Fas 6  Ut i världen          valfritt  webbklient (Rust→WASM), async Rust,
                                        GMCP, drift och lasttest
 ```
@@ -248,19 +247,19 @@ Att organisera klienten som ett **Cargo workspace** (`mud-core`, `mud-tui`,
 **Efter fas 4** ser MUD:en ut som en roguelike: genererade grottor och
 skogar, saker du bara ser när du ser dem, och ett fönster med tiles.
 
-## Fas 5 – En utbyggbar server (planerad)
+## Fas 5 – En utbyggbar server (lektion 31–36)
 
 **Mål:** servern ska aldrig behöva startas om för att få nytt innehåll eller
 nya funktioner. Det här är kursens kulmen och knyter ihop allt.
 
-| # | Spår | Lektion | Innehåll |
-|---|---|---|---|
-| 31 | Go | Omladdning av data | Bevaka världsfilerna (polling eller `fsnotify`), validera (lektion 09!), och byt världen *atomiskt* i spelloopen. Spelare i borttagna rum flyttas till en säker plats. Adminkommandot `@reload`. |
-| 32 | Go | Skript i Lua | Inbäddad Lua med `gopher-lua` (ren Go). Kommandon och NPC-beteenden i `.lua`-filer som laddas om live. Sandlåda (inga `os`/`io`), tidsgräns per skript med `context`, och den svåra frågan: *vilket API ska skript få?* Kommandoregistret från lektion 04 blir plötsligt väldigt viktigt. |
-| 33 | Rust → Go | Plugins i WebAssembly | Skriv plugins i **Rust**, kompilera till `wasm32-unknown-unknown`, kör dem i Go-servern med `wazero` (ren Go, ingen cgo). Ett eget ABI: pluginet exporterar `on_command(ptr, len)`, servern erbjuder `send(player, text)`. Minnesgränser, "bränsle" mot oändliga loopar, versionering. **Här möts språken på riktigt.** |
-| 34 | Go | Händelser och hooks | En händelsebuss: `OnEnterRoom`, `OnSay`, `OnTick`, `OnDeath`. Skript och plugins prenumererar; hooks kan avbryta handlingar ("dörren är låst"). |
-| 35 | Go | Copyover | Den klassiska MUD-tekniken från 90-talet: servern startar en *ny version av sig själv* med `exec` och lämnar över de öppna anslutningarna (filbeskrivare via `ExtraFiles`) och spelartillståndet. Spelarna ser bara "Världen skakar till ett ögonblick..." Ny kod – utan att någon kopplas ner. |
-| 36 | Go | Bygga i spelet | *Online creation*: `@dig north Mörk grotta`, `@desc ...`, `@exit ...` – ändringar valideras, sparas till världsfilen och syns direkt för alla. |
+| # | Spår | Lektion | Spelet får | Språket lär dig |
+|---|---|---|---|---|
+| 31 | Go | Ladda om världen | världsfilen bevakas och byts i drift; `@reload`; administratörer | pollning med `os.Stat` och en ticker, validera utanför loopen, byt inne i den, flytta levande tillstånd |
+| 32 | Go | Skript i Lua | kommandon och varelsebeteenden i `.lua`-filer, omladdade när du sparar | bädda in gopher-lua, en sandlåda, tidsgränser med `context`, API-design |
+| 33 | Go (+ Rust) | Plugins i WebAssembly | ett plugin skrivet i Rust, kompilerat till `wasm32`, som körs i Go-servern | wazero, ett eget ABI, delat minne, minnes- och tidsgränser, versioner |
+| 34 | Go | Händelser och hooks | `enter`, `say`, `tick`, `death`; hooks i Go och Lua som kan säga nej | en händelsebuss, funktioner som prenumeranter, returvärden från Lua |
+| 35 | Go | Copyover | ett nytt program tar över utan att någon kopplas ner | fildeskriptorer, `ExtraFiles`, `net.FileConn`/`FileListener`, överlämning av tillstånd |
+| 36 | Go | Bygga i spelet | `@dig`, `@desc`, `@name`, `@exit`, validerat och sparat direkt | genomför–validera–ångra, atomiska skrivningar, ordning på samtidiga sparningar |
 
 Tre nivåer av utbyggbarhet, från enklast till kraftfullast:
 
@@ -348,7 +347,7 @@ Ungefärliga tider för någon som kan programmera men är ny i Go och Rust:
 | Fas 2 (06–13) | 15–25 timmar |
 | Fas 3 (14–22) | 25–35 timmar |
 | Fas 4 (23–30) | 30–45 timmar |
-| Fas 5 | 25–40 timmar |
+| Fas 5 (31–36) | 25–40 timmar |
 
 Rust-lektionerna tar typiskt längre tid än Go-lektionerna. Det är normalt –
 lånekontrollen (*the borrow checker*) är en tröskel alla går över.

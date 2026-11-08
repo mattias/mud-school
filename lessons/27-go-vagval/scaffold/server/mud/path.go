@@ -99,7 +99,7 @@ type Fleer struct {
 }
 
 func (b Fleer) Act(s *Server, n *NPC) {
-	// TODO(lesson 27): below Below Ã max health and with players in the room:
+	// TODO(lesson 27): below Below × max health and with players in the room:
 	// step to the neighbour with the highest DijkstraMap value (from the
 	// players), if it is higher than where it stands.
 }

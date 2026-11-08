@@ -227,6 +227,9 @@ Resten (Ubuntu/Debian; på Fedora `sudo dnf install git telnet nmap-ncat gcc`):
 sudo apt install git telnet netcat-openbsd build-essential
 ```
 
+För den grafiska klienten i lektion 28 (ett fönster med tiles) behöver du också
+utvecklingsfilerna för X11 och OpenGL: `sudo apt install libx11-dev libxi-dev libgl1-mesa-dev`.
+
 Öppna terminalen igen och kontrollera `go version`, `rustc --version` och `cargo --version`.
 
 ### 2. Hämta kursen och börja

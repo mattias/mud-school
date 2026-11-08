@@ -141,6 +141,14 @@ const (
 	MsgPasswordTooShort = "パスワードは 4 文字以上にしてください。"
 	MsgWrongPassword    = "パスワードが違います。"
 	MsgStoreError       = "保存で問題が起きました。しばらくしてからもう一度試してください。"
+	// zones (lesson 23)
+	MsgBlocked     = "そこへは歩けません。"
+	MsgNoStairs    = "ここに階段はありません。"
+	MsgGoWhere     = "どこへ行きますか？（例: go north）"
+	MsgErrZoneRows = "部屋 %q: ゾーンが正しくありません（%v）。3×3 以上、同じ長さの行、既知のタイルのみ"
+	MsgErrZoneExit = "部屋 %q: 出口 %s に対応する開口部がゾーンにありません"
+	// creatures that hunt (lesson 27)
+	MsgAttacksYou = "%s が襲いかかってきた！"
 )
 
 // directionNames are the directions as shown to the player (lesson 8).

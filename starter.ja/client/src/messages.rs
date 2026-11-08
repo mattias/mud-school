@@ -13,3 +13,24 @@ pub const ONLINE: &str = "人がオンライン";
 pub const STARTER: &str = "MUD クライアントからこんにちは！このファイルはレッスン 3 で書きます。";
 pub const TITLE_PASSWORD: &str = " パスワード（非表示） ";
 pub const CONFIG_ERROR: &str = "設定にエラーがあります";
+// The mouse (lesson 30): menu entries and what tiles are called.
+pub const LOOK_AT: &str = "調べる";
+pub const ATTACK: &str = "攻撃する";
+pub const PICK_UP: &str = "拾う";
+pub const WALK_HERE: &str = "ここへ歩く";
+
+/// What a tile meaning is called, for the mouse pointer's tooltip.
+pub fn tile_name(meaning: &str) -> &'static str {
+    match meaning {
+        "floor" => "床",
+        "wall" => "壁",
+        "grass" => "草",
+        "tree" => "木",
+        "water" => "水",
+        "rock" => "岩",
+        "door" => "扉",
+        "stairs_up" => "上り階段",
+        "stairs_down" => "下り階段",
+        _ => "何か",
+    }
+}

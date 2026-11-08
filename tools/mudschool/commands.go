@@ -442,9 +442,9 @@ func rel(base, p string) string {
 
 func (c *course) cmdRun(args []string) error {
 	if len(args) == 0 {
-		return errors.New(L("användning: mudschool run server|client [argument...]",
-			"usage: mudschool run server|client [arguments...]",
-			"使い方: mudschool run server|client [引数...]"))
+		return errors.New(L("användning: mudschool run server|client|gfx [argument...]",
+			"usage: mudschool run server|client|gfx [arguments...]",
+			"使い方: mudschool run server|client|gfx [引数...]"))
 	}
 	ws := c.workspace()
 	switch args[0] {
@@ -454,8 +454,11 @@ func (c *course) cmdRun(args []string) error {
 	case "client":
 		_, err := runIn(filepath.Join(ws, "client"), false, nil, append([]string{"cargo", "run", "--quiet", "--"}, args[1:]...)...)
 		return err
+	case "gfx": // the graphical client from lesson 28 (a window of its own)
+		_, err := runIn(filepath.Join(ws, "client"), false, nil, append([]string{"cargo", "run", "--release", "--quiet", "--features", "gfx", "--bin", "mud-gfx", "--"}, args[1:]...)...)
+		return err
 	}
-	return fmt.Errorf("%q: server | client", args[0])
+	return fmt.Errorf("%q: server | client | gfx", args[0])
 }
 
 // cmdVerify builds the reference solution lesson by lesson in a temporary

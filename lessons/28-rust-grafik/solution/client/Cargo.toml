@@ -1,0 +1,26 @@
+[package]
+name = "mud-client"
+version = "0.1.0"
+edition = "2021"
+default-run = "mud-client"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+ratatui = "0.30"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+toml = "0.8"
+
+# The graphical client (lesson 28) is optional, so that the terminal client
+# and the tests don't have to build a whole graphics library:
+#   cargo run --release --features gfx --bin mud-gfx
+macroquad = { version = "0.4", optional = true }
+
+[features]
+gfx = ["dep:macroquad"]
+
+[[bin]]
+name = "mud-gfx"
+path = "gfx/main.rs"
+required-features = ["gfx"]

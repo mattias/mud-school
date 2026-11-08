@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Synfält – skuggkastning och dimma",
+    "en": "Field of view – shadowcasting and fog of war",
+    "ja": "視界 – シャドウキャスティングと戦場の霧"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Servern räknar ut vad varje spelare ser med rekursiv skuggkastning. Bara utforskade rutor och synliga entiteter skickas – ingen kan fuska genom väggar.",
+    "en": "The server computes what every player sees with recursive shadowcasting. Only explored tiles and visible entities are sent – nobody can cheat through walls.",
+    "ja": "サーバーが再帰的シャドウキャスティングで各プレイヤーの見えるものを計算する。送るのは探索済みのタイルと見えるエンティティだけ。壁越しのずるはできない。"
+  }
+}

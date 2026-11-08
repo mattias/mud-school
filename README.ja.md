@@ -14,11 +14,15 @@ JSON プロトコルを備えたマルチプレイヤーの世界と、Dwarf For
 （レッスン 13 を終えた模範解答の本物のスクリーンショットです。telnet でも遊べ、その場合マップはただの ASCII になります。）
 
 フェーズ 3（レッスン 14〜22）で世界に命が宿ります。ゲームループ、アイテム、歩き回る
-生き物、戦闘、そして SQLite に保存されるプレイヤー。カリキュラムはその先も続きます:
-Caves of Qud 風のタイルのゾーンと手続き
-生成、タイルセットを使うグラフィッククライアント、そして **稼働したまま** 拡張できる
-サーバー。世界の再読み込み、Lua スクリプト、Rust で書いて WebAssembly にコンパイル
-したプラグイン、そして MUD の古典的な技法 *copyover* です。
+生き物、戦闘、そして SQLite に保存されるプレイヤー。フェーズ 4（レッスン 23〜30）では、
+部屋がそれぞれ *Caves of Qud* 風のタイルのゾーンになり（シードから生成され、視界と狩りをする
+生き物付き）、独自のタイルセット、光、マウスを備えたグラフィッククライアントが加わります:
+
+![レッスン 28 のグラフィカルクライアント: タイルで描いたゾーンと、円形の視界](docs/images/gfx.png)
+
+カリキュラムはその先も続きます: **稼働したまま** 拡張できるサーバー。世界の再読み込み、
+Lua スクリプト、Rust で書いて WebAssembly にコンパイルしたプラグイン、そして MUD の古典的な
+技法 *copyover* です。
 
 コースは **英語・スウェーデン語・日本語** で提供しています。説明、ヒント、テストの
 失敗メッセージ、ゲーム内のテキスト、ゲームの世界まで。
@@ -65,7 +69,7 @@ git clone https://github.com/mattias/mud-school.git; cd mud-school
 | `./mudschool check [--race]` | レッスンのテストを実行。合格すれば次へ進む |
 | `./mudschool watch` | `check` と同じだが、保存時に自動で |
 | `./mudschool hint` | 次のヒント（1 つずつ） |
-| `./mudschool run server` / `run client` | 自分のサーバーまたはクライアントを起動 |
+| `./mudschool run server` / `run client` / `run gfx` | 自分のサーバー、クライアント、グラフィカルクライアントを起動 |
 | `./mudschool connect` | telnet のように、自分のサーバーへ手で接続する |
 | `./mudschool solution [--apply]` | 模範解答を表示（またはコピー） |
 | `./mudschool goto <id>` | レッスンへ移動 |
@@ -114,8 +118,16 @@ git pull
 | 20 | Go | 保存 | `database/sql`、SQLite、トランザクション、マイグレーション、bcrypt |
 | 21 | Rust | 設定とログイン | `clap`、`toml`、`thiserror` |
 | 22 | Go | 本気のテスト | ファジング、プロパティベーステスト |
+| 23 | Go | ゾーン | 2D グリッド、状態の差分、`zone`/`delta` フレーム |
+| 24 | Go | 手続き生成 | セル・オートマトン、ノイズ、塗りつぶし、シード |
+| 25 | Rust | カメラ | serde の `rename`、`BTreeMap`、`saturating_sub` |
+| 26 | Go | 視界 | 再帰的シャドウキャスティング、戦場の霧 |
+| 27 | Go | 経路探索 | 汎用 A*、`container/heap`、ダイクストラマップ |
+| 28 | Rust | グラフィカルクライアント | `Renderer` トレイト、Cargo の feature、macroquad |
+| 29 | Rust | 光と命 | 色の混合、時間の関数としてのアニメーション、パーティクル |
+| 30 | Rust | マウス | `BinaryHeap` + `Reverse`、座標系 |
 
-フェーズ 4〜6（レッスン 23〜36 と選択コース）は **[docs/ja/CURRICULUM.md](docs/ja/CURRICULUM.md)** で説明しています。
+フェーズ 5〜6（レッスン 31〜36 と選択コース）は **[docs/ja/CURRICULUM.md](docs/ja/CURRICULUM.md)** で説明しています。
 
 ## ドキュメント
 

@@ -1,7 +1,6 @@
 package mud
 
 import (
-	"context"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -48,15 +47,6 @@ func newSaveServer(t *testing.T, st *Store) (*Server, string) {
 	addr := startServer(t, srv)
 	t.Cleanup(func() { shutdown(t, srv) })
 	return srv, addr
-}
-
-func shutdown(t *testing.T, srv *Server) {
-	t.Helper()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		t.Fatalf("Shutdown: %v", err)
-	}
 }
 
 // loginWithPassword logs in; first is true for a name that has no account yet.

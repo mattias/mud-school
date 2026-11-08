@@ -16,6 +16,8 @@ starter.<språk>/             språkberoende startfiler: messages.go och message
 lessons/
   _shared/go/...             filer som kopieras in vid VARJE Go-lektion (testhjälpare)
   _shared/rust/...           motsvarande för Rust (tests/mudschool_common/)
+  _shared/go-from-NN/...     hjälpare för Go-lektion NN och senare (de använder kod
+                             studenten skriver i lektion NN, t.ex. go-from-23 för zoner)
   NN-namn/
     lesson.json              titel och sammanfattning på alla språk, spår ("go"/"rust")
     README.md                instruktionerna på engelska (README.sv.md, README.ja.md)
@@ -70,7 +72,8 @@ sparas en ändrad `messages.go`/`messages.rs` först som `.bak`.
 - **`check`**:
   1. tar bort alla filer och kataloger i `workspace/` vars namn börjar på
      `mudschool_` (gamla kurstester),
-  2. kopierar in `lessons/_shared/<spår>/` och lektionens `tests/`,
+  2. kopierar in `lessons/_shared/<spår>/` (och varje `<spår>-from-NN/` med
+     NN ≤ lektionen) och lektionens `tests/`,
   3. kör `go vet ./... && go test -count=1 ./...` i `workspace/server`
      (Go) eller `cargo test` i `workspace/client` (Rust),
   4. vid grönt: listar kvarglömda `TODO(lesson NN)`-markeringar för lektionen,

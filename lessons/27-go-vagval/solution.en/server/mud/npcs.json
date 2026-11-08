@@ -1,0 +1,150 @@
+{
+  "npcs": [
+    {
+      "id": "cat",
+      "name": "a black cat",
+      "description": "A thin black cat with yellow eyes. It looks at you as if it knows something you don't.",
+      "keywords": [
+        "cat"
+      ],
+      "room": "torget",
+      "behaviors": [
+        {
+          "type": "wander",
+          "chance": 0.03
+        },
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "Meow.",
+            "Purr ..."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "innkeeper",
+      "name": "Greta the innkeeper",
+      "description": "A broad-shouldered woman with a towel over her shoulder and a laugh you can hear from the square.",
+      "keywords": [
+        "innkeeper",
+        "greta"
+      ],
+      "room": "krogen",
+      "behaviors": [
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "What can I get you?",
+            "Mind the stairs, they creak.",
+            "Have you heard the howling from the dark wood?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smith",
+      "name": "Olof the smith",
+      "description": "Sooty arms, a leather apron and a hammer that never seems to rest.",
+      "keywords": [
+        "smith",
+        "blacksmith",
+        "olof"
+      ],
+      "room": "smedjan",
+      "behaviors": [
+        {
+          "type": "talk",
+          "chance": 0.015,
+          "lines": [
+            "*clang* *clang*",
+            "Good iron is hard to find these days."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crow",
+      "name": "a crow",
+      "description": "A big, glossy crow. It tilts its head and studies you.",
+      "keywords": [
+        "crow",
+        "bird"
+      ],
+      "room": "skogsbrynet",
+      "behaviors": [
+        {
+          "type": "wander",
+          "chance": 0.05
+        },
+        {
+          "type": "talk",
+          "chance": 0.03,
+          "lines": [
+            "Caw!"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rat",
+      "name": "a cave rat",
+      "description": "A grey rat as big as a cat. It shows its teeth.",
+      "keywords": [
+        "rat"
+      ],
+      "room": "grottan",
+      "behaviors": [
+        {
+          "type": "flee",
+          "below": 0.4
+        },
+        {
+          "type": "wander",
+          "chance": 0.02
+        }
+      ],
+      "hp": 4,
+      "damage": [
+        1,
+        2
+      ],
+      "attackable": true
+    },
+    {
+      "id": "wolf",
+      "name": "a grey wolf",
+      "description": "Lean and grey, with eyes that shine in the dark.",
+      "keywords": [
+        "wolf"
+      ],
+      "room": "morkskogen",
+      "behaviors": [
+        {
+          "type": "hunt",
+          "range": 5,
+          "chance": 0.3
+        },
+        {
+          "type": "wander",
+          "chance": 0.02
+        },
+        {
+          "type": "talk",
+          "chance": 0.02,
+          "lines": [
+            "Grrr ..."
+          ]
+        }
+      ],
+      "hp": 12,
+      "damage": [
+        2,
+        4
+      ],
+      "attackable": true
+    }
+  ]
+}

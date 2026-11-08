@@ -128,6 +128,54 @@ en vanlig `text`-frame strax före.
 
 Telnet ser aldrig `prompt`-frames.
 
+### `zone`
+
+Hela zonen spelaren står i (från lektion 23). Skickas vid varje `look` – alltså
+efter inloggning och i varje nytt rum – och som svar på `zone`.
+
+```json
+{"type":"zone","zone":{"room":"torget","width":9,"height":5,
+  "rows":["####.####","#.......#","#..~....#","#.......#","#########"],
+  "legend":{"#":"wall",".":"floor","~":"water"},
+  "entities":[{"id":"p:Anna","kind":"player","name":"Anna","glyph":"@","x":4,"y":2},
+              {"id":"i:lamp","kind":"item","name":"a lamp","glyph":"*","x":5,"y":2}],
+  "self":"p:Anna",
+  "visible":["111111111","111111111","111111111","111111111","111111111"]}}
+```
+
+| Fält | Typ | Beskrivning |
+|---|---|---|
+| `room` | sträng | Rummets ID |
+| `width`, `height` | heltal | Storleken i rutor |
+| `rows` | lista av strängar | `height` rader med `width` rutkoder. Ett mellanslag = inte utforskat än (från lektion 26). |
+| `legend` | objekt | Kod → betydelse: `floor`, `wall`, `grass`, `tree`, `water`, `rock`, `door`, `stairs_up`, `stairs_down`. Klienten ritar efter betydelsen. |
+| `entities` | lista | Allt med en position som spelaren ser: `id` (`p:<namn>`, `n:<id>`, `i:<id>`), `kind` (`player`, `creature`, `item`), `name`, `glyph` (för textklienter), `x`, `y`. |
+| `self` | sträng | Mottagarens eget entitets-ID |
+| `visible` | lista av strängar | Synfältet: `'1'` synligt nu, `'0'` inte (från lektion 26). Saknas = allt synligt. |
+
+Telnet får zonen ritad som text (med entiteternas tecken) efter varje steg.
+
+### `delta`
+
+Det som ändrats i zonen sedan förra framen (från lektion 23) – skickas efter
+ett kommando eller ett tick om något ändrats. Mycket mindre än en hel zon.
+
+```json
+{"type":"delta","delta":{"room":"torget",
+  "moved":[{"id":"p:Anna","kind":"player","name":"Anna","glyph":"@","x":5,"y":2}],
+  "removed":["n:cat"]}}
+```
+
+| Fält | Typ | Beskrivning |
+|---|---|---|
+| `room` | sträng | Rummet den gäller. **En delta för ett annat rum ska ignoreras.** |
+| `added`, `moved` | lista av entiteter | Nya och flyttade entiteter (hela entiteter, som i `zone`) |
+| `removed` | lista av strängar | ID:n som försvunnit (eller kommit ur sikte) |
+| `tiles` | lista | Rutor som syns för första gången: `x`, `y`, `code`, `meaning` (från lektion 26) |
+| `visible` | lista av strängar | Hela synfältet, när det ändrats (från lektion 26) |
+
+Alla listor får saknas. Telnet ser aldrig `delta`-frames.
+
 ## Kompatibilitet
 
 Protokollet ska kunna växa utan att gamla klienter går sönder:
@@ -143,7 +191,4 @@ Protokollet ska kunna växa utan att gamla klienter går sönder:
 | Version | Frame / fält | Fas |
 |---|---|---|
 | 1 | `hello.lang` – spelarens språk, så att servern kan välja texter per spelare | 6 |
-| 2 | `zone` – en hel zon med tiles | 4 |
-| 2 | `delta` – ändringar sedan förra ticket (entiteter som rör sig, tiles som syns) | 4 |
-| 2 | `fov` – vilka rutor spelaren ser just nu | 4 |
-| 2 | `sound`, `effect` – ljud och visuella effekter | 4 |
+| 1 | `sound`, `effect` – ljud och visuella effekter | 6 |

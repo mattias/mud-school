@@ -13,3 +13,24 @@ pub const ONLINE: &str = "online";
 pub const STARTER: &str = "Hello from the MUD client! You will fill in this file in lesson 3.";
 pub const TITLE_PASSWORD: &str = " Password (hidden) ";
 pub const CONFIG_ERROR: &str = "Error in the settings";
+// The mouse (lesson 30): menu entries and what tiles are called.
+pub const LOOK_AT: &str = "Look at";
+pub const ATTACK: &str = "Attack";
+pub const PICK_UP: &str = "Pick up";
+pub const WALK_HERE: &str = "Walk here";
+
+/// What a tile meaning is called, for the mouse pointer's tooltip.
+pub fn tile_name(meaning: &str) -> &'static str {
+    match meaning {
+        "floor" => "Floor",
+        "wall" => "A wall",
+        "grass" => "Grass",
+        "tree" => "A tree",
+        "water" => "Water",
+        "rock" => "Rock",
+        "door" => "A door",
+        "stairs_up" => "Stairs up",
+        "stairs_down" => "Stairs down",
+        _ => "Something",
+    }
+}

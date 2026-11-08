@@ -16,6 +16,8 @@ starter.<lang>/              language-dependent starter files: messages.go and m
 lessons/
   _shared/go/...             files copied in for EVERY Go lesson (test helpers)
   _shared/rust/...           the same for Rust (tests/mudschool_common/)
+  _shared/go-from-NN/...     helpers for Go lesson NN and later (they use code
+                             the student writes in lesson NN, e.g. go-from-23 for zones)
   NN-name/
     lesson.json              title and summary in every language, track ("go"/"rust")
     README.md                the instructions in English (README.sv.md, README.ja.md)
@@ -70,7 +72,8 @@ If the student switches languages with `./mudschool lang`, an edited
 - **`check`**:
   1. removes every file and directory in `workspace/` whose name starts with
      `mudschool_` (old course tests),
-  2. copies in `lessons/_shared/<track>/` and the lesson's `tests/`,
+  2. copies in `lessons/_shared/<track>/` (and every `<track>-from-NN/` with
+     NN ≤ the lesson) and the lesson's `tests/`,
   3. runs `go vet ./... && go test -count=1 ./...` in `workspace/server`
      (Go) or `cargo test` in `workspace/client` (Rust),
   4. when green: lists leftover `TODO(lesson NN)` markers for the lesson,

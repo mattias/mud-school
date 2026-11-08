@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Procedurgenerering – grottor, skogar och frön",
+    "en": "Procedural generation – caves, forests and seeds",
+    "ja": "手続き生成 – 洞窟、森、シード"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Zonerna byggs av små algoritmer: cellautomater blir grottor, brus blir skog, en full mans vandring gräver gångar – och samma frö ger alltid samma värld.",
+    "en": "Zones are built by small algorithms: cellular automata become caves, noise becomes forest, a drunkard's walk digs tunnels – and the same seed always gives the same world.",
+    "ja": "ゾーンを小さなアルゴリズムで作る。セル・オートマトンで洞窟、ノイズで森、酔歩でトンネル。同じシードからは常に同じ世界が生まれる。"
+  }
+}

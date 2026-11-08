@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Kameran – en stor zon på en liten skärm",
+    "en": "The camera – a big zone on a small screen",
+    "ja": "カメラ – 小さな画面に大きなゾーン"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Klienten förstår zone- och delta-frames, ritar zonen med en kamera som följer spelaren och låter piltangenterna gå.",
+    "en": "The client understands zone and delta frames, draws the zone with a camera that follows the player, and lets the arrow keys walk.",
+    "ja": "クライアントが zone と delta のフレームを理解し、プレイヤーを追うカメラでゾーンを描き、矢印キーで歩けるようにする。"
+  }
+}

@@ -104,8 +104,12 @@ visar vilka funktioner processorn är upptagen med. Lektion 44 ger den något at
 1. `mud/protect.go` är delvis given (konstanterna, räknarna, `hostOf`):
    skriv `Allow`, `connsFrom` och `allowCommand`.
 2. `server.go`: alternativen och fälten; i `handle` IP-adressen, scannerns
-   gräns, kontrollen per IP, inloggningens tidsgräns (och att den tas bort);
-   i `play` begränsaren. Räkna spelare i `addPlayer`/`removePlayer`.
+   gräns, kontrollen per IP och inloggningens tidsgräns – båda inne i den
+   `s.call` som registrerar anslutningen, så att en avstängning inte kan
+   smita in emellan – och att den tas bort efter inloggningen; i `play`
+   begränsaren. Räkna spelare i `addPlayer`/`removePlayer`.
+   `copyover.go` (lektion 35): `adopt` sätter `p.ip` och scannerns gräns, och
+   räknar spelaren också.
 3. `player.go`: `ip`, `limiter`, `dropped`, och `MsgLineTooLong` i `readLine`.
 4. `config.go` och `main.go`: de nya flaggorna, och debug-servern.
 

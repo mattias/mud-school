@@ -78,7 +78,8 @@ fel i filen, inte en överraskning för en spelare.
   `TextData{Name, Step, Steps}`.
 - `TutorialStep.Text` och `Tutorial.Done` är `Text`. En text som inte är en
   giltig mall är ett laddningsfel: `MsgErrTutorialText` med stegets nummer
-  (`len(Steps)+1` för `done`).
+  (`len(Steps)+1` för `done`). Ett steg vars text är tom på alla språk
+  (`""`, `{"en": ""}`, `null`) har ingen text: `MsgErrTutorialStep`, som i lektion 37.
 - En världsfil får ha `"language"` (`World.Language`: språket på dess vanliga
   texter), och rum får ha `"translations": {"sv": {"name": ..., "description": ...}}`
   (`Room.Translations`, `RoomText`).
@@ -95,7 +96,7 @@ fel i filen, inte en överraskning för en spelare.
 
 ## Uppgift
 
-1. `i18n.go` är delvis given (typerna, `sortedKeys`): skriv `Text`-metoderna,
+1. `i18n.go` är delvis given (typerna, `empty`, `sortedKeys`): skriv de andra `Text`-metoderna,
    `Languages`, `roomText`, `render` och `cmdLanguage`.
 2. `tutorial.go`: `Text` i stället för `string`, mallkontrollen, och
    `s.render` där texterna visas.
@@ -105,6 +106,7 @@ fel i filen, inte en överraskning för en spelare.
    `account.go`: spara och återställ den.
 5. `defaultworld.go`: `tutorial.all.json` och `w.Language = CourseLanguage`.
    `commands.go`: `language`. `olc.go`: `Language` i `worldSnapshot`.
+   `copyover.go`: `Lang` i `CopyoverPlayer` (JSON `lang`), `PrepareCopyover` och `adopt`.
 
 ## Fundera på
 

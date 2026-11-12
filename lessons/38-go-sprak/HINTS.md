@@ -40,7 +40,7 @@ executing finds fields that don't exist.
 
 ## The tutorial
 
-`len(st.Text) == 0` replaces `st.Text == ""`. In `showTutorialStep`:
+`st.Text.empty()` (given in `i18n.go`) replaces `st.Text == ""`. In `showTutorialStep`:
 
 ```go
 text := s.render(p, t.Steps[p.tutorial-1].Text, TextData{Step: p.tutorial, Steps: len(t.Steps)})

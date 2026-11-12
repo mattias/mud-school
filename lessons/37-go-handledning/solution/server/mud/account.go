@@ -104,8 +104,14 @@ func (s *Server) restore(p *Player, sp SavedPlayer) {
 		p.Room = r
 		p.Pos = s.world.zoneOf(r).freeNear(s.world.zoneOf(r).Center(), nil)
 	}
-	if t := s.world.Tutorial; t != nil && sp.Tutorial > 0 && sp.Tutorial <= len(t.Steps) {
-		p.tutorial = sp.Tutorial // lesson 37
+	if t := s.world.Tutorial; t != nil && sp.Tutorial > 0 {
+		p.tutorial = min(sp.Tutorial, len(t.Steps)) // lesson 37; a shorter tutorial: its last step
+	}
+	if p.tutorial == 0 && s.world.tutorialArea()[p.Room.ID] {
+		// In the tutorial's rooms but not in the tutorial: they could never get out.
+		start := s.world.Room(s.world.Start)
+		p.Room = start
+		p.Pos = s.world.zoneOf(start).freeNear(s.world.zoneOf(start).Center(), nil)
 	}
 	if sp.HP > 0 && sp.HP <= p.MaxHP {
 		p.HP = sp.HP

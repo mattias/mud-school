@@ -105,8 +105,12 @@ shows which functions the CPU is busy in. Lesson 44 will give it something to do
 1. `mud/protect.go` is partly given (the constants, the counters, `hostOf`):
    write `Allow`, `connsFrom` and `allowCommand`.
 2. `server.go`: the options and fields; in `handle` the IP, the scanner's
-   limit, the per-IP check, the login deadline (and its removal); in `play`
-   the limiter. Count players in `addPlayer`/`removePlayer`.
+   limit, the per-IP check and the login deadline – both inside the `s.call`
+   that registers the connection, so a shutdown can't slip in between – and
+   its removal after the login; in `play` the limiter. Count players in
+   `addPlayer`/`removePlayer`.
+   `copyover.go` (lesson 35): `adopt` sets `p.ip` and the scanner's limit, and
+   counts the player too.
 3. `player.go`: `ip`, `limiter`, `dropped`, and `MsgLineTooLong` in `readLine`.
 4. `config.go` and `main.go`: the new flags, and the debug server.
 

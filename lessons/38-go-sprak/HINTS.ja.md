@@ -39,7 +39,7 @@ for _, l := range []string{lang, fallback, ""} {
 
 ## チュートリアル
 
-`st.Text == ""` の代わりに `len(st.Text) == 0`。`showTutorialStep` では:
+`st.Text == ""` の代わりに `st.Text.empty()`（`i18n.go` に用意済み）。`showTutorialStep` では:
 
 ```go
 text := s.render(p, t.Steps[p.tutorial-1].Text, TextData{Step: p.tutorial, Steps: len(t.Steps)})

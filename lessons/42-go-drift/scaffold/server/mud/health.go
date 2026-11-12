@@ -20,9 +20,10 @@ type Health struct {
 // loop runs, and 503 when the server is stopping or has stopped. It asks the
 // game loop itself – a server whose loop is stuck is not healthy either.
 func (s *Server) HealthHandler() http.Handler {
-	// TODO(lesson 42): a handler that asks the game loop (s.do, with a time
-	// limit) for the number of players: 200 {status: ok, players, uptime_seconds};
-	// while closing, or if the loop doesn't answer: 503 {status: stopping}.
+	// TODO(lesson 42): a handler that asks the game loop for the number of
+	// players – sending to s.events in a select with a time limit, not s.do,
+	// which can wait forever: 200 {status: ok, players, uptime_seconds}; while
+	// closing, or if the loop doesn't answer within 2 s: 503 {status: stopping}.
 	_, _ = json.Marshal, time.Now
 	return http.NotFoundHandler()
 }

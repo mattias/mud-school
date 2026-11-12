@@ -127,6 +127,16 @@ per adress, så det här spelar roll.
 6. Öppna `https://mud.example.com`. **Registrera sedan ditt administratörsnamn
    direkt** (lektion 31: en administratör är bara ett namn).
 
+Bra att veta:
+
+- Docker öppnar sina publicerade portar själv, förbi `ufw`: en brandväggsregel
+  stänger dem inte. Ta bort raden med `4000` i `compose.yaml` om du inte vill ha telnet.
+- Telnetspelare som når port 4000 genom Dockers proxy (från VPS:en själv, eller
+  över IPv6) får alla Docker-nätverkets adress, och delar på de fem
+  anslutningarna per adress från lektion 43.
+- Datan ligger i en namngiven volym. Monterar du en egen mapp på `/data` i
+  stället måste användaren i avbilden (uid 65532) kunna skriva i den.
+
 I vardagen: `docker compose logs -f mud` visar loggen, `docker compose up -d --build`
 lägger ut en ny version, och `docker compose cp mud:/data/mud.db mud-backup.db`
 kopierar databasen (helst när ingen spelar – se utmaningarna).

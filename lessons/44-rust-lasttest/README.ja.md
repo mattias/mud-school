@@ -72,9 +72,9 @@ Go はどちらにも 1 種類のチャネルを使い、tokio はパターン�
   `Event::Connected`、`HELLO` と名前を送り、その後 `tokio::select!` で: 最初のゾーンで
   `Event::LoggedIn` と `tutorial skip`、差分を適用し、パスワードの問いに答え、echo の応答で
   時間付きの `Event::Reply`、ログイン後は `think`（＋ゆらぎ）ごとにコマンドと `Event::Sent`、
-  停止で `quit`。閉じた接続: `Event::Disconnected`。
+  停止で `quit`（ログイン後だけ。その前だと名前として受け取られる）。閉じた接続: `Event::Disconnected`。
 - `run(plan) -> Report` – ボットを `plan.ramp` に分散して起動し、`plan.duration` が過ぎるまで
-  イベントを集め、ボットを止めて待ち、`latencies_ms` をソートする。非同期でないコードには
+  イベントを集め、ボットを止めて（全体で最大 5 秒）待ち、`latencies_ms` をソートする。非同期でないコードには
   `run_blocking`（用意済み）。
 
 ## 課題

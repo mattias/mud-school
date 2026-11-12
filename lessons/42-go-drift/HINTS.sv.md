@@ -51,17 +51,23 @@ ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SI
 ## HealthHandler
 
 ```go
+limit := time.After(2 * time.Second)
 done := make(chan int, 1)
-if s.do(func() { done <- len(s.players) }) {
+select {
+case s.events <- func() { done <- len(s.players) }:
 	select {
 	case n := <-done: // frisk
-	case <-time.After(2 * time.Second): // loopen har fastnat
+	case <-limit: // the loop took the question but never answered
 	}
+case <-limit: // the loop is stuck: it doesn't even take the question
+case <-s.loopDone:
 }
 ```
 
-`s.do`, inte `s.call`: `call` skulle vänta för evigt på en loop som fastnat.
-Kanalen har plats för ett värde, så loopen blockeras aldrig av den heller.
+Varken `s.call` eller `s.do`: båda väntar så länge det tar för loopen att ta
+emot jobbet – för evigt, om den har fastnat. Skicka till `s.events` själv, i en
+`select` med en tidsgräns (och anropa `s.start()` först, som `do` gör).
+Svarskanalen har plats för ett värde, så loopen blockeras aldrig av den heller.
 
 ## TrustProxy
 

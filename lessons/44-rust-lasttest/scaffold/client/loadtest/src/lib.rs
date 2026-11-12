@@ -115,7 +115,7 @@ impl Rng {
 /// time), otherwise a step towards a random place in the zone (the core's
 /// A*, lesson 30), or "look".
 fn next_command(rng: &mut Rng, zone: Option<&ZoneView>, count: u64) -> String {
-    if count.is_multiple_of(3) {
+    if count % 3 == 0 {
         return format!("echo ping-{count}");
     }
     if let Some(z) = zone {
@@ -138,7 +138,7 @@ pub async fn run_bot(id: usize, plan: Arc<Plan>, events: mpsc::Sender<Event>, mu
     // server (zone → LoggedIn + "tutorial skip", delta, prompt → a password, the
     // text of an echo → Event::Reply), the time for the next command (only when
     // logged in: next_command, Event::Sent, think + jitter) and stop.changed()
-    // (send quit). A closed connection: Event::Disconnected.
+    // (send quit if logged in). A closed connection: Event::Disconnected.
     let _ = (id, plan, events, &mut stop);
     todo!("lesson 44: run_bot")
 }
@@ -148,7 +148,7 @@ pub async fn run(plan: Plan) -> Report {
     // TODO(lesson 44): an mpsc channel for events and a watch channel for "stop";
     // spawn the bots spread over plan.ramp (in a task of its own); collect events
     // with tokio::select! until plan.duration has passed; then stop the bots,
-    // wait for them (with a timeout), and sort the answer times.
+    // wait for them (5 s in all, still taking events), and sort the answer times.
     let _ = plan;
     todo!("lesson 44: run")
 }

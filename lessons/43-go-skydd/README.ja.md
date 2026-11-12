@@ -98,9 +98,11 @@ go tool pprof http://127.0.0.1:6060/debug/pprof/profile?seconds=10
 
 1. `mud/protect.go` は一部用意されています（定数、カウンター、`hostOf`）。`Allow`、
    `connsFrom`、`allowCommand` を書きましょう。
-2. `server.go`: オプションとフィールド。`handle` で IP、スキャナーの上限、IP ごとの確認、
-   ログインの期限（とその解除）。`play` でリミッター。`addPlayer`/`removePlayer` で
-   プレイヤーを数える。
+2. `server.go`: オプションとフィールド。`handle` で IP、スキャナーの上限、IP ごとの確認と
+   ログインの期限（どちらも接続を登録する `s.call` の中で。停止が間に割り込めないように）、
+   ログイン後の期限の解除。`play` でリミッター。`addPlayer`/`removePlayer` で
+   プレイヤーを数える。`copyover.go`（レッスン 35）: `adopt` でも `p.ip` とスキャナーの上限を
+   設定し、プレイヤーを数える。
 3. `player.go`: `ip`、`limiter`、`dropped`、そして `readLine` で `MsgLineTooLong`。
 4. `config.go` と `main.go`: 新しいフラグとデバッグ用のサーバー。
 

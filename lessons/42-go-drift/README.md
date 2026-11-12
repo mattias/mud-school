@@ -127,6 +127,16 @@ this matters.
 6. Open `https://mud.example.com`. Then **register your admin name at once**
    (lesson 31: an administrator is only a name).
 
+Good to know:
+
+- Docker opens its published ports itself, past `ufw`: a firewall rule doesn't
+  close them. Remove the `4000` line in `compose.yaml` if you don't want telnet.
+- Telnet players that reach port 4000 through Docker's proxy (from the VPS
+  itself, or over IPv6) all get the address of the Docker network, and share
+  the five connections per address of lesson 43.
+- The data lives in a named volume. If you mount a folder of your own on
+  `/data` instead, it must be writable by the user in the image (uid 65532).
+
 Day to day: `docker compose logs -f mud` shows the log, `docker compose up -d --build`
 puts out a new version, and `docker compose cp mud:/data/mud.db mud-backup.db`
 copies the database (best while nobody plays – see the challenges).

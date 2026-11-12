@@ -48,6 +48,11 @@ may read `s.conns`), and send `MsgTooManyConnections` after it – `p.close()`
 
 ## The login deadline
 
+Set it in the same `s.call` that adds `p` to `s.conns`, just before: if it
+were set afterwards, outside the loop, a `Shutdown` in between would set its
+own deadline (now) first – and yours would overwrite it with a minute.
+After a failed login:
+
 ```go
 if !ok {
 	if errors.Is(p.scanner.Err(), os.ErrDeadlineExceeded) && !s.closing.Load() {

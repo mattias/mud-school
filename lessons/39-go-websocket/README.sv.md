@@ -92,6 +92,10 @@ samma värd (eller någon av `Origins`). Telnet har inte det problemet; webben h
   `ServeHTTP`: `/ws` är spelet (textmeddelanden, samma rader som i telnet –
   JSON efter `@hello`), allt annat är filerna. Andra webbplatsers sidor nekas.
 - En webbspelares `RemoteAddr` är webbläsarens adress.
+- En läs-tidsgräns fungerar som för TCP: läsningen avbryts med
+  `os.ErrDeadlineExceeded` och anslutningen står kvar, så att `Shutdown`s hej då
+  ändå kommer fram. (`websocket.NetConn` ensam stänger anslutningen i stället –
+  slå in den i `newDeadlineConn`, given.)
 - `Shutdown` säger hej då till webbspelare också, och `Serve(gw.Listener())`
   returnerar `ErrServerClosed`.
 - `main.go`: `-web` (standard `127.0.0.1:8080`, tomt = av) serverar gatewayen,
@@ -101,7 +105,8 @@ samma värd (eller någon av `Origins`). Telnet har inte det problemet; webben h
 ## Uppgift
 
 1. `go get github.com/coder/websocket@v1.8.12` i `server/`.
-2. `mud/web.go` är delvis given: skriv `Offer`, `Accept`, `Close` och `ServeHTTP`.
+2. `mud/web.go` är delvis given (typerna, `NewGateway`, `newDeadlineConn`):
+   skriv `Offer`, `Accept`, `Close` och `ServeHTTP`.
 3. `main.go`: flaggan `-web`, `//go:embed web`, en `http.Server` med
    gatewayen, `go srv.Serve(gw.Listener())`, och `web.Shutdown` efter `srv.Shutdown`.
 

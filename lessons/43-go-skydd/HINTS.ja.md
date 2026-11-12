@@ -47,6 +47,10 @@ if ok, quit := s.allowCommand(p); quit {
 
 ## ログインの期限
 
+`p` を `s.conns` に加えるのと同じ `s.call` の中、その直前で設定します。後でループの外で
+設定すると、その間の `Shutdown` が先に自分の期限（今）を設定し、それをあなたの 1 分が
+上書きしてしまいます。ログインに失敗したら:
+
 ```go
 if !ok {
 	if errors.Is(p.scanner.Err(), os.ErrDeadlineExceeded) && !s.closing.Load() {

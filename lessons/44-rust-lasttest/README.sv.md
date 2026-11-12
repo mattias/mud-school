@@ -77,10 +77,11 @@ svaren kom inom 40 ms – och 5 % inte gjorde det. Botarna mäter tiden från
   med `tokio::select!`: vid första zonen `Event::LoggedIn` och `tutorial skip`;
   deltan appliceras; en lösenordsfråga besvaras; svaret på ett echo ger
   `Event::Reply` med tiden; när den är inloggad ett kommando var `think`
-  (+ lite slump) med `Event::Sent`; vid stopp `quit`. En stängd anslutning:
+  (+ lite slump) med `Event::Sent`; vid stopp `quit` (bara om den är
+  inloggad – innan dess skulle det tas för ett namn). En stängd anslutning:
   `Event::Disconnected`.
 - `run(plan) -> Report` – startar botarna utspridda över `plan.ramp`, samlar
-  händelser tills `plan.duration` har gått, stoppar botarna och väntar på dem,
+  händelser tills `plan.duration` har gått, stoppar botarna och väntar på dem (högst 5 s sammanlagt),
   och sorterar `latencies_ms`. `run_blocking` (given) för kod som inte är asynkron.
 
 ## Uppgift

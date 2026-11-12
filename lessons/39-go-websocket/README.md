@@ -92,6 +92,10 @@ same host (or one of `Origins`). Telnet has no such problem; the web has.
   `ServeHTTP`: `/ws` is the game (text messages, the same lines as telnet –
   JSON after `@hello`), everything else the files. Other sites' pages are refused.
 - A web player's `RemoteAddr` is the browser's address.
+- A read deadline works as on TCP: the read stops with `os.ErrDeadlineExceeded`
+  and the connection stays open, so `Shutdown`'s goodbye still arrives.
+  (`websocket.NetConn` alone closes the connection instead – wrap it in
+  `newDeadlineConn`, given.)
 - `Shutdown` says goodbye to web players too, and `Serve(gw.Listener())`
   returns `ErrServerClosed`.
 - `main.go`: `-web` (default `127.0.0.1:8080`, empty = off) serves the gateway,
@@ -101,7 +105,8 @@ same host (or one of `Origins`). Telnet has no such problem; the web has.
 ## Task
 
 1. `go get github.com/coder/websocket@v1.8.12` in `server/`.
-2. `mud/web.go` is partly given: write `Offer`, `Accept`, `Close` and `ServeHTTP`.
+2. `mud/web.go` is partly given (the types, `NewGateway`, `newDeadlineConn`):
+   write `Offer`, `Accept`, `Close` and `ServeHTTP`.
 3. `main.go`: the `-web` flag, `//go:embed web`, an `http.Server` with the
    gateway, `go srv.Serve(gw.Listener())`, and `web.Shutdown` after `srv.Shutdown`.
 

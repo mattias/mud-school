@@ -463,7 +463,13 @@ func (c *course) cmdRun(args []string) error {
 			"--target", "wasm32-unknown-unknown", "-p", "mud-web"); err != nil {
 			return err
 		}
-		wasm, err := os.ReadFile(filepath.Join(client, "target", "wasm32-unknown-unknown", "release", "mud_web.wasm"))
+		target := os.Getenv("CARGO_TARGET_DIR")
+		if target == "" {
+			target = filepath.Join(client, "target")
+		} else if !filepath.IsAbs(target) {
+			target = filepath.Join(client, target)
+		}
+		wasm, err := os.ReadFile(filepath.Join(target, "wasm32-unknown-unknown", "release", "mud_web.wasm"))
 		if err != nil {
 			return err
 		}

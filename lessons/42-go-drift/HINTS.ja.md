@@ -51,17 +51,22 @@ ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SI
 ## HealthHandler
 
 ```go
+limit := time.After(2 * time.Second)
 done := make(chan int, 1)
-if s.do(func() { done <- len(s.players) }) {
+select {
+case s.events <- func() { done <- len(s.players) }:
 	select {
 	case n := <-done: // 健康
-	case <-time.After(2 * time.Second): // ループが止まっている
+	case <-limit: // the loop took the question but never answered
 	}
+case <-limit: // the loop is stuck: it doesn't even take the question
+case <-s.loopDone:
 }
 ```
 
-`s.call` ではなく `s.do`: `call` だと止まったループを永遠に待ちます。チャネルには 1 つ分の
-余裕があるので、ループもそこで止まりません。
+`s.call` も `s.do` も使いません。どちらもループが仕事を受け取るまで待ちます。止まって
+いれば永遠に。時間制限付きの `select` で自分で `s.events` に送りましょう（`do` と同じく先に
+`s.start()` を呼ぶ）。答えのチャネルには 1 つ分の余裕があるので、ループもそこで止まりません。
 
 ## TrustProxy
 

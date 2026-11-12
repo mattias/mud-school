@@ -124,7 +124,7 @@ impl Rng {
 /// time), otherwise a step towards a random place in the zone (the core's
 /// A*, lesson 30), or "look".
 fn next_command(rng: &mut Rng, zone: Option<&ZoneView>, count: u64) -> String {
-    if count.is_multiple_of(3) {
+    if count % 3 == 0 {
         return format!("echo ping-{count}");
     }
     if let Some(z) = zone {
@@ -215,7 +215,9 @@ pub async fn run_bot(id: usize, plan: Arc<Plan>, events: mpsc::Sender<Event>, mu
                 next = Instant::now() + plan.think + Duration::from_millis(jitter);
             }
             _ = stop.changed() => {
-                let _ = write.write_all(b"quit\r\n").await;
+                if logged_in { // before that, "quit" would be taken as a name
+                    let _ = write.write_all(b"quit\r\n").await;
+                }
                 return;
             }
         }
@@ -269,16 +271,32 @@ pub async fn run(plan: Plan) -> Report {
     }
     r.seconds = start.elapsed().as_secs_f64();
 
-    // Time is up: tell every bot, and wait (a little) for them to finish.
+    // Time is up: tell every bot, and wait for them – at most 5 s in all, and
+    // still taking their events, so that no bot is stuck sending one.
     let _ = stop_tx.send(true);
-    if let Ok(Ok(bots)) = timeout(Duration::from_secs(5), starter).await {
-        for b in bots {
-            let _ = timeout(Duration::from_secs(5), b).await;
+    let give_up = Instant::now() + Duration::from_secs(5);
+    let join = async {
+        if let Ok(bots) = starter.await {
+            for b in bots {
+                let _ = b.await;
+            }
+        }
+    };
+    tokio::pin!(join);
+    loop {
+        tokio::select! {
+            _ = &mut join => break,
+            Some(ev) = events.recv() => {
+                if matches!(ev, Event::Failed(_) | Event::Connected | Event::LoggedIn) {
+                    record(&mut r, ev); // late arrivals still count
+                }
+            }
+            _ = sleep_until(give_up) => break,
         }
     }
     while let Ok(ev) = events.try_recv() {
         if matches!(ev, Event::Failed(_) | Event::Connected | Event::LoggedIn) {
-            record(&mut r, ev); // late arrivals still count
+            record(&mut r, ev);
         }
     }
     r.latencies_ms.sort_by(|a, b| a.total_cmp(b));

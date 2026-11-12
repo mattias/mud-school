@@ -108,12 +108,17 @@ torch too.
 - `tutorial` repeats the current step; `tutorial skip` leaves
   (`MsgTutorialSkipped`); outside the tutorial: `MsgTutorialNotIn`.
 - `SavedPlayer.Tutorial` (the step, 0 = not in the tutorial) is saved in a new
-  column through migration 4; a player who logs in again continues where they were.
+  column through migration 4; a player who logs in again continues where they were
+  (on the last step if the tutorial has become shorter). A player who is *not*
+  in the tutorial but stands in its area is moved to the world's start – they
+  could never get out. A world reloaded without a tutorial sends everyone in
+  it to the start (`moveToStart`, given).
+- A copyover (lesson 35) keeps the step: `CopyoverPlayer.Tutorial`.
 - `worldSnapshot` (lesson 36) keeps the tutorial.
 
 ## Task
 
-1. `tutorial.go` is partly given (the types, `tutorialFile`): write
+1. `tutorial.go` is partly given (the types, `tutorialFile`, `moveToStart`): write
    `LoadTutorial`, `tutorialArea`, `validateTutorial`, `startTutorial`,
    `showTutorialStep`, `stepDone`, `onTutorialCommand`, `leaveTutorial` and
    `cmdTutorial`.
@@ -124,6 +129,7 @@ torch too.
    and the column in `SavePlayer`/`LoadPlayer`. `account.go`: snapshot and restore it.
 5. `defaultworld.go`: embed `tutorial.json` and `LoadTutorial` it.
    `commands.go`: `tutorial`. `olc.go`: `Tutorial` in `worldSnapshot`.
+   `copyover.go`: `Tutorial` in `CopyoverPlayer`, `PrepareCopyover` and `adopt`.
 
 Then log in with a new name and do the tutorial yourself.
 

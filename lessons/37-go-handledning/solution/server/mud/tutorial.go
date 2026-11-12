@@ -163,8 +163,9 @@ func (s *Server) onTutorialCommand(e *Event) {
 		return
 	}
 	t := s.world.Tutorial
-	if t == nil || p.tutorial > len(t.Steps) { // the world was reloaded without it
+	if t == nil { // the world was reloaded without a tutorial: out to the start
 		p.tutorial = 0
+		s.moveToStart(p)
 		return
 	}
 	advanced := false
@@ -197,10 +198,14 @@ func (s *Server) leaveTutorial(p *Player) {
 		}
 	}
 	p.Inventory = kept
-	start := s.world.Room(s.world.Start)
-	if !area[p.Room.ID] {
-		return // they are already out (e.g. they skipped after dying)
+	if area[p.Room.ID] { // not if they are already out (e.g. they skipped after dying)
+		s.moveToStart(p)
 	}
+}
+
+// moveToStart moves the player to the world's start room, in front of everyone.
+func (s *Server) moveToStart(p *Player) {
+	start := s.world.Room(s.world.Start)
 	s.broadcastRoom(p.Room, p, KindMove, fmt.Sprintf(MsgDisappears, p.Name))
 	p.Room = start
 	p.Pos = s.world.zoneOf(start).freeNear(s.world.zoneOf(start).Center(), nil)

@@ -6,7 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/coder/websocket"
 )
@@ -66,7 +68,7 @@ type Gateway struct {
 	files    http.Handler
 	listener *ConnListener
 	// Origins are other hosts allowed to open a WebSocket, e.g.
-	// "mud.example.com" (lesson 42). The page's own host is always allowed.
+	// "mud.example.com". The page's own host is always allowed.
 	Origins []string
 }
 
@@ -82,8 +84,111 @@ func (g *Gateway) Listener() net.Listener { return g.listener }
 func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// TODO(lesson 39): not /ws: g.files. /ws: websocket.Accept with
 	// OriginPatterns g.Origins, websocket.NetConn(context.Background(), c,
-	// websocket.MessageText), and g.listener.Offer – if it is closed, c.Close.
+	// websocket.MessageText) wrapped in newDeadlineConn (given, below), and
+	// g.listener.Offer – if it is closed, c.Close.
 	_, _ = context.Background, log.Printf
 	_ = websocket.Accept
 	g.files.ServeHTTP(w, r)
+}
+
+// deadlineConn gives a WebSocket the read deadlines of a TCP connection.
+// coder/websocket closes the whole connection when a read deadline passes –
+// but the server uses deadlines to stop a *read* (Shutdown, the login time
+// limit in lesson 43) and still wants to say goodbye. So a goroutine of its
+// own reads, and Read waits for it or for the deadline, whichever is first:
+// an expired deadline is os.ErrDeadlineExceeded and the connection stays open.
+type deadlineConn struct {
+	net.Conn                // the WebSocket: Write, Close, the addresses
+	data      chan []byte   // what the reader goroutine has read
+	closed    chan struct{} // closed by Close
+	closeOnce sync.Once
+	err       error  // why the reader stopped; set before data is closed
+	rest      []byte // read but not yet returned
+
+	mu       sync.Mutex
+	deadline time.Time
+	changed  chan struct{} // closed (and replaced) when the deadline changes
+}
+
+func newDeadlineConn(c net.Conn) *deadlineConn {
+	d := &deadlineConn{Conn: c, data: make(chan []byte), closed: make(chan struct{}), changed: make(chan struct{})}
+	go d.readLoop()
+	return d
+}
+
+func (d *deadlineConn) readLoop() {
+	for {
+		buf := make([]byte, 4096)
+		n, err := d.Conn.Read(buf)
+		if n > 0 {
+			select {
+			case d.data <- buf[:n]:
+			case <-d.closed:
+				return
+			}
+		}
+		if err != nil {
+			d.err = err
+			close(d.data)
+			return
+		}
+	}
+}
+
+func (d *deadlineConn) Read(p []byte) (int, error) {
+	for len(d.rest) == 0 {
+		d.mu.Lock()
+		deadline, changed := d.deadline, d.changed
+		d.mu.Unlock()
+		var timer *time.Timer
+		var expired <-chan time.Time
+		if !deadline.IsZero() {
+			wait := time.Until(deadline)
+			if wait <= 0 {
+				return 0, os.ErrDeadlineExceeded
+			}
+			timer = time.NewTimer(wait)
+			expired = timer.C
+		}
+		var b []byte
+		ok, timedOut := true, false
+		select {
+		case b, ok = <-d.data:
+		case <-expired:
+			timedOut = true
+		case <-changed: // a new deadline: look again
+		}
+		if timer != nil {
+			timer.Stop()
+		}
+		switch {
+		case timedOut:
+			return 0, os.ErrDeadlineExceeded
+		case !ok:
+			return 0, d.err
+		}
+		d.rest = b
+	}
+	n := copy(p, d.rest)
+	d.rest = d.rest[n:]
+	return n, nil
+}
+
+func (d *deadlineConn) SetReadDeadline(t time.Time) error {
+	d.mu.Lock()
+	d.deadline = t
+	close(d.changed)
+	d.changed = make(chan struct{})
+	d.mu.Unlock()
+	return nil
+}
+
+func (d *deadlineConn) SetDeadline(t time.Time) error {
+	d.SetReadDeadline(t)
+	return d.Conn.SetWriteDeadline(t)
+}
+
+func (d *deadlineConn) Close() error {
+	d.closeOnce.Do(func() { close(d.closed) })
+	return d.Conn.Close()
 }

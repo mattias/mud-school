@@ -75,6 +75,7 @@ tmpl.Execute(&b, TextData{Name: "Anna", Step: 2, Steps: 6})
   `TextData{Name, Step, Steps}`。
 - `TutorialStep.Text` と `Tutorial.Done` は `Text`。正しいテンプレートでないテキストは
   読み込みエラー: ステップ番号付きの `MsgErrTutorialText`（`done` は `len(Steps)+1`）。
+  どの言語でも空のテキスト（`""`、`{"en": ""}`、`null`）はテキストなし: レッスン 37 と同じく `MsgErrTutorialStep`。
 - ワールドファイルには `"language"`（`World.Language`: 普通のテキストの言語）を置け、
   部屋には `"translations": {"ja": {"name": ..., "description": ...}}`
   （`Room.Translations`、`RoomText`）を置ける。
@@ -91,7 +92,7 @@ tmpl.Execute(&b, TextData{Name: "Anna", Step: 2, Steps: 6})
 
 ## 課題
 
-1. `i18n.go` は一部用意されています（型、`sortedKeys`）。`Text` のメソッド、`Languages`、
+1. `i18n.go` は一部用意されています（型、`empty`、`sortedKeys`）。ほかの `Text` のメソッド、`Languages`、
    `roomText`、`render`、`cmdLanguage` を書きましょう。
 2. `tutorial.go`: `string` の代わりに `Text`、テンプレートの確認、テキストを見せる所で `s.render`。
 3. `world.go`: `Room.Translations`、`World.Language`、`worldFile.Language`。
@@ -100,6 +101,7 @@ tmpl.Execute(&b, TextData{Name: "Anna", Step: 2, Steps: 6})
    `account.go`: 保存と復元。
 5. `defaultworld.go`: `tutorial.all.json` と `w.Language = CourseLanguage`。
    `commands.go`: `language`。`olc.go`: `worldSnapshot` に `Language`。
+   `copyover.go`: `CopyoverPlayer`（JSON は `lang`）、`PrepareCopyover`、`adopt` に `Lang`。
 
 ## 考えてみよう
 

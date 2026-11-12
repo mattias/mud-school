@@ -244,10 +244,18 @@ func TestShutdownReachesTheBrowser(t *testing.T) {
 	w.send("Anna")
 	w.expectContains("Square")
 	shutdown(t, srv)
+	goodbye := false
 	for {
-		if _, ok := w.readLine(); !ok {
+		line, ok := w.readLine()
+		if !ok {
 			break // closed – good
 		}
+		goodbye = goodbye || strings.Contains(line, MsgShutdown)
+	}
+	if !goodbye {
+		t.Errorf(L("webbspelaren ska få MsgShutdown innan anslutningen stängs – en läs-tidsgräns får inte stänga WebSocketen (newDeadlineConn). Rader: %q",
+			"the web player should get MsgShutdown before the connection closes – a read deadline must not close the WebSocket (newDeadlineConn). Lines: %q",
+			"Web プレイヤーは接続が閉じる前に MsgShutdown を受け取るべきです。読み込み期限で WebSocket を閉じてはいけません（newDeadlineConn）。行: %q"), w.seen)
 	}
 	select {
 	case err := <-served:

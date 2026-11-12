@@ -111,12 +111,17 @@ också hittar facklan.
 - `tutorial` upprepar steget; `tutorial skip` lämnar introduktionen
   (`MsgTutorialSkipped`); utanför den: `MsgTutorialNotIn`.
 - `SavedPlayer.Tutorial` (steget, 0 = inte i introduktionen) sparas i en ny
-  kolumn genom migrering 4; en spelare som loggar in igen fortsätter där hen var.
+  kolumn genom migrering 4; en spelare som loggar in igen fortsätter där hen var
+  (på sista steget om introduktionen har blivit kortare). En spelare som *inte*
+  är i introduktionen men står i dess område flyttas till världens start – hen
+  skulle aldrig komma ut. En värld som laddas om utan introduktion skickar
+  alla i den till starten (`moveToStart`, given).
+- En copyover (lektion 35) behåller steget: `CopyoverPlayer.Tutorial`.
 - `worldSnapshot` (lektion 36) behåller introduktionen.
 
 ## Uppgift
 
-1. `tutorial.go` är delvis given (typerna, `tutorialFile`): skriv
+1. `tutorial.go` är delvis given (typerna, `tutorialFile`, `moveToStart`): skriv
    `LoadTutorial`, `tutorialArea`, `validateTutorial`, `startTutorial`,
    `showTutorialStep`, `stepDone`, `onTutorialCommand`, `leaveTutorial` och
    `cmdTutorial`.
@@ -127,6 +132,7 @@ också hittar facklan.
    och kolumnen i `SavePlayer`/`LoadPlayer`. `account.go`: spara och återställ den.
 5. `defaultworld.go`: bädda in `tutorial.json` och `LoadTutorial` den.
    `commands.go`: `tutorial`. `olc.go`: `Tutorial` i `worldSnapshot`.
+   `copyover.go`: `Tutorial` i `CopyoverPlayer`, `PrepareCopyover` och `adopt`.
 
 Logga sedan in med ett nytt namn och gör introduktionen själv.
 

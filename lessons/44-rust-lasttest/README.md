@@ -78,11 +78,12 @@ answers came within 40 ms – and 5 % didn't. The bots measure the time from
   with `tokio::select!`: on the first zone `Event::LoggedIn` and
   `tutorial skip`; deltas are applied; a password prompt is answered; the
   answer to an echo gives `Event::Reply` with the time; when logged in, a
-  command every `think` (+ jitter) with `Event::Sent`; on stop, `quit`.
+  command every `think` (+ jitter) with `Event::Sent`; on stop, `quit` (only
+  if logged in – before that it would be taken as a name).
   A closed connection: `Event::Disconnected`.
 - `run(plan) -> Report` – starts the bots spread over `plan.ramp`, collects
   events until `plan.duration` has passed, stops the bots and waits for
-  them, and sorts `latencies_ms`. `run_blocking` (given) for code that isn't async.
+  them (5 s at most in all), and sorts `latencies_ms`. `run_blocking` (given) for code that isn't async.
 
 ## Task
 

@@ -50,6 +50,17 @@ func (t Text) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]string(t))
 }
 
+// empty reports whether the text has nothing to say in any language –
+// "", {"en": ""} and null are all empty.
+func (t Text) empty() bool {
+	for _, s := range t {
+		if s != "" {
+			return false
+		}
+	}
+	return true
+}
+
 // In returns the text in lang. If there is none it falls back to the
 // world's default language, then the plain string, then the first language
 // in alphabetical order – something is always better than nothing.

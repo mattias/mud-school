@@ -90,6 +90,9 @@ telnet にはない問題ですが、Web にはあります。
   ゲーム（テキストメッセージで telnet と同じ行。`@hello` の後は JSON）、それ以外はファイル。
   他のサイトのページは拒否する。
 - Web プレイヤーの `RemoteAddr` はブラウザのアドレス。
+- 読み込み期限は TCP と同じように働く: 読み込みは `os.ErrDeadlineExceeded` で止まり、接続は
+  開いたままなので、`Shutdown` の別れのあいさつも届く。（`websocket.NetConn` だけだと代わりに
+  接続を閉じてしまうので、用意済みの `newDeadlineConn` で包む。）
 - `Shutdown` は Web プレイヤーにも別れを告げ、`Serve(gw.Listener())` は `ErrServerClosed` を返す。
 - `main.go`: `-web`（既定 `127.0.0.1:8080`、空 = オフ）でゲートウェイを配信し、`web/` の
   ファイルを埋め込む（`//go:embed web`）。オンの間は `@copyover` はオフ（copyover は
@@ -98,7 +101,8 @@ telnet にはない問題ですが、Web にはあります。
 ## 課題
 
 1. `server/` で `go get github.com/coder/websocket@v1.8.12`。
-2. `mud/web.go` は一部用意されています。`Offer`、`Accept`、`Close`、`ServeHTTP` を書きましょう。
+2. `mud/web.go` は一部用意されています（型、`NewGateway`、`newDeadlineConn`）。
+   `Offer`、`Accept`、`Close`、`ServeHTTP` を書きましょう。
 3. `main.go`: `-web` フラグ、`//go:embed web`、ゲートウェイを持つ `http.Server`、
    `go srv.Serve(gw.Listener())`、そして `srv.Shutdown` の後に `web.Shutdown`。
 

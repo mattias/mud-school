@@ -104,12 +104,16 @@ s.emit(&Event{Kind: EventCommand, Player: p, Room: p.Room, Text: cmd.Verb})
 - `tutorial` は今のステップを繰り返し、`tutorial skip` で抜ける（`MsgTutorialSkipped`）。
   チュートリアル外では `MsgTutorialNotIn`。
 - `SavedPlayer.Tutorial`（ステップ。0 = チュートリアル中ではない）はマイグレーション 4 の
-  新しい列に保存され、再ログインしたプレイヤーは続きから始める。
+  新しい列に保存され、再ログインしたプレイヤーは続きから始める（チュートリアルが短く
+  なっていたら最後のステップから）。チュートリアル中で *ない* のにその区域にいるプレイヤーは、
+  決して出られないので世界の開始の部屋へ移す。チュートリアルなしで再読み込みされた世界では、
+  中にいた全員を開始の部屋へ送る（`moveToStart`、用意済み）。
+- copyover（レッスン 35）はステップを保つ: `CopyoverPlayer.Tutorial`。
 - `worldSnapshot`（レッスン 36）はチュートリアルも残す。
 
 ## 課題
 
-1. `tutorial.go` は一部用意されています（型、`tutorialFile`）。`LoadTutorial`、
+1. `tutorial.go` は一部用意されています（型、`tutorialFile`、`moveToStart`）。`LoadTutorial`、
    `tutorialArea`、`validateTutorial`、`startTutorial`、`showTutorialStep`、`stepDone`、
    `onTutorialCommand`、`leaveTutorial`、`cmdTutorial` を書きましょう。
 2. `world.go`: `World` と `worldFile` に `Tutorial`、そして `LoadWorld` での確認。
@@ -119,6 +123,7 @@ s.emit(&Event{Kind: EventCommand, Player: p, Room: p.Room, Text: cmd.Verb})
    `SavePlayer`/`LoadPlayer` の列。`account.go`: 保存と復元。
 5. `defaultworld.go`: `tutorial.json` を埋め込み、`LoadTutorial` する。
    `commands.go`: `tutorial`。`olc.go`: `worldSnapshot` に `Tutorial`。
+   `copyover.go`: `CopyoverPlayer`、`PrepareCopyover`、`adopt` に `Tutorial`。
 
 それから新しい名前でログインして、自分でチュートリアルをやってみましょう。
 

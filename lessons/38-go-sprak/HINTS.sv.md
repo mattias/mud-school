@@ -40,7 +40,7 @@ körningen hittar fält som inte finns.
 
 ## Introduktionen
 
-`len(st.Text) == 0` ersätter `st.Text == ""`. I `showTutorialStep`:
+`st.Text.empty()` (given i `i18n.go`) ersätter `st.Text == ""`. I `showTutorialStep`:
 
 ```go
 text := s.render(p, t.Steps[p.tutorial-1].Text, TextData{Step: p.tutorial, Steps: len(t.Steps)})

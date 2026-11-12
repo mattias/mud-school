@@ -51,17 +51,23 @@ ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SI
 ## HealthHandler
 
 ```go
+limit := time.After(2 * time.Second)
 done := make(chan int, 1)
-if s.do(func() { done <- len(s.players) }) {
+select {
+case s.events <- func() { done <- len(s.players) }:
 	select {
 	case n := <-done: // healthy
-	case <-time.After(2 * time.Second): // the loop is stuck
+	case <-limit: // the loop took the question but never answered
 	}
+case <-limit: // the loop is stuck: it doesn't even take the question
+case <-s.loopDone:
 }
 ```
 
-`s.do`, not `s.call`: `call` would wait forever for a stuck loop. The channel
-has room for one, so the loop never blocks on it either.
+Neither `s.call` nor `s.do`: both wait for as long as it takes the loop to
+take the work – forever, if it is stuck. Send to `s.events` yourself, in a
+`select` with a time limit (and call `s.start()` first, like `do` does). The
+answer channel has room for one, so the loop never blocks on it either.
 
 ## TrustProxy
 

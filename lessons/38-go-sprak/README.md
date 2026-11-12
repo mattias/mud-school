@@ -77,7 +77,8 @@ in the file, not a surprise for a player.
   language). `TextData{Name, Step, Steps}`.
 - `TutorialStep.Text` and `Tutorial.Done` are `Text`. A text that is not a valid
   template is a load error: `MsgErrTutorialText` with the step number
-  (`len(Steps)+1` for `done`).
+  (`len(Steps)+1` for `done`). A step whose text is empty in every language
+  (`""`, `{"en": ""}`, `null`) has no text: `MsgErrTutorialStep`, as in lesson 37.
 - A world file may have `"language"` (`World.Language`: the language of its
   plain texts), and rooms may have `"translations": {"sv": {"name": ..., "description": ...}}`
   (`Room.Translations`, `RoomText`).
@@ -94,7 +95,7 @@ in the file, not a surprise for a player.
 
 ## Task
 
-1. `i18n.go` is partly given (the types, `sortedKeys`): write the `Text`
+1. `i18n.go` is partly given (the types, `empty`, `sortedKeys`): write the other `Text`
    methods, `Languages`, `roomText`, `render` and `cmdLanguage`.
 2. `tutorial.go`: `Text` instead of `string`, the template check, and
    `s.render` where the texts are shown.
@@ -104,6 +105,7 @@ in the file, not a surprise for a player.
    `account.go`: snapshot and restore it.
 5. `defaultworld.go`: `tutorial.all.json` and `w.Language = CourseLanguage`.
    `commands.go`: `language`. `olc.go`: `Language` in `worldSnapshot`.
+   `copyover.go`: `Lang` in `CopyoverPlayer` (JSON `lang`), `PrepareCopyover` and `adopt`.
 
 ## Think about
 

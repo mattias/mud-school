@@ -204,3 +204,15 @@ func loginPw38(t *testing.T, addr, name string, first bool) *testClient {
 	c.expectContains(fmt.Sprintf(MsgWelcomeName, name))
 	return c
 }
+
+func TestEmptyTextsAreMistakes(t *testing.T) {
+	for _, text := range []string{`""`, `{"en": ""}`, `null`} {
+		world := strings.Replace(languageWorldJSON, `"Type who ({{.Step}}/{{.Steps}})."`, text, 1)
+		_, err := LoadWorld(strings.NewReader(world))
+		if err == nil || !strings.Contains(err.Error(), fmt.Sprintf(MsgErrTutorialStep, 2)) {
+			t.Errorf(L("ett steg med texten %s har ingen text – väntade %q, fick %v",
+				"a step with the text %s has no text – expected %q, got %v",
+				"テキストが %s のステップにはテキストがありません。%q を期待しましたが %v"), text, fmt.Sprintf(MsgErrTutorialStep, 2), err)
+		}
+	}
+}

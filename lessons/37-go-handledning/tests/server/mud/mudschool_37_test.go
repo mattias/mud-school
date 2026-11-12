@@ -303,3 +303,23 @@ func TestTheTutorialSurvivesBuilding(t *testing.T) {
 			"worldSnapshot（レッスン 36）はチュートリアルも含めるべきです。でないと誰かが建築したときに消えます"))
 	}
 }
+
+func TestNobodyIsStuckInTheTutorialArea(t *testing.T) {
+	st, err := OpenStore(filepath.Join(t.TempDir(), "mud.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	// Cecilia was saved in the yard but not in the tutorial (e.g. after a copyover
+	// that forgot her step). The tutorial area is closed: she could never get out.
+	hash, _ := bcrypt.GenerateFromPassword([]byte("secret"), bcrypt.MinCost)
+	if err := st.CreateAccount("Cecilia", hash); err != nil {
+		t.Fatal(err)
+	}
+	if err := st.SavePlayer(SavedPlayer{Name: "Cecilia", Room: "yard", HP: 10}); err != nil {
+		t.Fatal(err)
+	}
+	_, addr := newTutorialServer(t, st)
+	c := loginPw37(t, addr, "Cecilia", false)
+	c.expectContains("Square")
+}

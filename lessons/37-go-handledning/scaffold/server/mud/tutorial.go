@@ -92,8 +92,8 @@ func (s *Server) stepDone(p *Player, st TutorialStep, verb string) bool {
 // command can finish several.
 func (s *Server) onTutorialCommand(e *Event) {
 	// TODO(lesson 37): for a player in the tutorial: advance while the current
-	// step is done (a world without the tutorial, or with fewer steps: just
-	// p.tutorial = 0). After the last step: t.Done and leaveTutorial; otherwise,
+	// step is done (a world reloaded without a tutorial: p.tutorial = 0 and
+	// moveToStart). After the last step: t.Done and leaveTutorial; otherwise,
 	// if something was done, show the new step.
 }
 
@@ -102,8 +102,17 @@ func (s *Server) onTutorialCommand(e *Event) {
 // next new player finds them too.
 func (s *Server) leaveTutorial(p *Player) {
 	// TODO(lesson 37): p.tutorial = 0; things from the tutorial area go back to
-	// their rooms (placeItem); if the player is in the area: MsgDisappears to
-	// the room, to the world's start room (a free cell), MsgArrives, look.
+	// their rooms (placeItem); if the player is in the area: moveToStart.
+}
+
+// moveToStart moves the player to the world's start room, in front of everyone.
+func (s *Server) moveToStart(p *Player) {
+	start := s.world.Room(s.world.Start)
+	s.broadcastRoom(p.Room, p, KindMove, fmt.Sprintf(MsgDisappears, p.Name))
+	p.Room = start
+	p.Pos = s.world.zoneOf(start).freeNear(s.world.zoneOf(start).Center(), nil)
+	s.broadcastRoom(start, p, KindMove, fmt.Sprintf(MsgArrives, p.Name))
+	s.look(p)
 }
 
 // cmdTutorial: "tutorial" repeats the current step, "tutorial skip" leaves.

@@ -48,6 +48,11 @@ Bestäm inne i `s.call` som registrerar anslutningen (bara spelloopen får läsa
 
 ## Inloggningens tidsgräns
 
+Sätt den i samma `s.call` som lägger till `p` i `s.conns`, precis innan: om
+den sattes efteråt, utanför loopen, skulle en `Shutdown` däremellan sätta sin
+egen tidsgräns (nu) först – och din skulle skriva över den med en minut.
+Efter en misslyckad inloggning:
+
 ```go
 if !ok {
 	if errors.Is(p.scanner.Err(), os.ErrDeadlineExceeded) && !s.closing.Load() {

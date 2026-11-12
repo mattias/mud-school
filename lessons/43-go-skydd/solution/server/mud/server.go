@@ -236,6 +236,12 @@ func (s *Server) handle(conn net.Conn) {
 		case s.maxPerIP > 0 && s.connsFrom(p.ip) >= s.maxPerIP:
 			tooMany = true
 		default:
+			if s.loginTimeout > 0 {
+				// Nobody may hold a connection without logging in (lesson 43). Set
+				// here, in the loop, before Shutdown can see p: otherwise this could
+				// overwrite the deadline Shutdown sets to make the read stop.
+				conn.SetReadDeadline(time.Now().Add(s.loginTimeout))
+			}
 			s.conns[p] = true
 			registered = true
 		}
@@ -251,9 +257,6 @@ func (s *Server) handle(conn net.Conn) {
 	defer s.call(func() { delete(s.conns, p) })
 
 	p.Send(Welcome)
-	if s.loginTimeout > 0 { // lesson 43: nobody may hold a connection without logging in
-		conn.SetReadDeadline(time.Now().Add(s.loginTimeout))
-	}
 	saved, ok := s.login(p)
 	if !ok {
 		if errors.Is(p.scanner.Err(), os.ErrDeadlineExceeded) && !s.closing.Load() {

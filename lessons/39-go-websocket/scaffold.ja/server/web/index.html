@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- The web client's page (lesson 39). The texts are in MUD_TEXT below. -->
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MUD スクール</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <div id="status">未接続</div>
+    <canvas id="zone" hidden title="入力欄が空のときは矢印キーで歩けます。マップをクリックするとそこまで歩きます。"></canvas>
+    <div id="log" aria-live="polite"></div>
+    <input id="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="コマンドを打って Enter">
+  </main>
+  <script>
+    window.MUD_TEXT = {"connected": "接続しました。", "disconnected": "接続が閉じられました。もう一度つなぐにはページを再読み込みしてください。", "offline": "未接続", "online": "人がオンライン", "textOnly": "（テキストのみ – マップを見るにはレッスン 41 で Rust の Web クライアントをビルドしましょう。）", "wrongAbi": "mud_web.wasm の ABI バージョンが違います – テキストのみ。"};
+  </script>
+  <script src="mud.js"></script>
+</body>
+</html>

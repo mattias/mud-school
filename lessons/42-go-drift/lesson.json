@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Ut på nätet – Docker, Caddy och en VPS",
+    "en": "Out on the internet – Docker, Caddy and a VPS",
+    "ja": "インターネットへ – Docker・Caddy・VPS"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Konfiguration från miljövariabler, strukturerade loggar med log/slog, /healthz, SIGTERM och X-Forwarded-For – och en Docker-avbild, Caddy med automatisk HTTPS och en guide för en vanlig VPS.",
+    "en": "Configuration from environment variables, structured logs with log/slog, /healthz, SIGTERM and X-Forwarded-For – and a Docker image, Caddy with automatic HTTPS and a guide for an ordinary VPS.",
+    "ja": "環境変数による設定、log/slog の構造化ログ、/healthz、SIGTERM、X-Forwarded-For。そして Docker イメージ、自動 HTTPS の Caddy、普通の VPS 向けの手引き。"
+  }
+}

@@ -1,6 +1,6 @@
 # Lektion 36 – Bygga i spelet
 
-Sista lektionen. Sedan lektion 31 kan du ändra världen genom att redigera en
+Sista lektionen i fas 5. Sedan lektion 31 kan du ändra världen genom att redigera en
 JSON-fil. MUD:ar har länge haft något bättre: **online creation**. Byggare går
 omkring inne i världen och formar den därifrån:
 
@@ -124,8 +124,6 @@ DittNamn`, gräv, beskriv och titta i filen efteråt.
 - `@zone`: rita en handgjord zon i spelet, rad för rad.
 - Snyggare ID:n: `å` → `a`, `ö` → `o` (paketet `golang.org/x/text/unicode/norm`).
 
-**Det var sista lektionen.** Du har byggt en spelserver för många spelare i
-Go och en klient i Rust – från en ekoserver till en tile-värld med ljus, mus,
-sparande, skript, plugins i ett annat språk och en server som kan ändras på
-alla sätt utan att någon kopplas ner. Fas 6 i `docs/*/CURRICULUM.md` har idéer
-om vart du kan gå härnäst.
+**Det var fas 5.** Din server kan nu ändras på alla sätt utan att någon
+kopplas ner. Fas 6 tar ut den i världen: en introduktion för nya spelare,
+språk per spelare, webbläsaren, en VPS – och ett lasttest.

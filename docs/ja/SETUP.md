@@ -255,6 +255,14 @@ Ubuntu と、Go・Rust 用の VS Code 拡張）。
 
 ---
 
+## フェーズ 6 のために
+
+- **WebAssembly のターゲット**（レッスン 33 と 41）: `rustup target add wasm32-unknown-unknown`。
+- Web クライアント（レッスン 39 と 41）のための **ブラウザ**。最近のものなら何でも。
+- **Docker**（レッスン 42、任意）: Windows と macOS では Docker Desktop、Linux では
+  `docker.io` パッケージか https://get.docker.com。自分のコンピューターでコンテナイメージを
+  作るときだけ必要です。VPS には別に入れます。
+
 ## エディタ
 
 おすすめは **VS Code** と拡張機能 **Go**（`golang.go`）、**rust-analyzer**

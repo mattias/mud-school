@@ -143,6 +143,12 @@ Rust: `tests/mudschool_NN.rs`（ライブラリ `mud_client` に対する結合�
      `login`、`expect`、`expectContains`、`expectSilence` など）で TCP 越しに行う。
    - 厳しすぎず: レッスンで教えることをテストし、それ以外は自由にさせる。
    - 避けられるならスリープは使わず、タイムアウトを使う。
+   - 作業領域にあるのは今のレッスンのテストだけです。テストファイルは別のレッスンの
+     テストの補助関数を使えません。コピーするか `_shared/` に置きましょう。
+   - テストは作業領域のどこにでも置けます。レッスン 42 はパッケージ `main` をテストします
+     （`tests/server/mudschool_42_test.go`）。Rust のテストは常にクライアントのパッケージに
+     置き、ワークスペースのほかの crate（レッスン 41、44）はその `[dev-dependencies]` にして、
+     `client/` での `cargo test` から届くようにします。
 5. 新しいファイルの `scaffold/` を書く: コードがコンパイルできるよう、
    `TODO(lesson NN)` と `todo!()`／空の戻り値を付けた型とシグネチャ。
 6. `./mudschool verify NN` を実行する。

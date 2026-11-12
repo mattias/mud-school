@@ -1,0 +1,6 @@
+# Caddy in front of the MUD (lesson 42): HTTPS with automatic certificates,
+# compression, and everything – WebSockets too – passed on to the web client.
+{$MUD_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy mud:8080
+}

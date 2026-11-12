@@ -1,0 +1,69 @@
+{
+  "rooms": [
+    {
+      "id": "tutorial-hall",
+      "name": "The Hall of Beginnings",
+      "description": "A quiet hall with whitewashed walls. Morning light falls through\na high window. A wide doorway leads north, out into a courtyard.",
+      "terrain": "inside",
+      "x": 0,
+      "y": 0,
+      "z": -10,
+      "exits": {
+        "north": "tutorial-yard"
+      }
+    },
+    {
+      "id": "tutorial-yard",
+      "name": "The Courtyard",
+      "description": "A small courtyard behind high walls. Beyond the gate in the north\nwall you hear the sounds of a town.",
+      "terrain": "field",
+      "x": 0,
+      "y": -1,
+      "z": -10,
+      "exits": {
+        "south": "tutorial-hall"
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "tutorial-torch",
+      "name": "an unlit torch",
+      "description": "A simple torch of pine wood, wrapped in tarred cloth.",
+      "keywords": [
+        "torch"
+      ],
+      "room": "tutorial-yard"
+    }
+  ],
+  "tutorial": {
+    "start": "tutorial-hall",
+    "steps": [
+      {
+        "text": "Welcome! This short tutorial teaches you the basics (tutorial skip leaves it). Type look to see where you are.",
+        "command": "look"
+      },
+      {
+        "text": "There is a doorway to the north. Go through it with: go north (north, or just n, takes one step at a time).",
+        "room": "tutorial-yard"
+      },
+      {
+        "text": "Something lies on the ground here. Pick it up with: get torch",
+        "item": "tutorial-torch"
+      },
+      {
+        "text": "Check what you are carrying with: inventory (or just i)",
+        "command": "inventory"
+      },
+      {
+        "text": "Other players hear what you say in the same room. Try: say hello",
+        "command": "say"
+      },
+      {
+        "text": "Last step: help lists every command there is. Type help.",
+        "command": "help"
+      }
+    ],
+    "done": "Well done! You hand the torch to the gatekeeper, the gate opens, and you step out into Mudby."
+  }
+}

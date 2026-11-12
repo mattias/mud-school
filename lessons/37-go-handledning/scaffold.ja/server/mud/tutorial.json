@@ -1,0 +1,70 @@
+{
+  "rooms": [
+    {
+      "id": "tutorial-hall",
+      "name": "はじまりの広間",
+      "description": "白い漆喰の壁の静かな広間。高い窓から朝の光が差しこむ。\n北の広い戸口から中庭に出られる。",
+      "terrain": "inside",
+      "x": 0,
+      "y": 0,
+      "z": -10,
+      "exits": {
+        "north": "tutorial-yard"
+      }
+    },
+    {
+      "id": "tutorial-yard",
+      "name": "中庭",
+      "description": "高い壁に囲まれた小さな中庭。北の壁の門の向こうから、\n町のざわめきが聞こえる。",
+      "terrain": "field",
+      "x": 0,
+      "y": -1,
+      "z": -10,
+      "exits": {
+        "south": "tutorial-hall"
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "tutorial-torch",
+      "name": "火のついていないたいまつ",
+      "description": "松の木に、タールを染みこませた布を巻いた素朴なたいまつ。",
+      "keywords": [
+        "たいまつ",
+        "torch"
+      ],
+      "room": "tutorial-yard"
+    }
+  ],
+  "tutorial": {
+    "start": "tutorial-hall",
+    "steps": [
+      {
+        "text": "ようこそ！ この短いチュートリアルで基本を覚えましょう（tutorial skip で抜けられます）。look と打って、今いる場所を見てみましょう。",
+        "command": "look"
+      },
+      {
+        "text": "北に戸口があります。go north で通り抜けましょう（north、または n だけなら 1 歩ずつ進みます）。",
+        "room": "tutorial-yard"
+      },
+      {
+        "text": "地面に何か落ちています。get たいまつ で拾いましょう。",
+        "item": "tutorial-torch"
+      },
+      {
+        "text": "inventory（または i だけ）で持ち物を確かめましょう。",
+        "command": "inventory"
+      },
+      {
+        "text": "同じ部屋にいる他のプレイヤーには、あなたの言葉が聞こえます。say こんにちは と打ってみましょう。",
+        "command": "say"
+      },
+      {
+        "text": "最後のステップです。help ですべてのコマンドが見られます。help と打ちましょう。",
+        "command": "help"
+      }
+    ],
+    "done": "よくできました！ たいまつを門番に返すと門が開き、あなたはマッドビーの町へ踏み出した。"
+  }
+}

@@ -27,6 +27,8 @@ Användning:
   mudschool goto <id>            hoppa till en lektion
   mudschool solution [--apply]   visa (eller kopiera in) referenslösningen
   mudschool run server|client|gfx starta din server, klient eller grafiska klient
+  mudschool run web [argument]   bygg webbklienten (lektion 41) och starta servern
+  mudschool run loadtest [arg]   kör lasttestaren (lektion 44), t.ex. --bots 100
   mudschool connect [adress]     anslut till servern som telnet (standard 127.0.0.1:4000)
   mudschool verify [id...]       (lärare) kontrollera att alla lösningar klarar testerna
   mudschool reference <kat> [id] (lärare) bygg referenslösningen till och med en lektion
@@ -46,6 +48,8 @@ Usage:
   mudschool goto <id>            jump to a lesson
   mudschool solution [--apply]   show (or copy in) the reference solution
   mudschool run server|client|gfx start your server, client or graphical client
+  mudschool run web [arguments]  build the web client (lesson 41) and start the server
+  mudschool run loadtest [args]  run the load tester (lesson 44), e.g. --bots 100
   mudschool connect [address]    connect to the server like telnet (default 127.0.0.1:4000)
   mudschool verify [id...]       (teachers) check that every solution passes its tests
   mudschool reference <dir> [id] (teachers) build the reference solution up to a lesson
@@ -65,6 +69,8 @@ Usage:
   mudschool goto <id>            指定したレッスンへ移動する
   mudschool solution [--apply]   模範解答を表示する（またはコピーする）
   mudschool run server|client|gfx 自分のサーバー、クライアント、グラフィカルクライアントを起動する
+  mudschool run web [引数]       Web クライアント（レッスン 41）をビルドしてサーバーを起動する
+  mudschool run loadtest [引数]  負荷テスト（レッスン 44）を実行する（例: --bots 100）
   mudschool connect [address]    telnet のようにサーバーへ接続する（既定 127.0.0.1:4000）
   mudschool verify [id...]       （講師向け）すべての模範解答がテストに通るか確認する
   mudschool reference <dir> [id] （講師向け）指定レッスンまでの模範解答を作る

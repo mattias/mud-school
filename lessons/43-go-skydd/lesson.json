@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Skydd – mot spam, flod och överbelastning",
+    "en": "Protection – against spam, floods and overload",
+    "ja": "守り – スパム・洪水・過負荷から"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "En token bucket per spelare, en gräns för anslutningar per IP-adress, för långa rader och för långsamma inloggningar – och mätvärden med expvar och profilering med pprof.",
+    "en": "A token bucket per player, limits for connections per IP address, for long lines and for slow logins – and numbers with expvar and profiling with pprof.",
+    "ja": "プレイヤーごとのトークンバケット、IP アドレスごとの接続数・長すぎる行・遅いログインの制限。そして expvar による数値と pprof によるプロファイリング。"
+  }
+}

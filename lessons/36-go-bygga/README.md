@@ -1,6 +1,6 @@
 # Lesson 36 – Building in the game
 
-The last lesson. Since lesson 31 you can change the world by editing a JSON
+The last lesson of phase 5. Since lesson 31 you can change the world by editing a JSON
 file. MUDs have long had something better: **online creation**. Builders
 walk around inside the world and shape it from there:
 
@@ -120,8 +120,6 @@ Build a little area of your own: start the server with `-world my-world.json
 - Builders: a role between players and administrators who may only build in their own area.
 - `@zone`: draw a hand-made zone in the game, row by row.
 
-**That was the last lesson.** You have built a multiplayer game server in Go
-and a client in Rust – from an echo server to a tile world with light, a mouse,
-saving, scripts, plugins in another language, and a server that can be
-changed in every way without anyone being disconnected. Phase 6 in
-`docs/*/CURRICULUM.md` has ideas for where to go next.
+**That was phase 5.** Your server can now be changed in every way without
+anyone being disconnected. Phase 6 takes it out into the world: a tutorial
+for new players, languages per player, the browser, a VPS – and a load test.

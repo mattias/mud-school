@@ -442,9 +442,9 @@ func rel(base, p string) string {
 
 func (c *course) cmdRun(args []string) error {
 	if len(args) == 0 {
-		return errors.New(L("användning: mudschool run server|client|gfx [argument...]",
-			"usage: mudschool run server|client|gfx [arguments...]",
-			"使い方: mudschool run server|client|gfx [引数...]"))
+		return errors.New(L("användning: mudschool run server|client|gfx|web|loadtest [argument...]",
+			"usage: mudschool run server|client|gfx|web|loadtest [arguments...]",
+			"使い方: mudschool run server|client|gfx|web|loadtest [引数...]"))
 	}
 	ws := c.workspace()
 	switch args[0] {
@@ -457,8 +457,27 @@ func (c *course) cmdRun(args []string) error {
 	case "gfx": // the graphical client from lesson 28 (a window of its own)
 		_, err := runIn(filepath.Join(ws, "client"), false, nil, append([]string{"cargo", "run", "--release", "--quiet", "--features", "gfx", "--bin", "mud-gfx", "--"}, args[1:]...)...)
 		return err
+	case "web": // lesson 41: build the browser client, put it next to the page, start the server
+		client := filepath.Join(ws, "client")
+		if _, err := runIn(client, false, nil, "cargo", "build", "--release", "--quiet",
+			"--target", "wasm32-unknown-unknown", "-p", "mud-web"); err != nil {
+			return err
+		}
+		wasm, err := os.ReadFile(filepath.Join(client, "target", "wasm32-unknown-unknown", "release", "mud_web.wasm"))
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(filepath.Join(ws, "server", "web", "mud_web.wasm"), wasm, 0o644); err != nil {
+			return err
+		}
+		fmt.Println(green("✔ server/web/mud_web.wasm"))
+		_, err = runIn(filepath.Join(ws, "server"), false, nil, append([]string{"go", "run", "."}, args[1:]...)...)
+		return err
+	case "loadtest": // lesson 44
+		_, err := runIn(filepath.Join(ws, "client"), false, nil, append([]string{"cargo", "run", "--release", "--quiet", "-p", "mud-loadtest", "--"}, args[1:]...)...)
+		return err
 	}
-	return fmt.Errorf("%q: server | client | gfx", args[0])
+	return fmt.Errorf("%q: server | client | gfx | web | loadtest", args[0])
 }
 
 // cmdVerify builds the reference solution lesson by lesson in a temporary

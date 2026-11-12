@@ -4,12 +4,13 @@
 
 > Learn **Go** and **Rust** by building a MUD server and a matching client
 > from scratch – from a 20-line echo server to an extensible game world with
-> tile graphics, scripts and plugins that load without a restart.
+> tile graphics, scripts and plugins that load without a restart – out on
+> the internet, playable in a browser.
 
 This document describes the *whole* journey: why it looks the way it does,
-what you learn in every step and where we are heading. Lessons 01–36 are
-implemented in `lessons/` (with tests and reference solutions). Phase 6 is a
-set of optional tracks, described here as ideas to build on on your own.
+what you learn in every step and where we are heading. All 44 lessons are
+implemented in `lessons/` (with tests and reference solutions);
+[IDEAS.md](IDEAS.md) has more to build on on your own.
 
 ---
 
@@ -23,7 +24,7 @@ set of optional tracks, described here as ideas to build on on your own.
 6. [Phase 3 – A living world (lessons 14–22)](#phase-3--a-living-world-lessons-1422)
 7. [Phase 4 – Tiles and zones (lessons 23–30)](#phase-4--tiles-and-zones-lessons-2330)
 8. [Phase 5 – An extensible server (lessons 31–36)](#phase-5--an-extensible-server-lessons-3136)
-9. [Phase 6 – Out into the world](#phase-6--out-into-the-world-optional-tracks)
+9. [Phase 6 – Out into the world (lessons 37–44)](#phase-6--out-into-the-world-lessons-3744)
 10. [Concept map: Go and Rust side by side](#concept-map-go-and-rust-side-by-side)
 11. [Further reading](#further-reading)
 12. [Time required](#time-required)
@@ -124,7 +125,7 @@ step towards *internationalizing* the game itself.
 
 Core ideas come back in increasingly demanding forms: channels in Go (07) →
 channels in Rust (06, 13) → the actor pattern for the game loop (phase 3) →
-`tokio::select!` (phase 6). Error handling: `error` (01) → your own errors
+`tokio::select!` (44). Error handling: `error` (01) → your own errors
 (05) → `errors.Join` (09) → `Result` and `?` (03) → your own error types (11).
 Every time you see an idea again you understand it a little more deeply.
 
@@ -159,9 +160,9 @@ Phase 4  Tiles and zones      23 ─ 30   Caves of Qud-style zones, procedural g
                                         field of view, A*, graphical client with a tileset
 Phase 5  An extensible server 31 ─ 36   live reloading, Lua scripts, WASM plugins
                                         in Rust, hooks, copyover, building in the game
-───────────────────────────────────────────────────── implemented above ───
-Phase 6  Out into the world   optional  web client (Rust→WASM), async Rust,
-                                        GMCP, operations and load testing
+Phase 6  Out into the world   37 ─ 44   a tutorial, languages per player, WebSockets,
+                                        the Rust core in the browser, Docker + Caddy,
+                                        protection, a load tester with tokio
 ```
 
 ---
@@ -249,7 +250,7 @@ forests, things you only see when you see them, and a window with tiles.
 ## Phase 5 – An extensible server (lessons 31–36)
 
 **Goal:** the server should never need a restart to get new content or new
-features. This is the culmination of the course and ties everything together.
+features. It ties together everything from phases 1–4.
 
 | # | Track | Lesson | The game gets | The language teaches you |
 |---|---|---|---|---|
@@ -268,22 +269,30 @@ Three levels of extensibility, from simplest to most powerful:
                                                     code in any language
 ```
 
-## Phase 6 – Out into the world (optional tracks)
+## Phase 6 – Out into the world (lessons 37–44)
 
-Pick whatever interests you most:
+**Goal:** the MUD leaves your computer. New players are welcomed, everyone
+reads the world in their own language, anyone can play in a browser, and the
+server runs on a VPS – protected, measured and load tested.
 
-- **Web client:** a WebSocket gateway in Go and the client compiled from Rust
-  to WebAssembly – the same `render` code draws on the browser's `<canvas>`.
-- **Async Rust:** rewrite the client with `tokio`. `tokio::select!` is
-  surprisingly similar to Go's `select`. Build a load tester with 1000 bot players.
-- **Real telnet:** IAC negotiation, NAWS (window size) and **GMCP**, so that
-  ordinary MUD clients like Mudlet can show your map and status bar.
-- **Operations:** `log/slog`, `pprof`, metrics for Prometheus, Docker, TLS,
-  protection against spam and overload.
-- **Internationalization for real:** every player picks a language, and the
-  server chooses texts per player (a message catalog with `text/template`).
-- **Rust on the server:** write the field-of-view or generator code as a Rust
-  library and compare performance and developer experience.
+| # | Track | Lesson | The game gets | The language teaches you |
+|---|---|---|---|---|
+| 37 | Go | The tutorial | new players start in a closed-off area and are guided step by step; progress is saved | behaviour as data, a hook for `EventCommand`, a database migration, breadth-first search |
+| 38 | Go | Languages per player | `language`; the tutorial and translated rooms in each player's language | `json.Unmarshaler`/`Marshaler`, methods on a map type, `text/template`, fallbacks |
+| 39 | Go | WebSockets | a web client served by the server; browser players meet telnet players | `net/http`, `http.Handler`, a `net.Listener` made of channels, `go:embed`, the Origin check |
+| 40 | Rust | The core | the client becomes a Cargo workspace with `mud-core`: no I/O, no clock | workspaces, `pub use`, the orphan rule, passing time in |
+| 41 | Rust | The client in the browser | the core, compiled to WebAssembly, draws the zone on a `<canvas>`; click to walk | `cdylib`, `#[no_mangle]`, `extern "C"`, `thread_local!`, an ABI with the browser as the host |
+| 42 | Go | Out on the internet | Docker, Caddy with automatic HTTPS, a guide for a VPS | configuration from the environment and a testable `main`, `log/slog`, `/healthz`, SIGTERM, `X-Forwarded-For` |
+| 43 | Go | Protection | limits for commands, connections per IP, long lines and slow logins; counters | a token bucket, read deadlines, `expvar`, `pprof` |
+| 44 | Rust | The load tester | hundreds of bots that walk around and measure answer times | tokio, `async`/`.await`, `tokio::select!`, `mpsc`/`watch`, percentiles |
+
+```
+browser ──https──▶ Caddy ──▶ gateway (/ws) ──▶ ConnListener ──▶ Serve ◀── telnet
+   └── mud_web.wasm: the Rust core draws the zone, the same code as the window
+```
+
+More ideas – GMCP for Mudlet, Rust on the server, an async terminal client –
+are in [IDEAS.md](IDEAS.md).
 
 ---
 
@@ -296,7 +305,7 @@ Pick whatever interests you most:
 | Errors | `error`, `if err != nil` | `Result<T, E>`, `?` | 01, 03, 05, 09, 11 |
 | Missing value | `nil`, `value, ok :=` | `Option<T>` | 03, 05, 11 |
 | Memory | garbage collector | ownership and borrowing | 03, 06 |
-| Concurrency | goroutines | OS threads (`thread::spawn`), later `tokio` | 02, 06, (phase 6) |
+| Concurrency | goroutines | OS threads (`thread::spawn`), later `tokio` tasks | 02, 06, 44 |
 | Messages | `chan T`, `select` | `mpsc::channel`, `recv`/`try_recv` | 06, 07, 13 |
 | Shared data | `sync.Mutex` (voluntary) | `Mutex<T>` (required by the compiler) | 05, (14) |
 | Abstraction | interfaces (implicit) | traits (explicit) | 06, 09, 10, 11, 13 |
@@ -346,6 +355,7 @@ Approximate times for someone who can program but is new to Go and Rust:
 | Phase 3 (14–22) | 25–35 hours |
 | Phase 4 (23–30) | 30–45 hours |
 | Phase 5 (31–36) | 25–40 hours |
+| Phase 6 (37–44) | 30–45 hours |
 
 The Rust lessons typically take longer than the Go lessons. That is normal –
 the borrow checker is a threshold everyone has to get over.

@@ -7,7 +7,9 @@ lektion 10 (servern) och 11 (klienten).
 
 ## Grundregler
 
-- Transport: TCP. All text är **UTF-8**.
+- Transport: TCP – eller en WebSocket på `/ws` på webbklientens adress
+  (lektion 39), vars textmeddelanden bär samma rader (ett meddelande kan
+  innehålla en del av en rad, eller flera). All text är **UTF-8**.
 - Varje meddelande är **en rad** som avslutas med `\r\n` (CR LF), åt båda hållen.
 - Klienten skickar alltid vanlig text: kommandon som `look` eller `say hej`.
 - Servern skickar **vanlig text** tills klienten har skickat en hälsning.
@@ -190,5 +192,5 @@ Protokollet ska kunna växa utan att gamla klienter går sönder:
 
 | Version | Frame / fält | Fas |
 |---|---|---|
-| 1 | `hello.lang` – spelarens språk, så att servern kan välja texter per spelare | 6 |
-| 1 | `sound`, `effect` – ljud och visuella effekter | 6 |
+| 1 | `hello.lang` – klientens språk redan i handskakningen (i dag gör kommandot `language` det, lektion 38) | – |
+| 1 | `sound`, `effect` – ljud och visuella effekter | – |

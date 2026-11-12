@@ -178,7 +178,34 @@ const (
 	MsgBuildInvalid = "それでは世界が正しくなくなります。何も変更していません:\n%v"
 	MsgNotSaved     = "（サーバーにワールドファイルがないので、変更は保存されません。）"
 	MsgSaveFailed   = "世界を保存できませんでした: %v"
+	// the tutorial (lesson 37)
+	MsgTutorialStep     = "[チュートリアル %d/%d] %s"
+	MsgTutorialSkipped  = "チュートリアルを抜けました。help ですべてのコマンドが見られます。"
+	MsgTutorialNotIn    = "チュートリアル中ではありません。"
+	MsgDisappears       = "%s が消えた。"
+	MsgErrTutorialStart = "チュートリアル: 開始の部屋 %q がありません"
+	MsgErrTutorialOpen  = "チュートリアル: チュートリアルから世界の開始の部屋 %q に行けてしまいます。チュートリアルの区域は閉じていなければなりません"
+	MsgErrTutorialEmpty = "チュートリアル: ステップがありません"
+	MsgErrTutorialStep  = "チュートリアルのステップ %d: テキストと、command・room・item のちょうど 1 つが必要です"
+	MsgErrTutorialRoom  = "チュートリアルのステップ %d: 部屋 %q はチュートリアルの区域にありません"
+	MsgErrTutorialItem  = "チュートリアルのステップ %d: 物 %q はチュートリアルの区域にありません"
+	// languages per player (lesson 38)
+	MsgLanguage        = "あなたの言語: %s。あるのは: %s。例えば language ja で選べます"
+	MsgLanguageSet     = "言語: %s。"
+	MsgLanguageUnknown = "%q のテキストはありません。あるのは: %s。"
+	MsgErrText         = "テキストは文字列か、言語ごとに 1 つの文字列を持つオブジェクトでなければなりません"
+	MsgErrTemplate     = "%q のテキストは正しいテンプレートではありません: %v"
+	MsgErrTutorialText = "チュートリアルのステップ %d: %v"
+	// protection (lesson 43)
+	MsgSlowDown           = "落ち着いて – コマンドの送り方が速すぎます。"
+	MsgFlooding           = "コマンドが多すぎます – さようなら。"
+	MsgTooManyConnections = "あなたのアドレスからの接続が多すぎます – 後でもう一度どうぞ。"
+	MsgLineTooLong        = "その行は長すぎます – さようなら。"
+	MsgLoginTimeout       = "ログインに時間がかかりすぎました – さようなら。"
 )
+
+// CourseLanguage is the language this file – and world.json – is written in (lesson 38).
+const CourseLanguage = "ja"
 
 // directionNames are the directions as shown to the player (lesson 8).
 var directionNames = map[string]string{

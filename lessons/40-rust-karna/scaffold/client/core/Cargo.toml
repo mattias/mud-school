@@ -1,0 +1,11 @@
+[package]
+name = "mud-core"
+version = "0.1.0"
+edition = "2021"
+
+# The client's core (lesson 40): everything that is the same in the terminal,
+# in the window and in the browser. No terminal, no window, no network, no
+# clock – so it can be compiled to WebAssembly (lesson 41).
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

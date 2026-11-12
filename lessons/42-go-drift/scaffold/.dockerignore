@@ -1,0 +1,7 @@
+# What `docker build` doesn't need to see (lesson 42).
+**/target
+**/mud.db
+**/*.db-journal
+.git
+.env
+.mudschool.json

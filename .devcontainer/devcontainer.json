@@ -9,8 +9,8 @@
     "LANG": "C.UTF-8",
     "COLORTERM": "truecolor"
   },
-  "forwardPorts": [4000],
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y telnet netcat-openbsd && ./mudschool doctor",
+  "forwardPorts": [4000, 8080],
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y telnet netcat-openbsd && rustup target add wasm32-unknown-unknown && ./mudschool doctor",
   "customizations": {
     "vscode": {
       "extensions": ["golang.go", "rust-lang.rust-analyzer"]

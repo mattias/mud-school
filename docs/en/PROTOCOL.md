@@ -7,7 +7,9 @@ introduced in lesson 10 (the server) and 11 (the client).
 
 ## Ground rules
 
-- Transport: TCP. All text is **UTF-8**.
+- Transport: TCP – or a WebSocket at `/ws` on the web client's address
+  (lesson 39), whose text messages carry the same lines (a message may hold
+  part of a line, or several). All text is **UTF-8**.
 - Every message is **one line** ending in `\r\n` (CR LF), in both directions.
 - The client always sends plain text: commands like `look` or `say hello`.
 - The server sends **plain text** until the client has sent a greeting.
@@ -190,5 +192,5 @@ The protocol must be able to grow without breaking old clients:
 
 | Version | Frame / field | Phase |
 |---|---|---|
-| 1 | `hello.lang` – the player's language, so the server can choose texts per player | 6 |
-| 1 | `sound`, `effect` – sounds and visual effects | 6 |
+| 1 | `hello.lang` – the client's language at the handshake (today the `language` command does it, lesson 38) | – |
+| 1 | `sound`, `effect` – sounds and visual effects | – |

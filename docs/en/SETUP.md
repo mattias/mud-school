@@ -261,6 +261,14 @@ already cloned). Port 4000 is forwarded automatically.
 
 ---
 
+## For phase 6
+
+- **The WebAssembly target** (lessons 33 and 41): `rustup target add wasm32-unknown-unknown`.
+- **A browser** for the web client (lessons 39 and 41) – any modern one.
+- **Docker** (lesson 42, optional): Docker Desktop on Windows and macOS, the
+  `docker.io` package or https://get.docker.com on Linux. You only need it to
+  build the container image on your own computer; the VPS gets its own.
+
 ## Editor
 
 Recommendation: **VS Code** with the extensions **Go** (`golang.go`) and

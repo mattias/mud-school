@@ -24,7 +24,12 @@ tileset, ljus och mus:
 Fas 5 (lektion 31–36) gör servern utbyggbar **medan den kör**: omladdning av
 världen, Lua-skript, plugins skrivna i Rust och kompilerade till WebAssembly,
 händelser och hooks, den klassiska MUD-tekniken *copyover*, och att bygga
-världen inifrån spelet.
+världen inifrån spelet. Fas 6 (lektion 37–44) tar ut den i världen: en
+introduktion för nya spelare, ett språk per spelare, en webbklient – din
+Rust-kod kompilerad till WebAssembly, i webbläsaren – Docker och Caddy på en
+VPS, skydd mot spam och flod, och en lasttestare med tusen botar i asynkron Rust:
+
+![Webbklienten från lektion 41: zonen ritad på en canvas i webbläsaren, introduktionen i loggen](docs/images/web.png)
 
 Kursen finns på **engelska, svenska och japanska** – instruktioner, ledtrådar,
 testernas felmeddelanden, spelets texter och spelvärlden.
@@ -73,6 +78,7 @@ Rekommenderade typsnitt för kartan (t.ex. i Windows Terminal) finns i
 | `./mudschool watch` | som `check`, men automatiskt när du sparar |
 | `./mudschool hint` | nästa ledtråd (en i taget) |
 | `./mudschool run server` / `run client` / `run gfx` | starta din server, klient eller grafiska klient |
+| `./mudschool run web` / `run loadtest` | bygg webbklienten och starta servern (lektion 41) / kör lasttestaren (lektion 44) |
 | `./mudschool connect` | anslut till din server för hand, som telnet |
 | `./mudschool solution [--apply]` | visa (eller kopiera in) referenslösningen |
 | `./mudschool goto <id>` | hoppa till en lektion |
@@ -135,8 +141,16 @@ Du behöver aldrig köra `init` igen.
 | 34 | Go | Händelser och hooks | en händelsebuss, handlingar som kan avbrytas |
 | 35 | Go | Copyover | fildeskriptorer, `ExtraFiles`, överlämning av anslutningar |
 | 36 | Go | Bygga i spelet | genomför–validera–ångra, atomiska skrivningar |
+| 37 | Go | Introduktionen | beteende som data, hooks, en migrering |
+| 38 | Go | Språk per spelare | `json.Unmarshaler`, `text/template` |
+| 39 | Go | WebSocket | `net/http`, en lyssnare av kanaler, `go:embed` |
+| 40 | Rust | Kärnan | workspaces, `pub use`, orphan rule |
+| 41 | Rust | Klienten i webbläsaren | WebAssembly, `cdylib`, ett ABI med webbläsaren |
+| 42 | Go | Ut på nätet | `log/slog`, `/healthz`, SIGTERM, Docker, Caddy |
+| 43 | Go | Skydd | en token bucket, tidsgränser, `expvar`, `pprof` |
+| 44 | Rust | Lasttestaren | tokio, `tokio::select!`, percentiler |
 
-Fas 6 (valfria spår) och hela resan beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
+Hela resan, fas för fas, beskrivs i **[docs/sv/CURRICULUM.md](docs/sv/CURRICULUM.md)**.
 
 ## Dokumentation
 

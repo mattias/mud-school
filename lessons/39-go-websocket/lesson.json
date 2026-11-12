@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "WebSocket – spela i webbläsaren",
+    "en": "WebSockets – play in the browser",
+    "ja": "WebSocket – ブラウザで遊ぶ"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "En gateway serverar webbklienten över HTTP och gör varje WebSocket till en net.Conn som Serve tar emot via en egen lyssnare. Resten av servern märker ingen skillnad.",
+    "en": "A gateway serves the web client over HTTP and turns every WebSocket into a net.Conn that Serve accepts through a listener of its own. The rest of the server notices no difference.",
+    "ja": "ゲートウェイが Web クライアントを HTTP で配信し、各 WebSocket を net.Conn に変えて専用のリスナー経由で Serve に渡す。サーバーの残りの部分は違いに気づかない。"
+  }
+}

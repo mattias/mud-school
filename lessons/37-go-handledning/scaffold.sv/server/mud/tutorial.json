@@ -1,0 +1,70 @@
+{
+  "rooms": [
+    {
+      "id": "tutorial-hall",
+      "name": "Begynnelsens sal",
+      "description": "En stilla sal med vitkalkade väggar. Morgonljus faller in genom\nett högt fönster. En bred dörröppning leder norrut, ut på en gård.",
+      "terrain": "inside",
+      "x": 0,
+      "y": 0,
+      "z": -10,
+      "exits": {
+        "north": "tutorial-yard"
+      }
+    },
+    {
+      "id": "tutorial-yard",
+      "name": "Gården",
+      "description": "En liten gård bakom höga murar. Bortom porten i norra muren\nhör du ljuden från en stad.",
+      "terrain": "field",
+      "x": 0,
+      "y": -1,
+      "z": -10,
+      "exits": {
+        "south": "tutorial-hall"
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "tutorial-torch",
+      "name": "en otänd fackla",
+      "description": "En enkel fackla av furu, lindad i tjärat tyg.",
+      "keywords": [
+        "fackla",
+        "torch"
+      ],
+      "room": "tutorial-yard"
+    }
+  ],
+  "tutorial": {
+    "start": "tutorial-hall",
+    "steps": [
+      {
+        "text": "Välkommen! Den här korta introduktionen lär dig grunderna (tutorial skip lämnar den). Skriv look för att se var du är.",
+        "command": "look"
+      },
+      {
+        "text": "Det finns en dörröppning norrut. Gå igenom den med: go north (north, eller bara n, tar ett steg i taget).",
+        "room": "tutorial-yard"
+      },
+      {
+        "text": "Något ligger på marken här. Plocka upp det med: get fackla",
+        "item": "tutorial-torch"
+      },
+      {
+        "text": "Se vad du bär på med: inventory (eller bara i)",
+        "command": "inventory"
+      },
+      {
+        "text": "Andra spelare i samma rum hör vad du säger. Prova: say hej",
+        "command": "say"
+      },
+      {
+        "text": "Sista steget: help visar alla kommandon som finns. Skriv help.",
+        "command": "help"
+      }
+    ],
+    "done": "Bra gjort! Du lämnar facklan till portvakten, porten öppnas och du kliver ut i Mudby."
+  }
+}

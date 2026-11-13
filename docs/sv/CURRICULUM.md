@@ -4,14 +4,15 @@
 
 > Lär dig **Go** och **Rust** genom att bygga en MUD-server och en matchande
 > klient från grunden – från en ekoserver på 20 rader till en utbyggbar
-> spelvärld med tile-grafik, skript och plugins som laddas utan omstart.
+> spelvärld med tile-grafik, skript och plugins som laddas utan omstart – ute
+> på internet, spelbar i en webbläsare.
 
 > 🇸🇪 Svenska · [🇬🇧 English](../en/CURRICULUM.md) · [🇯🇵 日本語](../ja/CURRICULUM.md)
 
 Det här dokumentet beskriver *hela* resan: varför den ser ut som den gör,
-vad du lär dig i varje steg och vart vi är på väg. Lektion 01–36 finns
-implementerade i `lessons/` (med tester och referenslösningar). Fas 6 är en
-samling valfria spår, beskrivna här som idéer att bygga vidare på egen hand.
+vad du lär dig i varje steg och vart vi är på väg. Alla 44 lektioner finns
+implementerade i `lessons/` (med tester och referenslösningar);
+[IDEAS.md](IDEAS.md) har mer att bygga vidare på egen hand.
 
 ---
 
@@ -25,7 +26,7 @@ samling valfria spår, beskrivna här som idéer att bygga vidare på egen hand.
 6. [Fas 3 – En levande värld (lektion 14–22)](#fas-3--en-levande-värld-lektion-1422)
 7. [Fas 4 – Tiles och zoner (lektion 23–30)](#fas-4--tiles-och-zoner-lektion-2330)
 8. [Fas 5 – En utbyggbar server (lektion 31–36)](#fas-5--en-utbyggbar-server-lektion-3136)
-9. [Fas 6 – Ut i världen](#fas-6--ut-i-världen-valfria-spår)
+9. [Fas 6 – Ut i världen (lektion 37–44)](#fas-6--ut-i-världen-lektion-3744)
 10. [Begreppskarta: Go och Rust sida vid sida](#begreppskarta-go-och-rust-sida-vid-sida)
 11. [Läsanvisningar](#läsanvisningar)
 12. [Tidsåtgång](#tidsåtgång)
@@ -124,7 +125,7 @@ första steg mot *internationalisering* av själva spelet.
 
 Kärnidéer återkommer i allt svårare former: kanaler i Go (07) → kanaler i
 Rust (06, 13) → actor-mönstret för spelloopen (fas 3) → `tokio::select!`
-(fas 6). Felhantering: `error` (01) → egna fel (05) → `errors.Join` (09) →
+(44). Felhantering: `error` (01) → egna fel (05) → `errors.Join` (09) →
 `Result` och `?` (03) → egna feltyper (11). Varje gång du ser en idé igen
 förstår du den lite djupare.
 
@@ -159,9 +160,9 @@ Fas 4  Tiles och zoner       23 ─ 30   zoner à la Caves of Qud, procedurgener
                                        synfält, A*, grafisk klient med tileset
 Fas 5  En utbyggbar server   31 ─ 36   omladdning live, Lua-skript, WASM-plugins
                                        i Rust, hooks, copyover, bygga i spelet
-─────────────────────────────────────────────────── implementerat ovanför ───
-Fas 6  Ut i världen          valfritt  webbklient (Rust→WASM), async Rust,
-                                       GMCP, drift och lasttest
+Fas 6  Ut i världen          37 ─ 44   introduktion, språk per spelare, WebSocket,
+                                       Rust-kärnan i webbläsaren, Docker + Caddy,
+                                       skydd, en lasttestare med tokio
 ```
 
 ---
@@ -250,7 +251,7 @@ skogar, saker du bara ser när du ser dem, och ett fönster med tiles.
 ## Fas 5 – En utbyggbar server (lektion 31–36)
 
 **Mål:** servern ska aldrig behöva startas om för att få nytt innehåll eller
-nya funktioner. Det här är kursens kulmen och knyter ihop allt.
+nya funktioner. Den knyter ihop allt från fas 1–4.
 
 | # | Spår | Lektion | Spelet får | Språket lär dig |
 |---|---|---|---|---|
@@ -269,22 +270,30 @@ Tre nivåer av utbyggbarhet, från enklast till kraftfullast:
                                                    kod i valfritt språk
 ```
 
-## Fas 6 – Ut i världen (valfria spår)
+## Fas 6 – Ut i världen (lektion 37–44)
 
-Välj det som intresserar dig mest:
+**Mål:** MUD:en lämnar din dator. Nya spelare tas emot, alla läser världen på
+sitt eget språk, vem som helst kan spela i en webbläsare, och servern kör på
+en VPS – skyddad, mätt och lasttestad.
 
-- **Webbklient:** en WebSocket-gateway i Go och klienten kompilerad från Rust
-  till WebAssembly – samma `render`-kod ritar i webbläsarens `<canvas>`.
-- **Async Rust:** skriv om klienten med `tokio`. `tokio::select!` är
-  förvånansvärt likt Gos `select`. Bygg en lasttestare med 1000 bot-spelare.
-- **Riktigt telnet:** IAC-förhandling, NAWS (fönsterstorlek) och **GMCP**, så
-  att vanliga MUD-klienter som Mudlet kan visa din karta och statusrad.
-- **Drift:** `log/slog`, `pprof`, mätvärden för Prometheus, Docker, TLS,
-  skydd mot spam och överbelastning.
-- **Internationalisering på riktigt:** varje spelare väljer språk, och servern
-  väljer texter per spelare (en meddelandekatalog med `text/template`).
-- **Rust på servern:** skriv synfälts- eller generatorkoden som ett
-  Rust-bibliotek och jämför prestanda och utvecklarupplevelse.
+| # | Spår | Lektion | Spelet får | Språket lär dig |
+|---|---|---|---|---|
+| 37 | Go | Introduktionen | nya spelare börjar i ett avskilt område och leds steg för steg; hur långt de kommit sparas | beteende som data, en hook för `EventCommand`, en databasmigrering, bredden-först-sökning |
+| 38 | Go | Språk per spelare | `language`; introduktionen och översatta rum på varje spelares språk | `json.Unmarshaler`/`Marshaler`, metoder på en map-typ, `text/template`, reservspråk |
+| 39 | Go | WebSocket | en webbklient som servern serverar; webbspelare möter telnetspelare | `net/http`, `http.Handler`, en `net.Listener` av kanaler, `go:embed`, Origin-kontrollen |
+| 40 | Rust | Kärnan | klienten blir en Cargo-workspace med `mud-core`: ingen I/O, ingen klocka | workspaces, `pub use`, orphan rule, att skicka in tiden |
+| 41 | Rust | Klienten i webbläsaren | kärnan, kompilerad till WebAssembly, ritar zonen på en `<canvas>`; klicka för att gå | `cdylib`, `#[no_mangle]`, `extern "C"`, `thread_local!`, ett ABI med webbläsaren som värd |
+| 42 | Go | Ut på nätet | Docker, Caddy med automatisk HTTPS, en guide för en VPS | konfiguration från miljön och en testbar `main`, `log/slog`, `/healthz`, SIGTERM, `X-Forwarded-For` |
+| 43 | Go | Skydd | gränser för kommandon, anslutningar per IP, långa rader och långsamma inloggningar; räknare | en token bucket, läs-tidsgränser, `expvar`, `pprof` |
+| 44 | Rust | Lasttestaren | hundratals botar som går omkring och mäter svarstider | tokio, `async`/`.await`, `tokio::select!`, `mpsc`/`watch`, percentiler |
+
+```
+webbläsare ──https──▶ Caddy ──▶ gateway (/ws) ──▶ ConnListener ──▶ Serve ◀── telnet
+   └── mud_web.wasm: Rust-kärnan ritar zonen, samma kod som fönstret
+```
+
+Fler idéer – GMCP för Mudlet, Rust på servern, en asynkron terminalklient –
+finns i [IDEAS.md](IDEAS.md).
 
 ---
 
@@ -297,7 +306,7 @@ Välj det som intresserar dig mest:
 | Fel | `error`, `if err != nil` | `Result<T, E>`, `?` | 01, 03, 05, 09, 11 |
 | Saknat värde | `nil`, `value, ok :=` | `Option<T>` | 03, 05, 11 |
 | Minne | skräpsamlare | ägarskap och lån | 03, 06 |
-| Samtidighet | goroutines | OS-trådar (`thread::spawn`), senare `tokio` | 02, 06, (fas 6) |
+| Samtidighet | goroutines | OS-trådar (`thread::spawn`), senare `tokio`-tasks | 02, 06, 44 |
 | Meddelanden | `chan T`, `select` | `mpsc::channel`, `recv`/`try_recv` | 06, 07, 13 |
 | Delad data | `sync.Mutex` (frivilligt) | `Mutex<T>` (kompilatorn kräver det) | 05, (14) |
 | Abstraktion | gränssnitt (implicita) | traits (explicita) | 06, 09, 10, 11, 13 |
@@ -348,6 +357,7 @@ Ungefärliga tider för någon som kan programmera men är ny i Go och Rust:
 | Fas 3 (14–22) | 25–35 timmar |
 | Fas 4 (23–30) | 30–45 timmar |
 | Fas 5 (31–36) | 25–40 timmar |
+| Fas 6 (37–44) | 30–45 timmar |
 
 Rust-lektionerna tar typiskt längre tid än Go-lektionerna. Det är normalt –
 lånekontrollen (*the borrow checker*) är en tröskel alla går över.

@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Introduktionen – nya spelare får en guide",
+    "en": "The tutorial – a guide for new players",
+    "ja": "チュートリアル – 新しいプレイヤーへの案内"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Nya spelare börjar i ett eget litet område och leds steg för steg genom de första kommandona. Stegen är data i världsfilen; servern lyssnar på en ny händelse, EventCommand, och sparar hur långt varje spelare har kommit.",
+    "en": "New players start in a small area of their own and are guided step by step through the first commands. The steps are data in the world file; the server listens to a new event, EventCommand, and saves how far each player has come.",
+    "ja": "新しいプレイヤーは専用の小さな区域から始め、最初のコマンドを一歩ずつ案内される。ステップはワールドファイルのデータ。サーバーは新しいイベント EventCommand を聞き、各プレイヤーの進み具合を保存する。"
+  }
+}

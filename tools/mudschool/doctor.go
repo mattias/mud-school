@@ -58,6 +58,16 @@ func (c *course) cmdDoctor() error {
 		}
 	}
 
+	// The WebAssembly target (lessons 33 and 41) – optional until then.
+	if out, found := output("rustup", "target", "list", "--installed"); found {
+		if strings.Contains(out, "wasm32-unknown-unknown") {
+			ok("wasm32", L("finns (lektion 33 och 41)", "installed (lessons 33 and 41)", "あり（レッスン 33 と 41）"))
+		} else {
+			warn("wasm32", L("saknas (behövs i lektion 33 och 41)", "missing (needed in lessons 33 and 41)", "ありません（レッスン 33 と 41 で必要）"),
+				"rustup target add wasm32-unknown-unknown")
+		}
+	}
+
 	// A way to connect by hand: built in (./mudschool connect). telnet/nc
 	// are only mentioned if they happen to be there.
 	connectDetail := L("inbyggd: ./mudschool connect", "built in: ./mudschool connect", "内蔵: ./mudschool connect")

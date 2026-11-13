@@ -147,6 +147,12 @@ must line up – GitHub's fonts don't draw CJK characters exactly two columns wi
      (`startServer`, `login`, `expect`, `expectContains`, `expectSilence`, ...).
    - Just strict enough: test what the lesson teaches, leave freedom in the rest.
    - No sleeps where they can be avoided; use timeouts.
+   - Only the current lesson's tests are in the workspace: a test file may not
+     use helpers from another lesson's tests – copy them, or put them in `_shared/`.
+   - Tests can live anywhere in the workspace: lesson 42 tests package `main`
+     (`tests/server/mudschool_42_test.go`). Rust tests always live in the
+     client package; other crates in the workspace (lessons 41, 44) are its
+     `[dev-dependencies]`, so `cargo test` in `client/` reaches them.
 5. Write `scaffold/` for new files: types and signatures with `TODO(lesson NN)`
    and `todo!()`/empty return values so that the code compiles.
 6. Run `./mudschool verify NN`.

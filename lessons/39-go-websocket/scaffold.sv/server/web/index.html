@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- The web client's page (lesson 39). The texts are in MUD_TEXT below. -->
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MUD-skolan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <div id="status">Inte ansluten</div>
+    <canvas id="zone" hidden title="Piltangenterna går när inmatningsfältet är tomt. Klicka på kartan för att gå dit."></canvas>
+    <div id="log" aria-live="polite"></div>
+    <input id="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Skriv ett kommando och tryck Enter">
+  </main>
+  <script>
+    window.MUD_TEXT = {"connected": "Ansluten.", "disconnected": "Anslutningen stängdes. Ladda om sidan för att ansluta igen.", "offline": "Inte ansluten", "online": "online", "textOnly": "(Bara text – bygg webbklienten i Rust i lektion 41 för att se kartan.)", "wrongAbi": "mud_web.wasm talar en annan ABI-version – bara text."};
+  </script>
+  <script src="mud.js"></script>
+</body>
+</html>

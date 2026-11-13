@@ -178,7 +178,34 @@ const (
 	MsgBuildInvalid = "Det skulle göra världen ogiltig – ingenting ändrades:\n%v"
 	MsgNotSaved     = "(Servern har ingen världsfil – ändringen sparas inte.)"
 	MsgSaveFailed   = "Världen kunde inte sparas: %v"
+	// the tutorial (lesson 37)
+	MsgTutorialStep     = "[Introduktion %d/%d] %s"
+	MsgTutorialSkipped  = "Du lämnar introduktionen. Skriv help för att se alla kommandon."
+	MsgTutorialNotIn    = "Du är inte i introduktionen."
+	MsgDisappears       = "%s försvinner."
+	MsgErrTutorialStart = "introduktionen: startrummet %q finns inte"
+	MsgErrTutorialOpen  = "introduktionen: världens startrum %q går att nå från introduktionen – introduktionens område måste vara avskilt"
+	MsgErrTutorialEmpty = "introduktionen: det finns inga steg"
+	MsgErrTutorialStep  = "introduktionens steg %d: det behöver en text och precis ett av command, room och item"
+	MsgErrTutorialRoom  = "introduktionens steg %d: rummet %q ligger inte i introduktionens område"
+	MsgErrTutorialItem  = "introduktionens steg %d: saken %q ligger inte i introduktionens område"
+	// languages per player (lesson 38)
+	MsgLanguage        = "Ditt språk: %s. Det finns: %s. Välj med t.ex. language sv"
+	MsgLanguageSet     = "Språk: %s."
+	MsgLanguageUnknown = "Det finns inga texter på %q. Det finns: %s."
+	MsgErrText         = "en text måste vara en sträng eller ett objekt med en sträng per språk"
+	MsgErrTemplate     = "texten på %q är ingen giltig mall: %v"
+	MsgErrTutorialText = "introduktionens steg %d: %v"
+	// protection (lesson 43)
+	MsgSlowDown           = "Ta det lugnt – du skickar kommandon för fort."
+	MsgFlooding           = "För många kommandon – hej då."
+	MsgTooManyConnections = "För många anslutningar från din adress – försök igen senare."
+	MsgLineTooLong        = "Den raden är för lång – hej då."
+	MsgLoginTimeout       = "Det tog för lång tid att logga in – hej då."
 )
+
+// CourseLanguage is the language this file – and world.json – is written in (lesson 38).
+const CourseLanguage = "sv"
 
 // directionNames are the directions as shown to the player (lesson 8).
 var directionNames = map[string]string{

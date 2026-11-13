@@ -22,7 +22,13 @@ JSON プロトコルを備えたマルチプレイヤーの世界と、Dwarf For
 
 フェーズ 5（レッスン 31〜36）では、サーバーを **稼働したまま** 拡張できるようにします。世界の
 再読み込み、Lua スクリプト、Rust で書いて WebAssembly にコンパイルしたプラグイン、イベントと
-フック、MUD の古典的な技法 *copyover*、そしてゲームの中からの世界の建築です。
+フック、MUD の古典的な技法 *copyover*、そしてゲームの中からの世界の建築です。フェーズ 6
+（レッスン 37〜44）はそれを外の世界へ連れ出します。新しいプレイヤーへのチュートリアル、
+プレイヤーごとの言語、Web クライアント（WebAssembly にコンパイルしたあなたの Rust のコードが
+ブラウザで動く）、VPS の上の Docker と Caddy、洪水への守り、そして非同期 Rust で千体の
+ボットを走らせる負荷テスト:
+
+![レッスン 41 の Web クライアント: ブラウザのキャンバスに描かれたゾーンと、ログのチュートリアル](docs/images/web.png)
 
 コースは **英語・スウェーデン語・日本語** で提供しています。説明、ヒント、テストの
 失敗メッセージ、ゲーム内のテキスト、ゲームの世界まで。
@@ -70,6 +76,7 @@ git clone https://github.com/mattias/mud-school.git; cd mud-school
 | `./mudschool watch` | `check` と同じだが、保存時に自動で |
 | `./mudschool hint` | 次のヒント（1 つずつ） |
 | `./mudschool run server` / `run client` / `run gfx` | 自分のサーバー、クライアント、グラフィカルクライアントを起動 |
+| `./mudschool run web` / `run loadtest` | Web クライアントをビルドしてサーバーを起動（レッスン 41）／負荷テストを実行（レッスン 44） |
 | `./mudschool connect` | telnet のように、自分のサーバーへ手で接続する |
 | `./mudschool solution [--apply]` | 模範解答を表示（またはコピー） |
 | `./mudschool goto <id>` | レッスンへ移動 |
@@ -132,8 +139,16 @@ git pull
 | 34 | Go | イベントとフック | イベントバス、取り消せる行動 |
 | 35 | Go | copyover | ファイルディスクリプター、`ExtraFiles`、接続の引き渡し |
 | 36 | Go | ゲーム内での建築 | 適用・検証・取り消し、不可分な書き込み |
+| 37 | Go | チュートリアル | データとしての振る舞い、フック、マイグレーション |
+| 38 | Go | プレイヤーごとの言語 | `json.Unmarshaler`、`text/template` |
+| 39 | Go | WebSocket | `net/http`、チャネルでできたリスナー、`go:embed` |
+| 40 | Rust | コア | ワークスペース、`pub use`、孤児ルール |
+| 41 | Rust | ブラウザのクライアント | WebAssembly、`cdylib`、ブラウザとの ABI |
+| 42 | Go | インターネットへ | `log/slog`、`/healthz`、SIGTERM、Docker、Caddy |
+| 43 | Go | 守り | トークンバケット、期限、`expvar`、`pprof` |
+| 44 | Rust | 負荷テスト | tokio、`tokio::select!`、パーセンタイル |
 
-フェーズ 6（選択コース）と旅の全体は **[docs/ja/CURRICULUM.md](docs/ja/CURRICULUM.md)** で説明しています。
+旅の全体はフェーズごとに **[docs/ja/CURRICULUM.md](docs/ja/CURRICULUM.md)** で説明しています。
 
 ## ドキュメント
 

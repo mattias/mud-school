@@ -36,9 +36,21 @@ passar som utmaningar, egna projekt eller framtida lektioner.
 - **Repriser:** eftersom protokollet är JSON-rader kan klienten spela in en
   session till fil och spela upp den igen – helt utan server.
 - **Åskådarläge:** följ en annan spelare och se det hen ser.
-- **Bottar:** skriv AI-spelare i Rust som utforskar världen (bra för lasttest
-  och för att hitta buggar).
+- **Smartare botar:** lasttestarens botar (lektion 44) bara vandrar. Ge dem
+  mål – utforska alla rum, slåss, handla – så hittar de buggar och inte bara gränser.
 - **Prestationer och topplistor.**
+
+**Ute i världen**
+
+- **Riktigt telnet:** IAC-förhandling, NAWS (fönsterstorlek) och **GMCP**, så
+  att vanliga MUD-klienter som Mudlet kan visa din karta och statusrad.
+- **Rust på servern:** skriv synfältet eller en zongenerator som ett
+  Rust-bibliotek – som en WASM-modul som wazero kör (lektion 33) eller via cgo –
+  och jämför fart och utvecklarupplevelse.
+- **En asynkron terminalklient:** skriv om terminalklienten med `tokio`
+  (lektion 44) i stället för trådar och kanaler.
+- **Flera servrar, en värld:** dela upp världen på flera processer och låt
+  spelare gå mellan dem.
 
 ## Klienten
 
@@ -72,8 +84,8 @@ passar som utmaningar, egna projekt eller framtida lektioner.
   webbläsare (Go: `net/http` + `html/template`), med möjlighet att köra i
   t.ex. GitHub Codespaces utan installation.
 - **Prestationsmärken** i `mudschool list` för gjorda utmaningar.
-- **Spelet på flera språk samtidigt:** varje spelare väljer språk vid inloggning
-  och servern väljer `messages` per spelare. Bra övning i att designa om när
-  globala konstanter inte längre räcker.
+- **Serverns meddelanden per spelare:** lektion 38 översätter världen; nästa
+  steg är `messages` per spelare – bra övning i att designa om när globala
+  konstanter inte längre räcker.
 - **Fler språk:** samma protokoll gör det lätt att lägga till ett spår där
   klienten skrivs i ett tredje språk.

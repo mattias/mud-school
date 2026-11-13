@@ -147,6 +147,12 @@ ligga i linje – GitHubs typsnitt ritar inte CJK-tecken exakt två kolumner bre
      (`startServer`, `login`, `expect`, `expectContains`, `expectSilence`, ...).
    - Lagom stränga: testa det lektionen lär ut, ge frihet i resten.
    - Inga sovtider där det går att undvika; använd tidsgränser.
+   - Bara den aktuella lektionens tester finns i arbetsytan: en testfil får inte
+     använda hjälpare från en annan lektions tester – kopiera dem, eller lägg dem i `_shared/`.
+   - Tester kan ligga var som helst i arbetsytan: lektion 42 testar paketet
+     `main` (`tests/server/mudschool_42_test.go`). Rust-tester ligger alltid i
+     klientpaketet; andra crates i workspacen (lektion 41, 44) är dess
+     `[dev-dependencies]`, så att `cargo test` i `client/` når dem.
 5. Skriv `scaffold/` för nya filer: typer och signaturer med `TODO(lesson NN)`
    och `todo!()`/tomma returvärden så att koden kompilerar.
 6. Kör `./mudschool verify NN`.

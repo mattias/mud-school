@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Språk per spelare – samma värld på sv, en och ja",
+    "en": "Languages per player – the same world in sv, en and ja",
+    "ja": "プレイヤーごとの言語 – 同じ世界を sv・en・ja で"
+  },
+  "track": "go",
+  "summary": {
+    "sv": "Varje spelare väljer språk med language. Världens texter – introduktionen och rum med översättningar – blir en Text som kan vara en sträng eller ett objekt per språk (json.Unmarshaler), och kör som text/template.",
+    "en": "Each player chooses a language with language. The world's texts – the tutorial and rooms with translations – become a Text that can be a string or an object per language (json.Unmarshaler), and run as a text/template.",
+    "ja": "各プレイヤーは language で言語を選ぶ。世界のテキスト（チュートリアルと翻訳付きの部屋）は、文字列にも言語ごとのオブジェクトにもなれる Text（json.Unmarshaler）になり、text/template として実行される。"
+  }
+}

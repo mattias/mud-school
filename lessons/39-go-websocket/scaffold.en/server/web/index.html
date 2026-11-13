@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- The web client's page (lesson 39). The texts are in MUD_TEXT below. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MUD School</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <div id="status">Not connected</div>
+    <canvas id="zone" hidden title="Arrow keys walk when the input field is empty. Click on the map to walk there."></canvas>
+    <div id="log" aria-live="polite"></div>
+    <input id="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a command and press Enter">
+  </main>
+  <script>
+    window.MUD_TEXT = {"connected": "Connected.", "disconnected": "The connection was closed. Reload the page to connect again.", "offline": "Not connected", "online": "online", "textOnly": "(Text only – build the Rust web client in lesson 41 to see the map.)", "wrongAbi": "mud_web.wasm speaks another ABI version – text only."};
+  </script>
+  <script src="mud.js"></script>
+</body>
+</html>

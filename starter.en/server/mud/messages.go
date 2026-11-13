@@ -178,7 +178,34 @@ const (
 	MsgBuildInvalid = "That would make the world invalid – nothing was changed:\n%v"
 	MsgNotSaved     = "(The server has no world file – the change is not saved.)"
 	MsgSaveFailed   = "The world could not be saved: %v"
+	// the tutorial (lesson 37)
+	MsgTutorialStep     = "[Tutorial %d/%d] %s"
+	MsgTutorialSkipped  = "You leave the tutorial. Type help to see every command."
+	MsgTutorialNotIn    = "You are not in the tutorial."
+	MsgDisappears       = "%s disappears."
+	MsgErrTutorialStart = "tutorial: the start room %q doesn't exist"
+	MsgErrTutorialOpen  = "tutorial: the world's start room %q can be reached from the tutorial – the tutorial area must be closed off"
+	MsgErrTutorialEmpty = "tutorial: there are no steps"
+	MsgErrTutorialStep  = "tutorial step %d: it needs a text and exactly one of command, room and item"
+	MsgErrTutorialRoom  = "tutorial step %d: the room %q is not in the tutorial area"
+	MsgErrTutorialItem  = "tutorial step %d: the item %q doesn't lie in the tutorial area"
+	// languages per player (lesson 38)
+	MsgLanguage        = "Your language: %s. There are: %s. Choose with e.g. language en"
+	MsgLanguageSet     = "Language: %s."
+	MsgLanguageUnknown = "There are no texts in %q. There are: %s."
+	MsgErrText         = "a text must be a string or an object with one string per language"
+	MsgErrTemplate     = "the text in %q is not a valid template: %v"
+	MsgErrTutorialText = "tutorial step %d: %v"
+	// protection (lesson 43)
+	MsgSlowDown           = "Slow down – you are sending commands too fast."
+	MsgFlooding           = "Too many commands – goodbye."
+	MsgTooManyConnections = "Too many connections from your address – try again later."
+	MsgLineTooLong        = "That line is too long – goodbye."
+	MsgLoginTimeout       = "You took too long to log in – goodbye."
 )
+
+// CourseLanguage is the language this file – and world.json – is written in (lesson 38).
+const CourseLanguage = "en"
 
 // directionNames are the directions as shown to the player (lesson 8).
 var directionNames = map[string]string{

@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Klienten i webbläsaren – Rust som WebAssembly",
+    "en": "The client in the browser – Rust as WebAssembly",
+    "ja": "ブラウザのクライアント – WebAssembly としての Rust"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Kärnan kompileras till WebAssembly och ritar zonen på en canvas: med ljus, och med klick för att gå. Kontraktet med sidan är samma idé som pluginen i lektion 33 – men nu är webbläsaren värden.",
+    "en": "The core is compiled to WebAssembly and draws the zone on a canvas: with light, and with clicks to walk. The contract with the page is the same idea as the plugins in lesson 33 – but now the browser is the host.",
+    "ja": "コアを WebAssembly にコンパイルし、ゾーンをキャンバスに描く。光もあり、クリックで歩ける。ページとの契約はレッスン 33 のプラグインと同じ考え方だが、今度はブラウザがホストだ。"
+  }
+}

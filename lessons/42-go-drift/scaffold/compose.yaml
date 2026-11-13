@@ -1,0 +1,37 @@
+# The MUD and Caddy on a VPS (lesson 42):
+#   cp .env.example .env   # and fill it in
+#   docker compose up -d --build
+#
+# Caddy gets a certificate for MUD_DOMAIN from Let's Encrypt by itself and
+# passes https://MUD_DOMAIN – page and WebSocket – on to the MUD's web client.
+services:
+  mud:
+    build: .
+    restart: unless-stopped
+    environment:
+      MUD_ADMINS: ${MUD_ADMINS:-}
+      MUD_TRUST_PROXY: "true" # Caddy sets X-Forwarded-For
+    volumes:
+      - mud-data:/data
+    ports:
+      - "4000:4000" # telnet, without TLS – remove this line if you only want the web
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [mud]
+    environment:
+      MUD_DOMAIN: ${MUD_DOMAIN:?set MUD_DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  mud-data:
+  caddy-data:
+  caddy-config:

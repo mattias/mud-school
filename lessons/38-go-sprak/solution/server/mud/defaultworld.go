@@ -1,0 +1,38 @@
+package mud
+
+import (
+	"bytes"
+	_ "embed" // needed for //go:embed
+)
+
+//go:embed world.json
+var defaultWorldJSON []byte
+
+//go:embed items.json
+var defaultItemsJSON []byte
+
+//go:embed npcs.json
+var defaultNPCsJSON []byte
+
+//go:embed tutorial.all.json
+var defaultTutorialJSON []byte // the tutorial in all three languages (lesson 38)
+
+// DefaultWorld is the world in world.json, items.json, npcs.json and
+// tutorial.json, baked into the program binary.
+func DefaultWorld() *World {
+	w, err := LoadWorld(bytes.NewReader(defaultWorldJSON))
+	if err != nil {
+		panic("world.json is broken: " + err.Error())
+	}
+	if err := w.LoadItems(bytes.NewReader(defaultItemsJSON)); err != nil {
+		panic("items.json is broken: " + err.Error())
+	}
+	if err := w.LoadNPCs(bytes.NewReader(defaultNPCsJSON)); err != nil {
+		panic("npcs.json is broken: " + err.Error())
+	}
+	if err := w.LoadTutorial(bytes.NewReader(defaultTutorialJSON)); err != nil {
+		panic("tutorial.all.json is broken: " + err.Error()) // lesson 37
+	}
+	w.Language = CourseLanguage // the language of world.json (lesson 38)
+	return w
+}

@@ -6,8 +6,8 @@
   },
   "track": "go",
   "summary": {
-    "sv": "Online creation: @dig, @desc, @name och @exit. Varje ändring valideras, sparas atomiskt i världsfilen och syns för alla direkt – kursens sista steg mot en server som aldrig behöver startas om.",
-    "en": "Online creation: @dig, @desc, @name and @exit. Every change is validated, saved atomically to the world file and visible to everyone at once – the course's last step towards a server that never needs a restart.",
-    "ja": "オンラインクリエーション: @dig、@desc、@name、@exit。変更はすべて検証され、ワールドファイルに不可分に保存され、すぐに全員に見える。再起動のいらないサーバーへのコース最後の一歩。"
+    "sv": "Online creation: @dig, @desc, @name och @exit. Varje ändring valideras, sparas atomiskt i världsfilen och syns för alla direkt – fas 5:s sista steg mot en server som aldrig behöver startas om.",
+    "en": "Online creation: @dig, @desc, @name and @exit. Every change is validated, saved atomically to the world file and visible to everyone at once – phase 5's last step towards a server that never needs a restart.",
+    "ja": "オンラインクリエーション: @dig、@desc、@name、@exit。変更はすべて検証され、ワールドファイルに不可分に保存され、すぐに全員に見える。再起動のいらないサーバーへのフェーズ 5 最後の一歩。"
   }
 }

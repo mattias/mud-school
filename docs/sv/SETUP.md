@@ -262,6 +262,14 @@ Port 4000 vidarebefordras automatiskt.
 
 ---
 
+## Inför fas 6
+
+- **WebAssembly-målet** (lektion 33 och 41): `rustup target add wasm32-unknown-unknown`.
+- **En webbläsare** för webbklienten (lektion 39 och 41) – vilken modern som helst.
+- **Docker** (lektion 42, valfritt): Docker Desktop på Windows och macOS,
+  paketet `docker.io` eller https://get.docker.com på Linux. Det behövs bara
+  för att bygga containeravbilden på din egen dator; VPS:en får ett eget.
+
 ## Editor
 
 Rekommendation: **VS Code** med tilläggen **Go** (`golang.go`) och

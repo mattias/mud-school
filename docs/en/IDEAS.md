@@ -36,9 +36,21 @@ Many of them work as challenges, projects of your own or future lessons.
 - **Replays:** because the protocol is JSON lines, the client can record a
   session to a file and play it back – without any server at all.
 - **Spectator mode:** follow another player and see what they see.
-- **Bots:** write AI players in Rust that explore the world (good for load
-  testing and for finding bugs).
+- **Smarter bots:** the load tester's bots (lesson 44) only wander. Give them
+  goals – explore every room, fight, trade – and they find bugs as well as limits.
 - **Achievements and leaderboards.**
+
+**Out in the world**
+
+- **Real telnet:** IAC negotiation, NAWS (window size) and **GMCP**, so that
+  ordinary MUD clients like Mudlet can show your map and status bar.
+- **Rust on the server:** write the field of view or a zone generator as a Rust
+  library – as a WASM module run by wazero (lesson 33) or through cgo – and
+  compare speed and developer experience.
+- **An async terminal client:** rewrite the terminal client with `tokio`
+  (lesson 44) instead of threads and channels.
+- **Several servers, one world:** shard the world over processes and let
+  players walk between them.
 
 ## The client
 
@@ -72,9 +84,9 @@ Many of them work as challenges, projects of your own or future lessons.
   browser (Go: `net/http` + `html/template`), runnable e.g. in GitHub
   Codespaces without installation.
 - **Achievement badges** in `mudschool list` for completed challenges.
-- **The game in several languages at once:** every player picks a language at
-  login and the server chooses `messages` per player. A good exercise in
-  redesigning when global constants are no longer enough.
+- **The server's messages per player:** lesson 38 translates the world; the
+  next step is `messages` per player – a good exercise in redesigning when
+  global constants are no longer enough.
 - **More languages:** the same protocol makes it easy to add a track where the
   client is written in a third language – and the course itself can be
   translated into more languages in the same way as English, Swedish and Japanese.

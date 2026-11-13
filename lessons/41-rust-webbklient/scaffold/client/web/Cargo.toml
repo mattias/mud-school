@@ -1,0 +1,13 @@
+[package]
+name = "mud-web"
+version = "0.1.0"
+edition = "2021"
+
+# The browser client (lesson 41). A "cdylib" is what WebAssembly needs; the
+# "rlib" lets the tests use it like any Rust library. Build it with:
+#   cargo build --release --target wasm32-unknown-unknown -p mud-web
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+mud-core = { path = "../core" }

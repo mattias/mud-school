@@ -1,0 +1,119 @@
+{
+  "rooms": [
+    {
+      "id": "tutorial-hall",
+      "name": "The Hall of Beginnings",
+      "description": "A quiet hall with whitewashed walls. Morning light falls through\na high window. A wide doorway leads north, out into a courtyard.",
+      "terrain": "inside",
+      "x": 0,
+      "y": 0,
+      "z": -10,
+      "exits": {
+        "north": "tutorial-yard"
+      },
+      "translations": {
+        "sv": {
+          "name": "Begynnelsens sal",
+          "description": "En stilla sal med vitkalkade väggar. Morgonljus faller in genom\nett högt fönster. En bred dörröppning leder norrut, ut på en gård."
+        },
+        "ja": {
+          "name": "はじまりの広間",
+          "description": "白い漆喰の壁の静かな広間。高い窓から朝の光が差しこむ。\n北の広い戸口から中庭に出られる。"
+        }
+      }
+    },
+    {
+      "id": "tutorial-yard",
+      "name": "The Courtyard",
+      "description": "A small courtyard behind high walls. Beyond the gate in the north\nwall you hear the sounds of a town.",
+      "terrain": "field",
+      "x": 0,
+      "y": -1,
+      "z": -10,
+      "exits": {
+        "south": "tutorial-hall"
+      },
+      "translations": {
+        "sv": {
+          "name": "Gården",
+          "description": "En liten gård bakom höga murar. Bortom porten i norra muren\nhör du ljuden från en stad."
+        },
+        "ja": {
+          "name": "中庭",
+          "description": "高い壁に囲まれた小さな中庭。北の壁の門の向こうから、\n町のざわめきが聞こえる。"
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "tutorial-torch",
+      "name": "an unlit torch",
+      "description": "A simple torch of pine wood, wrapped in tarred cloth.",
+      "keywords": [
+        "fackla",
+        "torch",
+        "たいまつ"
+      ],
+      "room": "tutorial-yard"
+    }
+  ],
+  "tutorial": {
+    "start": "tutorial-hall",
+    "steps": [
+      {
+        "text": {
+          "en": "Welcome, {{.Name}}! This short tutorial teaches you the basics (tutorial skip leaves it). Type look to see where you are.",
+          "sv": "Välkommen, {{.Name}}! Den här korta introduktionen lär dig grunderna (tutorial skip lämnar den). Skriv look för att se var du är.",
+          "ja": "ようこそ、{{.Name}}！ この短いチュートリアルで基本を覚えましょう（tutorial skip で抜けられます）。look と打って、今いる場所を見てみましょう。"
+        },
+        "command": "look"
+      },
+      {
+        "text": {
+          "en": "There is a doorway to the north. Go through it with: go north (north, or just n, takes one step at a time).",
+          "sv": "Det finns en dörröppning norrut. Gå igenom den med: go north (north, eller bara n, tar ett steg i taget).",
+          "ja": "北に戸口があります。go north で通り抜けましょう（north、または n だけなら 1 歩ずつ進みます）。"
+        },
+        "room": "tutorial-yard"
+      },
+      {
+        "text": {
+          "en": "Something lies on the ground here. Pick it up with: get torch",
+          "sv": "Något ligger på marken här. Plocka upp det med: get fackla",
+          "ja": "地面に何か落ちています。get たいまつ で拾いましょう。"
+        },
+        "item": "tutorial-torch"
+      },
+      {
+        "text": {
+          "en": "Check what you are carrying with: inventory (or just i)",
+          "sv": "Se vad du bär på med: inventory (eller bara i)",
+          "ja": "inventory（または i だけ）で持ち物を確かめましょう。"
+        },
+        "command": "inventory"
+      },
+      {
+        "text": {
+          "en": "Other players hear what you say in the same room. Try: say hello",
+          "sv": "Andra spelare i samma rum hör vad du säger. Prova: say hej",
+          "ja": "同じ部屋にいる他のプレイヤーには、あなたの言葉が聞こえます。say こんにちは と打ってみましょう。"
+        },
+        "command": "say"
+      },
+      {
+        "text": {
+          "en": "Last step ({{.Step}} of {{.Steps}}): help lists every command there is. Type help.",
+          "sv": "Sista steget ({{.Step}} av {{.Steps}}): help visar alla kommandon som finns. Skriv help.",
+          "ja": "最後のステップです（{{.Steps}} 中 {{.Step}}）。help ですべてのコマンドが見られます。help と打ちましょう。"
+        },
+        "command": "help"
+      }
+    ],
+    "done": {
+      "en": "Well done, {{.Name}}! You hand the torch to the gatekeeper, the gate opens, and you step out into Mudby.",
+      "sv": "Bra gjort, {{.Name}}! Du lämnar facklan till portvakten, porten öppnas och du kliver ut i Mudby.",
+      "ja": "よくできました、{{.Name}}！ たいまつを門番に返すと門が開き、あなたはマッドビーの町へ踏み出した。"
+    }
+  }
+}

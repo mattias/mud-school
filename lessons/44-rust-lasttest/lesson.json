@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Lasttestaren – tusen botar med tokio",
+    "en": "The load tester – a thousand bots with tokio",
+    "ja": "負荷テスト – tokio で千体のボット"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Async Rust: varje bot är en tokio-task, och tokio::select! väntar på det som händer först – precis som Gos select. Botarna går med kärnans A* och mäter hur snabbt servern svarar.",
+    "en": "Async Rust: every bot is a tokio task, and tokio::select! waits for whatever happens first – just like Go's select. The bots walk with the core's A* and measure how quickly the server answers.",
+    "ja": "非同期 Rust: ボットはそれぞれ tokio のタスクで、tokio::select! は最初に起きたことを待つ。Go の select とそっくりだ。ボットはコアの A* で歩き、サーバーの応答の速さを測る。"
+  }
+}

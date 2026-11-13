@@ -1,0 +1,13 @@
+{
+  "title": {
+    "sv": "Kärnan – samma kod i terminal, fönster och webbläsare",
+    "en": "The core – the same code in the terminal, the window and the browser",
+    "ja": "コア – 端末・ウィンドウ・ブラウザで同じコード"
+  },
+  "track": "rust",
+  "summary": {
+    "sv": "Klienten blir en Cargo-workspace: protokollet, zonen, utseendet, ljuset och vägarna flyttar till ett eget bibliotek, mud-core, utan terminal, fönster, nätverk eller klocka. Rusts orphan rule visar varför en del måste skrivas om.",
+    "en": "The client becomes a Cargo workspace: the protocol, the zone, the looks, the light and the paths move to a library of their own, mud-core, without a terminal, a window, a network or a clock. Rust's orphan rule shows why some of it has to be rewritten.",
+    "ja": "クライアントは Cargo ワークスペースになる。プロトコル・ゾーン・見た目・光・経路を、端末もウィンドウもネットワークも時計もない独自のライブラリ mud-core に移す。一部を書き直す理由は Rust の孤児ルールが教えてくれる。"
+  }
+}

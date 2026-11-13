@@ -1,0 +1,12 @@
+[package]
+name = "mud-loadtest"
+version = "0.1.0"
+edition = "2021"
+
+# The load tester (lesson 44): hundreds of bots, each one a tokio task.
+#   cargo run --release -p mud-loadtest -- --bots 500 --seconds 30
+[dependencies]
+mud-core = { path = "../core" }
+clap = { version = "4", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-util", "time", "sync"] }

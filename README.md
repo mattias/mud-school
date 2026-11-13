@@ -24,7 +24,13 @@ graphical client with its own tileset, light and a mouse:
 Phase 5 (lessons 31–36) makes the server extensible **while it is running**:
 live world reloading, Lua scripts, plugins written in Rust and compiled to
 WebAssembly, events and hooks, the classic MUD technique *copyover*, and
-building the world from inside the game.
+building the world from inside the game. Phase 6 (lessons 37–44) takes it out
+into the world: a tutorial for new players, a language per player, a web
+client – your Rust code compiled to WebAssembly, in the browser – Docker and
+Caddy on a VPS, protection against floods, and a load tester with a thousand
+bots in async Rust:
+
+![The web client from lesson 41: the zone drawn on a canvas in the browser, the tutorial in the log](docs/images/web.png)
 
 The course is available in **English, Swedish and Japanese** – instructions,
 hints, the tests' failure messages, the game's texts and the game world.
@@ -72,6 +78,7 @@ Recommended fonts for the map (e.g. in Windows Terminal) are listed in
 | `./mudschool watch` | like `check`, but automatically when you save |
 | `./mudschool hint` | the next hint (one at a time) |
 | `./mudschool run server` / `run client` / `run gfx` | start your server, client or graphical client |
+| `./mudschool run web` / `run loadtest` | build the web client and start the server (lesson 41) / run the load tester (lesson 44) |
 | `./mudschool connect` | connect to your server by hand, like telnet |
 | `./mudschool solution [--apply]` | show (or copy in) the reference solution |
 | `./mudschool goto <id>` | jump to a lesson |
@@ -134,8 +141,16 @@ automatically, and `doctor` tells you when something is waiting. You never need 
 | 34 | Go | Events and hooks | an event bus, cancellable actions |
 | 35 | Go | Copyover | file descriptors, `ExtraFiles`, handing over connections |
 | 36 | Go | Building in the game | apply–validate–undo, atomic writes |
+| 37 | Go | The tutorial | behaviour as data, hooks, a migration |
+| 38 | Go | Languages per player | `json.Unmarshaler`, `text/template` |
+| 39 | Go | WebSockets | `net/http`, a listener made of channels, `go:embed` |
+| 40 | Rust | The core | workspaces, `pub use`, the orphan rule |
+| 41 | Rust | The client in the browser | WebAssembly, `cdylib`, an ABI with the browser |
+| 42 | Go | Out on the internet | `log/slog`, `/healthz`, SIGTERM, Docker, Caddy |
+| 43 | Go | Protection | a token bucket, deadlines, `expvar`, `pprof` |
+| 44 | Rust | The load tester | tokio, `tokio::select!`, percentiles |
 
-Phase 6 (optional tracks) and the whole journey are described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
+The whole journey, phase by phase, is described in **[docs/en/CURRICULUM.md](docs/en/CURRICULUM.md)**.
 
 ## Documentation
 

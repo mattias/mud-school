@@ -85,7 +85,7 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// TODO(lesson 39): not /ws: g.files. /ws: websocket.Accept with
 	// OriginPatterns g.Origins, websocket.NetConn(context.Background(), c,
 	// websocket.MessageText) wrapped in newDeadlineConn (given, below), and
-	// g.listener.Offer – if it is closed, c.Close.
+	// g.listener.Offer – if it is closed, c.Close and conn.Close.
 	_, _ = context.Background, log.Printf
 	_ = websocket.Accept
 	g.files.ServeHTTP(w, r)

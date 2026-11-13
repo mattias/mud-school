@@ -104,6 +104,7 @@ func (g *Gateway) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var conn net.Conn = newDeadlineConn(websocket.NetConn(context.Background(), c, websocket.MessageText))
 	if !g.listener.Offer(conn) {
 		c.Close(websocket.StatusGoingAway, "the server is shutting down")
+		conn.Close() // and stop newDeadlineConn's reader goroutine
 	}
 }
 

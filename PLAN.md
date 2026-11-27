@@ -8,8 +8,8 @@ each in English, Swedish and Japanese, with tests and reference solutions.
 
 | Phase | Lessons | Content | PR |
 |---|---|---|---|
-| 1 The basics | 01–05 | TCP server, goroutines, commands, players; first Rust client | – |
-| 2 A world and a face | 06–13 | chat, rooms, world files, protocol + map; threads, serde, ratatui TUI | – |
+| 1 The basics | 01–05 | TCP server, goroutines, commands, players; first Rust client | #1 |
+| 2 A world and a face | 06–13 | chat, rooms, world files, protocol + map; threads, serde, ratatui TUI | #1 (fixes #2–#4) |
 | 3 A living world | 14–22 | game loop (actor), items, NPCs, combat, SQLite saving, settings, fuzzing | #5 |
 | 4 Tiles and zones | 23–30 | zones, generation, camera, FOV, A*, macroquad window, light, mouse | #8 |
 | 5 An extensible server | 31–36 | live reload, Lua, WASM plugins (Rust), events/hooks, copyover, OLC | #9 |

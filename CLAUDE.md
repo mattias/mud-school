@@ -1,5 +1,11 @@
 # CLAUDE.md – working on MUD School
 
+> **This file is for developing the course.** If you are helping a *student*
+> who works in `workspace/` (it lies inside this repository, so this file is
+> loaded there too): ignore everything below. Answer in the student's
+> language, explain instead of handing out the solution (`./mudschool hint`
+> and `./mudschool solution` exist for that), and never commit, push or open PRs.
+
 MUD School is a course: students learn **Go** by building a MUD server and
 **Rust** by building its client, in 44 lessons and 6 phases, in **English,
 Swedish and Japanese**. This repository is the course itself – the lessons,
@@ -25,7 +31,7 @@ Read these before changing anything:
 
 ```
 ./mudschool verify                      # every lesson, every language: ~45 min
-./mudschool verify 37 38 --lang en      # some lessons (still builds 01–NN in order)
+./mudschool verify 37 38 --lang en      # builds every lesson in order, checks only these
 ./mudschool reference <dir> [id]        # the reference solution up to a lesson
 ./mudschool doctor                      # Go, Rust, wasm32 target, terminal
 gofmt -l tools lessons starter starter.sv starter.en starter.ja   # CI checks this
@@ -55,10 +61,19 @@ CI (`.github/workflows/verify.yml`) runs gofmt, vet and the full verify.
   student's file – and must **compile** on the previous lesson's reference
   (stubs with `TODO(lesson NN)`). A scaffold file that later changes in a
   solution must be given in full if the README says "given".
-- Rust: tests live in the root `client` package (`client/tests/`). Other crates
-  in the workspace (`core`, `web`, `loadtest`) are its `[dev-dependencies]`, so
-  `cargo test` in `client/` reaches them.
-- The README contract (`## The contract`) must match what the tests check.
+- Rust: tests live in the root `client` package (`client/tests/`). `mud-core`
+  is an ordinary dependency of the client; `mud-web` and `mud-loadtest` are
+  its `[dev-dependencies]`, so `cargo test` in `client/` reaches them too.
+- The README contract (`## The contract`, from lesson 14 on) must match what
+  the tests check.
+- **Generated files:** `tutorial.json` (lesson 37), `tutorial.all.json` (38)
+  and `web/index.html` (39) in `scaffold.<lang>/` come from `tools/gen/*.py` –
+  edit the script and rerun it, never the files. (Lesson 37's README has a
+  hand-written JSON excerpt; keep it in step by hand.)
+- **Students get fixes through `./mudschool update`** (and `check` applies the
+  safe ones). Changing a scaffold or starter file is fine; renaming or deleting
+  one that has been released is not – see "Updating students' workspaces" in
+  docs/en/TEACHERS.md.
 - Things learned the hard way:
   - coder/websocket's `NetConn` closes the connection when a read deadline
     expires; web connections go through `newDeadlineConn` (lesson 39).

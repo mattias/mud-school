@@ -2,8 +2,9 @@
 
   lessons/39-*/scaffold.<lang>/server/web/index.html
 
-Run from the repository root:  python3 tools/gen/webpage.py
-The texts for mud.js are in MUD_TEXT; edit them here, not in the HTML."""
+Run:  python3 tools/gen/webpage.py   (from anywhere; it finds the repository)
+The texts are in TEXT below (mud.js reads them as window.MUD_TEXT); edit them
+here, not in the HTML."""
 import glob, json, os, sys
 TEXT = {
   "en": {"title": "MUD School", "placeholder": "Type a command and press Enter", "connected": "Connected.",
@@ -45,12 +46,12 @@ PAGE = """<!doctype html>
 </body>
 </html>
 """
-root = sys.argv[1] if len(sys.argv) > 1 else "."
+root = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 (lesson_dir,) = glob.glob(os.path.join(root, "lessons", "39-*"))
 for lang, t in TEXT.items():
     path = os.path.join(lesson_dir, "scaffold." + lang, "server", "web", "index.html")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     js = json.dumps({k: v for k, v in t.items() if k not in ("title", "placeholder", "lang", "help")}, ensure_ascii=False)
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(PAGE.format(text=js, **t))
     print(path)

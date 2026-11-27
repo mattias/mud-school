@@ -3,7 +3,7 @@
   lessons/37-*/scaffold.<lang>/server/mud/tutorial.json      (lesson 37: one language)
   lessons/38-*/scaffold.<lang>/server/mud/tutorial.all.json  (lesson 38: all three)
 
-Run from the repository root:  python3 tools/gen/tutorial.py
+Run:  python3 tools/gen/tutorial.py   (from anywhere; it finds the repository)
 Edit the texts below, never the generated JSON files by hand."""
 import json, os, sys
 
@@ -80,7 +80,7 @@ def item(base, all_langs):
         kws = sorted(set(k for l in LANGS for k in ITEM[l][2]))
     return {"id": "tutorial-torch", "name": name, "description": desc, "keywords": kws, "room": "tutorial-yard"}
 
-def text(t, base, all_langs, step_has_kw=False):
+def text(t, base, all_langs):
     if all_langs:
         return {l: t[l].replace("{kw}", GET[l]) for l in LANGS}
     s = t[base].replace("{kw}", GET[base])
@@ -103,13 +103,13 @@ def build(base, all_langs):
 
 if __name__ == "__main__":
     import glob
-    root = sys.argv[1] if len(sys.argv) > 1 else "."
+    root = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
     for lesson, fname, all_langs in [("37", "tutorial.json", False), ("38", "tutorial.all.json", True)]:
         (lesson_dir,) = glob.glob(os.path.join(root, "lessons", lesson + "-*"))
         for base in LANGS:
             path = os.path.join(lesson_dir, "scaffold." + base, "server", "mud", fname)
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w", encoding="utf-8") as f:
+            with open(path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(build(base, all_langs), f, ensure_ascii=False, indent=2)
                 f.write("\n")
             print(path)

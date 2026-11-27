@@ -19,6 +19,11 @@ jobs:
           if [ -n "$unformatted" ]; then
             echo "These files need gofmt:"; echo "$unformatted"; exit 1
           fi
+      - name: generated files match tools/gen
+        run: |
+          python3 tools/gen/tutorial.py > /dev/null
+          python3 tools/gen/webpage.py > /dev/null
+          git diff --exit-code -- lessons
       - name: go vet (course tool)
         working-directory: tools/mudschool
         run: go vet ./...
